@@ -1,7 +1,8 @@
 .dashboard__header {
   display: flex;
   justify-content: center;
-  padding: 16px 70px;
+  /* padding: 16px 70px; */
+  padding: 38px 70px 26px 70px;
   background-color: #f8f8f8;
   border-radius: 0 0 16px 16px;
 
@@ -22,8 +23,8 @@
 
 /* Существующие стили */
 .dashboard__header-logo {
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 32px;
+  font-weight: 700;
 }
 
 .dashboard__header-logo-highlight {
@@ -35,12 +36,10 @@
   display: flex;
   align-items: center;
   margin: 0 2rem;
-  max-width: 500px;
+  max-width: 695px; /* ← было 500px */
   background-color: #f5f8ff;
   border-radius: 10px;
   padding-right: 4px;
-
-  /* 🌟 Добавлена мягкая тень */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
