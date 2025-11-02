@@ -21,7 +21,7 @@
 
 .todo-list__icon {
   font-size: 20px;
-  color: #e03e3e;
+  color: #a1a3ab;
 }
 
 .todo-list__title {
@@ -30,14 +30,30 @@
   color: #e03e3e;
 }
 
+/* === Кнопка Add task === */
 .todo-list__add {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   background: none;
   border: none;
-  color: #e03e3e;
+  color: #a1a3ab;
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
   transition: opacity 0.2s;
+}
+
+.todo-list__add-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 20px;
+  height: 20px;
+  /* border: 1.5px solid #e03e3e; */
+  color: #e03e3e; /* 🔴 красная иконка */
+  /* border-radius: 50%; */
+  font-size: 12px;
 }
 
 .todo-list__add:hover {

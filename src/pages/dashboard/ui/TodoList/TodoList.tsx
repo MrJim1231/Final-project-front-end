@@ -1,5 +1,5 @@
 import "./TodoList.css";
-import { FiClipboard } from "react-icons/fi"; // иконка списка
+import { FiClipboard, FiPlus } from "react-icons/fi"; // 👈 иконки (To-Do и +)
 
 export const TodoList = () => {
   const tasks = [
@@ -49,7 +49,14 @@ export const TodoList = () => {
           <FiClipboard className="todo-list__icon" />
           <h3 className="todo-list__title">To-Do</h3>
         </div>
-        <button className="todo-list__add">+ Add task</button>
+
+        {/* ✅ Кнопка Add task */}
+        <button className="todo-list__add">
+          <span className="todo-list__add-icon">
+            <FiPlus />
+          </span>
+          Add task
+        </button>
       </div>
 
       {tasks.map((task, i) => (
@@ -85,6 +92,7 @@ export const TodoList = () => {
 
             <span className="todo-card__date">Created on {task.date}</span>
           </div>
+
           <img src={task.image} alt={task.title} className="todo-card__img" />
         </div>
       ))}
