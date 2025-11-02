@@ -1,0 +1,60 @@
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.dashboard-header__title {
+  font-size: 36px;
+  font-weight: 500;
+}
+
+.dashboard-header__title span {
+  color: #000;
+}
+
+.dashboard-header__team {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dashboard-header__avatars {
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding-left: 4px;
+}
+
+.dashboard-header__avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 2px solid white;
+  object-fit: cover;
+}
+
+.dashboard-header__invite {
+  background: white;
+  border: 1px solid #ff5e5e;
+  color: #ff5e5e;
+  font-weight: 600;
+  font-size: 0.8rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dashboard-header__invite:hover {
+  background-color: #ffecec;
+}
+
+.dashboard-header__invite-icon {
+  font-size: 1rem;
+  display: inline-block;
+}
