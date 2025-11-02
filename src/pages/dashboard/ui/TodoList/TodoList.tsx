@@ -1,5 +1,10 @@
 import "./TodoList.css";
-import { FiClipboard, FiPlus } from "react-icons/fi"; // 👈 иконки (To-Do и +)
+import { FiClipboard, FiPlus } from "react-icons/fi"; // 👈 иконки
+
+// ✅ Импорт локальных изображений
+import todo1 from "../../../../shared/assets/images/dashboard/todo1.png";
+import todo2 from "../../../../shared/assets/images/dashboard/todo2.png";
+import todo3 from "../../../../shared/assets/images/dashboard/todo3.png";
 
 export const TodoList = () => {
   const tasks = [
@@ -9,7 +14,7 @@ export const TodoList = () => {
       date: "20/06/2023",
       priority: "High",
       status: "Not Started",
-      image: "https://placekitten.com/120/120",
+      image: todo1, // ✅ локальное изображение
     },
     {
       title: "Landing Page Design for TravelDays",
@@ -17,7 +22,7 @@ export const TodoList = () => {
       date: "19/06/2023",
       priority: "Moderate",
       status: "In Progress",
-      image: "https://placekitten.com/121/121",
+      image: todo2,
     },
     {
       title: "Presentation on Final Product",
@@ -25,7 +30,7 @@ export const TodoList = () => {
       date: "18/06/2023",
       priority: "Moderate",
       status: "Completed",
-      image: "https://placekitten.com/122/122",
+      image: todo3,
     },
   ];
 
