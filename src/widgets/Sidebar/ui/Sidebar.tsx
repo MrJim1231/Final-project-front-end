@@ -1,5 +1,5 @@
 import "./Sidebar.css";
-import avatar from "../../../assets/avatar.png";
+import avatar from "../../../shared/assets/avatar.png";
 
 import {
   FiGrid,
