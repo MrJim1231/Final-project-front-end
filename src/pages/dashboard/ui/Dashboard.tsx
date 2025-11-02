@@ -1,12 +1,12 @@
-// src/pages/dashboard/ui/Dashboard.tsx
 import "./Dashboard.css";
 
-const users = [
-  "/avatars/u1.jpg",
-  "/avatars/u2.jpg",
-  "/avatars/u3.jpg",
-  "/avatars/u4.jpg",
-];
+import u1 from "../../../shared/assets/avatars/u1.png";
+import u2 from "../../../shared/assets/avatars/u2.png";
+import u3 from "../../../shared/assets/avatars/u3.png";
+import u4 from "../../../shared/assets/avatars/u4.png";
+import u5 from "../../../shared/assets/avatars/u5.png";
+
+const users = [u1, u2, u3, u4, u5];
 
 export const Dashboard = () => {
   return (
@@ -18,18 +18,18 @@ export const Dashboard = () => {
 
         <div className="dashboard-page__team">
           <div className="dashboard-page__avatars">
-            {users.map((src, i) => (
+            {users.slice(0, 5).map((src, i) => (
               <img
                 key={i}
                 src={src}
                 alt="user"
                 className="dashboard-page__avatar"
-                style={{ left: `${i * 20}px` }}
               />
             ))}
+            {/* <div className="dashboard-page__more">+4</div> */}
           </div>
 
-          <button className="dashboard-page__invite">➕ Invite</button>
+          <button className="dashboard-page__invite">Invite</button>
         </div>
       </div>
 

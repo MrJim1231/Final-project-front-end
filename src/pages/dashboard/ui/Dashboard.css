@@ -1,5 +1,6 @@
 .dashboard-page {
-  padding: 2rem;
+  /* padding: 2rem; */
+  padding: 0 76px;
   background-color: #f5f8ff;
   min-height: 100%;
 }
@@ -12,8 +13,8 @@
 }
 
 .dashboard-page__title {
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 36px;
+  font-weight: 500;
 }
 
 .dashboard-page__title span {
@@ -24,22 +25,21 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  position: relative;
 }
 
 .dashboard-page__avatars {
   display: flex;
+  align-items: center;
   position: relative;
-  height: 32px;
+  padding-left: 4px;
 }
 
 .dashboard-page__avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
   border: 2px solid white;
   object-fit: cover;
-  position: absolute;
 }
 
 .dashboard-page__invite {
