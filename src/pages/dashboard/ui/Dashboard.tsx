@@ -1,4 +1,5 @@
 import "./Dashboard.css";
+import { FiUserPlus } from "react-icons/fi"; // 👈 импорт иконки
 
 import u1 from "../../../shared/assets/avatars/u1.png";
 import u2 from "../../../shared/assets/avatars/u2.png";
@@ -29,7 +30,10 @@ export const Dashboard = () => {
             {/* <div className="dashboard-page__more">+4</div> */}
           </div>
 
-          <button className="dashboard-page__invite">Invite</button>
+          <button className="dashboard-page__invite">
+            <FiUserPlus className="dashboard-page__invite-icon" />
+            Invite
+          </button>
         </div>
       </div>
 
