@@ -5,10 +5,10 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-  /* justify-content: space-between; */
-  padding: 3rem 1rem 1.5rem; /* ⬅️ немного увеличен верхний padding */
+  justify-content: space-between;
+  padding: 3rem 1rem 1.5rem;
   border-radius: 0 16px 16px 0;
-  position: relative; /* нужно для позиционирования аватара */
+  position: relative;
 }
 
 .dashboard__sidebar-profile {
@@ -90,6 +90,7 @@
   font-size: 0.95rem;
   cursor: pointer;
   transition: opacity 0.2s ease;
+  margin-top: auto;
 }
 
 .dashboard__sidebar-logout:hover {

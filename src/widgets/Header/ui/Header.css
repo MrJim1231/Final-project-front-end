@@ -1,7 +1,7 @@
 .dashboard__header {
   display: flex;
   justify-content: center;
-  padding: 1rem 0;
+  padding: 16px 70px;
   background-color: #f8f8f8;
   border-radius: 0 0 16px 16px;
 
