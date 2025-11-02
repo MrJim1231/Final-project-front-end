@@ -1,5 +1,8 @@
-function App() {
-  return <div>App</div>;
-}
+import { Header } from "../widgets/Header";
 
-export default App;
+export const App = () => (
+  <>
+    <Header />
+    <main>{/* ... */}</main>
+  </>
+);

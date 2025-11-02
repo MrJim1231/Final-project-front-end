@@ -1,0 +1,82 @@
+.dashboard__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 0 0 16px 16px;
+}
+
+.dashboard__header-logo {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.dashboard__header-logo-highlight {
+  color: #ff5e5e;
+}
+
+.dashboard__header-search {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  margin: 0 2rem;
+  max-width: 500px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding-right: 4px;
+}
+
+.dashboard__header-input {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 10px 0 0 10px;
+  background-color: transparent;
+  outline: none;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.dashboard__header-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ff5e5e;
+  color: white;
+  border: none;
+  padding: 0.6rem;
+  border-radius: 10px;
+  margin-left: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.dashboard__header-button:hover {
+  background-color: #ff3e3e;
+}
+
+.dashboard__header-actions {
+  display: flex;
+  align-items: center;
+}
+
+.dashboard__header-date {
+  display: flex;
+  flex-direction: column;
+  margin-left: 1rem;
+  text-align: right;
+}
+
+.dashboard__header-day {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #222;
+}
+
+.dashboard__header-full-date {
+  color: #00aaff;
+  font-size: 0.85rem;
+}
