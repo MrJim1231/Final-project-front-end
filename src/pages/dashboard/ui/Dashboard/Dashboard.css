@@ -8,6 +8,8 @@
   display: flex;
   gap: 2rem;
   margin-top: 2rem;
+  border: 2px solid rgba(161, 163, 171, 0.6);
+  padding: 20px;
 }
 
 .dashboard-page__left {
