@@ -1,0 +1,94 @@
+.dashboard__sidebar {
+  width: 260px;
+  background-color: #ff5e5e;
+  color: white;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.5rem 1rem;
+  border-radius: 0 16px 16px 0;
+}
+
+.dashboard__sidebar-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.dashboard__sidebar-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1rem;
+  border: 3px solid white;
+}
+
+.dashboard__sidebar-user {
+  text-align: center;
+}
+
+.dashboard__sidebar-name {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.dashboard__sidebar-email {
+  font-size: 0.85rem;
+  opacity: 0.85;
+  line-height: 1.2;
+}
+
+.dashboard__sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.dashboard__sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 12px;
+  background: none;
+  color: white;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  text-align: left;
+}
+
+.dashboard__sidebar-link:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.dashboard__sidebar-link.active {
+  background-color: white;
+  color: #ff5e5e;
+  font-weight: 600;
+}
+
+.dashboard__sidebar-icon {
+  font-size: 1.1rem;
+}
+
+.dashboard__sidebar-logout {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: none;
+  background: none;
+  color: white;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.dashboard__sidebar-logout:hover {
+  opacity: 0.7;
+}
