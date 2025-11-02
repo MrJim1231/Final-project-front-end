@@ -5,25 +5,28 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 1.5rem 1rem;
+  /* justify-content: space-between; */
+  padding: 3rem 1rem 1.5rem; /* ⬅️ немного увеличен верхний padding */
   border-radius: 0 16px 16px 0;
+  position: relative; /* нужно для позиционирования аватара */
 }
 
 .dashboard__sidebar-profile {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 2rem;
+  position: relative;
+  margin-bottom: 1rem;
 }
 
 .dashboard__sidebar-avatar {
-  width: 72px;
-  height: 72px;
+  position: absolute;
+  top: -90px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   object-fit: cover;
-  margin-bottom: 1rem;
-  border: 3px solid white;
+  border: 4px solid white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .dashboard__sidebar-user {

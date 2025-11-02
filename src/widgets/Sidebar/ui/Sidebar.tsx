@@ -1,4 +1,6 @@
 import "./Sidebar.css";
+import avatar from "../../../assets/avatar.png";
+
 import {
   FiGrid,
   FiZap,
@@ -14,7 +16,7 @@ export const Sidebar = () => {
     <aside className="dashboard__sidebar">
       <div className="dashboard__sidebar-profile">
         <img
-          src="https://randomuser.me/api/portraits/men/32.jpg"
+          src={avatar}
           alt="User Avatar"
           className="dashboard__sidebar-avatar"
         />
