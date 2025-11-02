@@ -1,0 +1,19 @@
+.dashboard-page {
+  padding: 0 76px;
+  background-color: #f5f8ff;
+  min-height: 100%;
+}
+
+.dashboard-page__content {
+  display: flex;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.dashboard-page__left {
+  flex: 2;
+}
+
+.dashboard-page__right {
+  flex: 1;
+}

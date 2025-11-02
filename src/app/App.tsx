@@ -1,6 +1,6 @@
 import { Header } from "../widgets/Header";
 import { Sidebar } from "../widgets/Sidebar";
-import { Dashboard } from "../pages/dashboard";
+import { Dashboard } from "../pages/dashboard/ui/Dashboard";
 
 import "./App.css";
 

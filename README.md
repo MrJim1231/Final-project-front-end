@@ -13,15 +13,24 @@ src/
 │   ├── routes/                      # Конфигурация маршрутов
 │   └── styles/                      # Глобальные стили (themes, reset)
 │
-├── processes/                       # (устарело, использовать только если нужно)
-│   └── checkout/
-│       ├── model/
-│       └── ui/
-│
 ├── pages/                           # Полные страницы (роуты)
-│   └── cart/
-│       ├── ui/
-│       └── index.ts
+│   ├── cart/
+│   │   ├── ui/
+│   │   └── index.ts
+│   │
+│   └── dashboard/                   # Страница Dashboard (пример FSD-структуры)
+│       ├── ui/                      # Локальные UI-компоненты страницы
+│       │   ├── Dashboard/           # Главный компонент страницы
+│       │   │   ├── Dashboard.tsx
+│       │   │   ├── Dashboard.css
+│       │   │   └── index.ts
+│       │   │
+│       │   └── DashboardHeader/     # Подкомпонент заголовка страницы
+│       │       ├── DashboardHeader.tsx
+│       │       ├── DashboardHeader.css
+│       │       └── index.ts
+│       │
+│       └── index.ts                 # Экспорт страницы Dashboard
 │
 ├── widgets/                         # Крупные виджеты/секции
 │   ├── Header/
@@ -46,10 +55,9 @@ src/
 │       └── ui/
 │
 ├── shared/                          # Переиспользуемые ресурсы
-│   ├── ui/
-│   ├── lib/
-│   ├── config/
-│   ├── types/
-│   └── assets/
-
+│   ├── ui/                          # Кнопки, инпуты, карточки и т.п.
+│   ├── lib/                         # Утилиты и вспомогательные функции
+│   ├── config/                      # Конфиги и константы
+│   ├── types/                       # Общие типы TypeScript
+│   └── assets/                      # Изображения, иконки, шрифты и т.п.
 ```
