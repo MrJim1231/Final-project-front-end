@@ -1,52 +1,91 @@
 import "./TodoList.css";
+import { FiClipboard } from "react-icons/fi"; // иконка списка
 
 export const TodoList = () => {
   const tasks = [
     {
       title: "Attend Nischal’s Birthday Party",
-      desc: "Buy gifts and pick up cake from the bakery.",
+      desc: "Buy gifts and pick up cake from the bakery. (6 PM | Fresh Elements)",
       date: "20/06/2023",
       priority: "High",
       status: "Not Started",
-      image: "https://placekitten.com/80/80",
+      image: "https://placekitten.com/120/120",
     },
     {
       title: "Landing Page Design for TravelDays",
-      desc: "Get design work done by EOD.",
+      desc: "Get the work done by EOD and discuss with client before leaving. (4 PM | Meeting Room)",
       date: "19/06/2023",
       priority: "Moderate",
       status: "In Progress",
-      image: "https://placekitten.com/81/81",
+      image: "https://placekitten.com/121/121",
     },
     {
       title: "Presentation on Final Product",
-      desc: "Prepare the meeting deck and documents.",
+      desc: "Make sure everything is functioning and get the documents ready.",
       date: "18/06/2023",
       priority: "Moderate",
-      status: "In Progress",
-      image: "https://placekitten.com/82/82",
+      status: "Completed",
+      image: "https://placekitten.com/122/122",
     },
   ];
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "Not Started":
+        return "#ff4444";
+      case "In Progress":
+        return "#007bff";
+      case "Completed":
+        return "#00c851";
+      default:
+        return "#ccc";
+    }
+  };
 
   return (
     <div className="todo-list">
       <div className="todo-list__header">
-        <h3 className="todo-list__title">To-Do</h3>
+        <div className="todo-list__title-wrapper">
+          <FiClipboard className="todo-list__icon" />
+          <h3 className="todo-list__title">To-Do</h3>
+        </div>
         <button className="todo-list__add">+ Add task</button>
       </div>
 
       {tasks.map((task, i) => (
         <div key={i} className="todo-card">
-          <img src={task.image} alt={task.title} className="todo-card__img" />
           <div className="todo-card__content">
-            <h4 className="todo-card__title">{task.title}</h4>
-            <p className="todo-card__desc">{task.desc}</p>
-            <div className="todo-card__meta">
-              <span>Priority: {task.priority}</span>
-              <span>Status: {task.status}</span>
+            <div className="todo-card__header">
+              <span
+                className="todo-card__status-dot"
+                style={{ backgroundColor: getStatusColor(task.status) }}
+              ></span>
+              <h4 className="todo-card__title">{task.title}</h4>
             </div>
+
+            <p className="todo-card__desc">{task.desc}</p>
+
+            <div className="todo-card__meta">
+              <span>
+                Priority:{" "}
+                <span className="todo-card__priority">{task.priority}</span>
+              </span>
+              <span
+                className={`todo-card__status ${
+                  task.status === "Not Started"
+                    ? "status--red"
+                    : task.status === "In Progress"
+                    ? "status--blue"
+                    : "status--green"
+                }`}
+              >
+                Status: {task.status}
+              </span>
+            </div>
+
             <span className="todo-card__date">Created on {task.date}</span>
           </div>
+          <img src={task.image} alt={task.title} className="todo-card__img" />
         </div>
       ))}
     </div>
