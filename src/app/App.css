@@ -1,9 +1,8 @@
 .dashboard__layout {
-  padding-top: 56px;
-  /* gap: 56px; */
+  /* padding-top: 56px; */
   display: flex;
   flex: 1;
-  /* background-color: #f5f8ff; */
+  padding-top: 150px;
   background-color: #f5f8ff;
 }
 
