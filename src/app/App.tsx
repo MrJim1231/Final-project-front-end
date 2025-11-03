@@ -1,18 +1,20 @@
 import { Header } from "../widgets/Header";
 import { Sidebar } from "../widgets/Sidebar";
-import { Dashboard } from "../pages/dashboard/ui/Dashboard";
+import { AppRouter } from "../app/routes/AppRouter"; // ✅ добавляем маршруты
+import { BrowserRouter } from "react-router-dom";
 
 import "./App.css";
 
 export const App = () => (
-  <>
+  <BrowserRouter>
     <Header />
 
     <div className="dashboard__layout">
       <Sidebar />
       <main className="dashboard__content">
-        <Dashboard /> {/* 🔹 Страница отрисовывается здесь */}
+        {/* 🔹 Здесь будет подгружаться нужная страница */}
+        <AppRouter />
       </main>
     </div>
-  </>
+  </BrowserRouter>
 );
