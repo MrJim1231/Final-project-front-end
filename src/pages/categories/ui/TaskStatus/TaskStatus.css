@@ -62,18 +62,19 @@
   border-collapse: collapse;
 }
 
-/* === Заголовок таблицы === */
-.status-table__head {
-  background-color: #f9fafc;
-  font-weight: 600;
+/* === Верхняя линия === */
+.status-table__inner thead {
+  border-bottom: 1px solid rgba(161, 163, 171, 0.3); /* 👈 только линия, без фона */
 }
 
 .status-table__col {
   border-left: 1px solid rgba(161, 163, 171, 0.3);
+  border-right: none;
   text-align: center;
   padding: 12px 8px;
   font-size: 14px;
-  color: #333;
+  color: #000;
+  font-weight: 600;
 }
 
 .status-table__col:first-child {
