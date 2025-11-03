@@ -2,13 +2,15 @@
   width: 260px;
   background-color: #ff5e5e;
   color: white;
-  height: 100vh;
+  /* height: 100vh; */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   padding: 3rem 1rem 1.5rem;
   border-radius: 0 16px 16px 0;
   position: relative;
+  min-height: 100%;
+  height: auto; /* 👈 убираем фиксированную высоту */
 }
 
 .dashboard__sidebar-profile {

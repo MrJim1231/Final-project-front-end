@@ -3,6 +3,7 @@
   flex: 1;
   padding-top: 150px;
   background-color: #f5f8ff;
+  min-height: 100%; /* растягивается по контенту */
 }
 
 .dashboard__content {
