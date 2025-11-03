@@ -1,6 +1,17 @@
 .vital-task-list {
   background: #f5f8ff;
   border-radius: 16px;
+  border: 1px solid rgba(161, 163, 171, 0.25);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  padding: 24px 28px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px; /* расстояние между карточками */
+
+  max-width: 466px; /* 👈 ограничиваем ширину по макету */
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .vital-task-list__header {
@@ -18,14 +29,14 @@
 .vital-task-list__title {
   font-size: 16px;
   font-weight: 600;
-  color: #e03e3e;
+  /* color: #e03e3e; */
 }
 
 /* === Карточка задачи === */
 .vital-card {
   position: relative;
-  width: 402px;
-  height: 166px;
+  min-width: 365px;
+  min-height: 134px;
   padding: 18px 20px;
   border: 1.5px solid rgba(161, 163, 171, 0.35);
   border-radius: 12px;
@@ -59,6 +70,9 @@
   flex: 1;
   position: relative;
   padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .vital-card__circle {
@@ -116,6 +130,7 @@
   align-items: flex-end;
   justify-content: flex-start;
   width: 100px;
+  gap: 15px;
 }
 
 .vital-card__img {
