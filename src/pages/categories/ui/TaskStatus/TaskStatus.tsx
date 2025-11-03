@@ -1,5 +1,5 @@
 import "./TaskStatus.css";
-import { FiEdit2, FiTrash2 } from "react-icons/fi";
+import { FiEdit2, FiTrash2, FiPlus } from "react-icons/fi";
 
 export const TaskStatus = () => {
   const statuses = ["Completed", "In Progress", "Not Started"];
@@ -9,7 +9,10 @@ export const TaskStatus = () => {
       {/* === Заголовок блока === */}
       <div className="status-block__header">
         <h3 className="status-block__title">Task Status</h3>
-        <button className="status-block__add">+ Add Task Status</button>
+        <button className="status-block__add">
+          <FiPlus className="status-block__add-icon" />
+          Add Task Status
+        </button>
       </div>
 
       {/* === Контейнер таблицы === */}

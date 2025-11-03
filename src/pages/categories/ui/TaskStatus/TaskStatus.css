@@ -1,7 +1,7 @@
 .status-block {
   background: #f5f8ff;
   border-radius: 12px;
-  padding: 20px;
+  /* padding: 20px; */
 }
 
 /* === Заголовок === */
@@ -35,13 +35,23 @@
 
 /* === Кнопка Add === */
 .status-block__add {
-  color: #ff6767;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #a1a3ab;
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 500;
   transition: opacity 0.2s;
+}
+
+.status-block__add-icon {
+  font-size: 14px;
+  color: #ff6767;
+  position: relative;
+  top: 1px;
 }
 
 .status-block__add:hover {
@@ -62,14 +72,13 @@
   border-collapse: collapse;
 }
 
-/* === Верхняя линия === */
 .status-table__inner thead {
-  border-bottom: 1px solid rgba(161, 163, 171, 0.3); /* 👈 только линия, без фона */
+  border-bottom: 1px solid rgba(161, 163, 171, 0.3);
 }
 
+/* === Заголовки колонок === */
 .status-table__col {
   border-left: 1px solid rgba(161, 163, 171, 0.3);
-  border-right: none;
   text-align: center;
   padding: 12px 8px;
   font-size: 14px;
@@ -81,7 +90,7 @@
   border-left: none;
 }
 
-/* === Ячейки таблицы === */
+/* === Ячейки === */
 .status-table__cell {
   border-left: 1px solid rgba(161, 163, 171, 0.3);
   text-align: center;
