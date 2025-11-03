@@ -48,55 +48,66 @@
   opacity: 0.8;
 }
 
-/* === Обёртка таблицы === */
-.status-block__card {
+/* === Таблица === */
+.status-table {
   border: 1px solid rgba(161, 163, 171, 0.3);
   border-radius: 12px;
   background-color: #fff;
   overflow: hidden;
-  padding: 10px 0;
-}
-
-/* === Таблица === */
-.status-block__table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
 }
 
-.status-block__table th,
-.status-block__table td {
-  border: none; /* ❌ убрали все перегородки */
-  text-align: center; /* 👈 выравнивание по центру */
+.status-table__inner {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* === Заголовок таблицы === */
+.status-table__head {
+  background-color: #f9fafc;
+  font-weight: 600;
+}
+
+.status-table__col {
+  border-left: 1px solid rgba(161, 163, 171, 0.3);
+  text-align: center;
+  padding: 12px 8px;
+  font-size: 14px;
+  color: #333;
+}
+
+.status-table__col:first-child {
+  border-left: none;
+}
+
+/* === Ячейки таблицы === */
+.status-table__cell {
+  border-left: 1px solid rgba(161, 163, 171, 0.3);
+  text-align: center;
   padding: 14px 10px;
   font-size: 14px;
   color: #333;
   vertical-align: middle;
 }
 
-.status-block__table th {
-  background-color: #fff;
-  font-weight: 600;
-  border-bottom: 1px solid rgba(161, 163, 171, 0.25); /* 👈 только нижняя линия у шапки */
-}
-
-.status-block__table tr:last-child td {
+.status-table__row:last-child .status-table__cell {
   border-bottom: none;
 }
 
-/* === Hover строк === */
-.status-block__table tr:hover {
+.status-table__row:hover td {
   background-color: #f9fbff;
   transition: background-color 0.2s ease;
 }
 
-/* === Кнопки === */
-.status-block__actions {
+/* === Действия === */
+.status-table__actions {
   display: flex;
-  justify-content: center; /* 👈 по центру */
+  justify-content: center;
+  align-items: center;
   gap: 10px;
 }
 
+/* === Кнопки === */
 .status-btn {
   border: none;
   border-radius: 6px;
@@ -105,6 +116,7 @@
   cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
   transition: opacity 0.2s;
 }

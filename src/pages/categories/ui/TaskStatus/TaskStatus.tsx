@@ -13,21 +13,25 @@ export const TaskStatus = () => {
       </div>
 
       {/* === Контейнер таблицы === */}
-      <div className="status-block__card">
-        <table className="status-block__table">
-          <thead>
+      <div className="status-table">
+        <table className="status-table__inner">
+          <thead className="status-table__head">
             <tr>
-              <th>SN</th>
-              <th>Task Status</th>
-              <th>Action</th>
+              <th className="status-table__col status-table__col--sn">SN</th>
+              <th className="status-table__col status-table__col--name">
+                Task Status
+              </th>
+              <th className="status-table__col status-table__col--action">
+                Action
+              </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="status-table__body">
             {statuses.map((status, i) => (
-              <tr key={i}>
-                <td>{i + 1}</td>
-                <td>{status}</td>
-                <td className="status-block__actions">
+              <tr key={i} className="status-table__row">
+                <td className="status-table__cell">{i + 1}</td>
+                <td className="status-table__cell">{status}</td>
+                <td className="status-table__cell status-table__actions">
                   <button className="status-btn status-btn--edit">
                     <FiEdit2 /> Edit
                   </button>
