@@ -1,56 +1,103 @@
-.task-status {
+.status-block {
   background: #f5f8ff;
-  border: 1px solid rgba(161, 163, 171, 0.3);
   border-radius: 12px;
   padding: 20px;
 }
 
-.task-status__header {
+/* === Заголовок === */
+.status-block__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
-.task-status__title {
+.status-block__title {
   font-size: 16px;
   font-weight: 600;
   color: #000;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 4px;
 }
 
-.task-status__add {
+/* 🔴 Красная полоска под заголовком */
+.status-block__title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 32px;
+  height: 2px;
+  background-color: #ff6767;
+  border-radius: 2px;
+}
+
+/* === Кнопка Add === */
+.status-block__add {
   color: #ff6767;
   background: none;
   border: none;
   cursor: pointer;
   font-size: 14px;
+  font-weight: 500;
+  transition: opacity 0.2s;
 }
 
-.task-status__table {
-  width: 100%;
-  border-collapse: collapse;
+.status-block__add:hover {
+  opacity: 0.8;
 }
 
-.task-status__table th,
-.task-status__table td {
+/* === Обёртка таблицы === */
+.status-block__card {
   border: 1px solid rgba(161, 163, 171, 0.3);
-  text-align: left;
-  padding: 10px;
+  border-radius: 12px;
+  background-color: #fff;
+  overflow: hidden;
+  padding: 10px 0;
+}
+
+/* === Таблица === */
+.status-block__table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.status-block__table th,
+.status-block__table td {
+  border: none; /* ❌ убрали все перегородки */
+  text-align: center; /* 👈 выравнивание по центру */
+  padding: 14px 10px;
   font-size: 14px;
   color: #333;
+  vertical-align: middle;
 }
 
-.task-status__table th {
+.status-block__table th {
   background-color: #fff;
   font-weight: 600;
+  border-bottom: 1px solid rgba(161, 163, 171, 0.25); /* 👈 только нижняя линия у шапки */
 }
 
-.task-status__actions {
+.status-block__table tr:last-child td {
+  border-bottom: none;
+}
+
+/* === Hover строк === */
+.status-block__table tr:hover {
+  background-color: #f9fbff;
+  transition: background-color 0.2s ease;
+}
+
+/* === Кнопки === */
+.status-block__actions {
   display: flex;
-  gap: 8px;
+  justify-content: center; /* 👈 по центру */
+  gap: 10px;
 }
 
-.btn {
+.status-btn {
   border: none;
   border-radius: 6px;
   padding: 6px 10px;
@@ -59,18 +106,15 @@
   display: flex;
   align-items: center;
   gap: 4px;
+  transition: opacity 0.2s;
 }
 
-.btn--edit {
+.status-btn--edit,
+.status-btn--delete {
   background: #f24e1e;
   color: #fff;
 }
 
-.btn--delete {
-  background: #f24e1e;
-  color: #fff;
-}
-
-.btn:hover {
+.status-btn:hover {
   opacity: 0.85;
 }
