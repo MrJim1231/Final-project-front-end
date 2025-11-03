@@ -1,0 +1,76 @@
+.task-priority {
+  background: #f5f8ff;
+  border: 1px solid rgba(161, 163, 171, 0.3);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.task-priority__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.task-priority__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000;
+}
+
+.task-priority__add {
+  color: #ff6767;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.task-priority__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.task-priority__table th,
+.task-priority__table td {
+  border: 1px solid rgba(161, 163, 171, 0.3);
+  text-align: left;
+  padding: 10px;
+  font-size: 14px;
+  color: #333;
+}
+
+.task-priority__table th {
+  background-color: #fff;
+  font-weight: 600;
+}
+
+.task-priority__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn--edit {
+  background: #ff6767;
+  color: #fff;
+}
+
+.btn--delete {
+  background: #ff4444;
+  color: #fff;
+}
+
+.btn:hover {
+  opacity: 0.85;
+}

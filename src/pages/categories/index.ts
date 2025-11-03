@@ -1,1 +1,1 @@
-export { TaskCategories } from "./ui/TaskCategories"; // для categories
+export { TaskCategories } from "./ui/TaskCategories/TaskCategories";
