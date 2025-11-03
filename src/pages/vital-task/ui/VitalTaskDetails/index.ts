@@ -1,0 +1,1 @@
+export { VitalTaskDetails } from "./VitalTaskDetails";

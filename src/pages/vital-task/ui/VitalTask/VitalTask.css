@@ -10,9 +10,25 @@
   min-height: 100%;
 }
 
-.vital-page__header {
-  margin-bottom: 1.5rem;
+.vital-page__content {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
 }
+
+.vital-page__left {
+  flex: 1;
+}
+
+.vital-page__right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+/* .vital-page__header {
+  margin-bottom: 1.5rem;
+} */
 
 .vital-page__title {
   font-size: 18px;
