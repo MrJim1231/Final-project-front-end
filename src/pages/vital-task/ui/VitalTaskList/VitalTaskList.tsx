@@ -44,7 +44,7 @@ export const VitalTaskList = () => {
     <div className="vital-task-list">
       <div className="vital-task-list__header">
         <div className="vital-task-list__title-wrapper">
-          <FiAlertTriangle className="vital-task-list__icon" />
+          {/* <FiAlertTriangle className="vital-task-list__icon" /> */}
           <h3 className="vital-task-list__title">Vital Tasks</h3>
         </div>
       </div>

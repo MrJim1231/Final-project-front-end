@@ -1,10 +1,13 @@
 .vital-page {
-  background: #f5f8ff;
+  /* background: #f5f8ff;
   border-radius: 16px;
   padding: 24px 28px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(161, 163, 171, 0.15);
-  min-width: 466px;
+  min-width: 466px; */
+  padding: 0 76px;
+  background-color: #f5f8ff;
+  min-height: 100%;
 }
 
 .vital-page__header {
