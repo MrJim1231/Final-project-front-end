@@ -106,7 +106,7 @@
 .completed-card__bottom {
   display: flex;
   flex-direction: column;
-  font-size: 13px;
+  font-size: 10px;
   color: #777;
   margin-top: 8px;
 }
@@ -118,7 +118,7 @@
 
 .completed-card__date {
   color: #999;
-  font-size: 12px;
+  font-size: 10px;
   margin-top: 2px;
 }
 
@@ -136,4 +136,5 @@
   height: 88px;
   border-radius: 10px;
   object-fit: cover;
+  margin-top: 10px; /* 👈 опускаем картинку чуть ниже */
 }
