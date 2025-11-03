@@ -1,0 +1,24 @@
+.vital-page {
+  background: #f5f8ff;
+  border-radius: 16px;
+  padding: 24px 28px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(161, 163, 171, 0.15);
+  min-width: 466px;
+}
+
+.vital-page__header {
+  margin-bottom: 1.5rem;
+}
+
+.vital-page__title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #e03e3e;
+  margin-bottom: 4px;
+}
+
+.vital-page__subtitle {
+  font-size: 14px;
+  color: #777;
+}

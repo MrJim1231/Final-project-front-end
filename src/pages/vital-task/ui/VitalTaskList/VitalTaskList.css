@@ -1,0 +1,133 @@
+.vital-task-list {
+  background: #f5f8ff;
+  border-radius: 16px;
+}
+
+.vital-task-list__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 1rem;
+}
+
+.vital-task-list__icon {
+  font-size: 20px;
+  color: #a1a3ab;
+}
+
+.vital-task-list__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #e03e3e;
+}
+
+/* === Карточка задачи === */
+.vital-card {
+  position: relative;
+  width: 402px;
+  height: 166px;
+  padding: 18px 20px;
+  border: 1.5px solid rgba(161, 163, 171, 0.35);
+  border-radius: 12px;
+  background-color: #f5f8ff;
+  margin-bottom: 14px;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.vital-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
+}
+
+.vital-card__menu {
+  position: absolute;
+  top: 2px;
+  right: 14px;
+  color: #a1a3ab;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.vital-card__main {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.vital-card__left {
+  flex: 1;
+  position: relative;
+  padding-left: 20px;
+}
+
+.vital-card__circle {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  border: 2px solid;
+  border-radius: 50%;
+}
+
+.vital-card__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 4px;
+}
+
+.vital-card__desc {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.45;
+}
+
+.vital-card__bottom {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 10px;
+  color: #777;
+  margin-top: 8px;
+}
+
+.vital-card__priority {
+  color: #0088cc;
+  font-weight: 500;
+}
+
+.vital-card__status.status--red {
+  color: #ff4444;
+}
+
+.vital-card__status.status--blue {
+  color: #007bff;
+}
+
+.vital-card__status.status--green {
+  color: #00c851;
+}
+
+.vital-card__right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-start;
+  width: 100px;
+}
+
+.vital-card__img {
+  width: 88px;
+  height: 88px;
+  border-radius: 10px;
+  object-fit: cover;
+  margin-top: 10px;
+}
+
+.vital-card__date {
+  font-size: 10px;
+  color: #999;
+  white-space: nowrap;
+}

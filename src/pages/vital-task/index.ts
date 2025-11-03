@@ -1,1 +1,1 @@
-export { VitalTask } from "./ui/VitalTask"; // для vital-task
+export { VitalTask } from "./ui/VitalTask";
