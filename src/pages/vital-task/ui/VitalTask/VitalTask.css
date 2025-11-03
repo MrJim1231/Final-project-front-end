@@ -1,35 +1,39 @@
 .vital-page {
-  /* background: #f5f8ff;
-  border-radius: 16px;
-  padding: 24px 28px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(161, 163, 171, 0.15);
-  min-width: 466px; */
-  /* padding: 0 76px; */
   background-color: #f5f8ff;
   min-height: 100%;
+  margin-bottom: 20px;
 }
 
+/* === Контент: 2 колонки === */
 .vital-page__content {
   display: flex;
   gap: 2rem;
-  align-items: flex-start;
+  align-items: stretch; /* 👈 обе колонки одной высоты */
 }
 
+/* === Левая колонка (список задач) === */
 .vital-page__left {
   flex: 1;
+  display: flex; /* 👈 чтобы содержимое можно было растянуть */
+  flex-direction: column;
+  justify-content: stretch;
 }
 
+.vital-page__left .vital-task-list {
+  flex: 1; /* 👈 растягивает список на всю высоту */
+  display: flex;
+  flex-direction: column;
+}
+
+/* === Правая колонка (детали задачи) === */
 .vital-page__right {
   flex: 1;
   display: flex;
   justify-content: center;
+  align-items: stretch; /* 👈 тянет контент по высоте */
 }
 
-/* .vital-page__header {
-  margin-bottom: 1.5rem;
-} */
-
+/* === Заголовок и подзаголовок === */
 .vital-page__title {
   font-size: 18px;
   font-weight: 600;
