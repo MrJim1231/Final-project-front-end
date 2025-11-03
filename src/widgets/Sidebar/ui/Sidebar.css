@@ -1,5 +1,6 @@
 .dashboard__sidebar {
   width: 260px;
+  flex-shrink: 0; /* 👈 чтобы Sidebar не сжимался */
   background-color: #ff5e5e;
   color: white;
   /* height: 100vh; */
