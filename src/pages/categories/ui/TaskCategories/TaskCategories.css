@@ -16,12 +16,28 @@
   font-size: 20px;
   font-weight: 600;
   color: #000;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 4px; /* отступ под линию */
+}
+
+/* 👇 красная линия под заголовком */
+.categories-page__title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 36px;
+  height: 2px;
+  background-color: #ff6767;
+  border-radius: 2px;
 }
 
 .categories-page__back {
   font-size: 14px;
-  color: #ff6767;
-  text-decoration: none;
+  font-weight: 700;
+  color: #000000;
+  text-decoration: underline;
 }
 
 .categories-page__back:hover {
@@ -29,7 +45,7 @@
 }
 
 .categories-page__add-btn {
-  background: #ff6767;
+  background: #f24e1e;
   color: #fff;
   border: none;
   border-radius: 8px;
