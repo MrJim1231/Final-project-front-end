@@ -8,7 +8,7 @@
   display: flex;
   gap: 2rem;
   margin-top: 2rem;
-  border: 2px solid rgba(161, 163, 171, 0.6);
+  border: 1px solid rgba(161, 163, 171, 0.6);
   padding: 20px;
   align-items: flex-start; /* 👈 предотвращает растягивание по высоте */
   height: auto; /* 👈 фикс: высота по контенту */

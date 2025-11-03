@@ -1,4 +1,5 @@
 import "./TaskStatus.css";
+import { FiClipboard } from "react-icons/fi"; // 👈 иконка слева
 
 export const TaskStatus = () => {
   const data = [
@@ -9,10 +10,16 @@ export const TaskStatus = () => {
 
   return (
     <div className="task-status">
-      <h3 className="task-status__title">Task Status</h3>
+      {/* === Заголовок с иконкой === */}
+      <div className="task-status__header">
+        <FiClipboard className="task-status__icon" />
+        <h3 className="task-status__title">Task Status</h3>
+      </div>
+
+      {/* === Круги === */}
       <div className="task-status__list">
         {data.map((item, i) => (
-          <div key={i} className="task-status__item">
+          <div key={i} className="task-status__item" data-status={item.label}>
             <svg width="80" height="80">
               <circle
                 cx="40"
@@ -31,10 +38,23 @@ export const TaskStatus = () => {
                 fill="none"
                 strokeDasharray={`${(item.percent / 100) * 220}, 220`}
                 transform="rotate(-90 40 40)"
+                strokeLinecap="round"
               />
             </svg>
             <span className="task-status__percent">{item.percent}%</span>
-            <p className="task-status__label">{item.label}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* === Подписи с точками === */}
+      <div className="task-status__legend">
+        {data.map((item, i) => (
+          <div key={i} className="task-status__legend-item">
+            <span
+              className="task-status__dot"
+              style={{ backgroundColor: item.color }}
+            ></span>
+            <span className="task-status__legend-label">{item.label}</span>
           </div>
         ))}
       </div>

@@ -1,25 +1,41 @@
-/* === Контейнер всего блока === */
+/* === Контейнер всего блока (фиксированный размер 423×263) === */
 .task-status {
-  background: #fff;
+  background: #f5f8ff;
   border-radius: 12px;
-  padding: 24px;
+  padding: 20px 24px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  width: 423px;
+  height: 263px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* === Заголовок с иконкой === */
+.task-status__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 1.2rem;
+}
+
+.task-status__icon {
+  font-size: 20px;
+  color: #a1a3ab;
 }
 
 .task-status__title {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
-  color: #1a1a1a;
-  margin-bottom: 1.5rem;
+  color: #e03e3e;
 }
 
-/* === Список кругов === */
+/* === Круги === */
 .task-status__list {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 1.5rem;
-  flex-wrap: wrap;
+  /* flex: 1; */
 }
 
 /* === Элемент одного статуса === */
@@ -29,22 +45,16 @@
   flex-direction: column;
   align-items: center;
   width: 100px;
-  height: 130px;
+  height: 100px;
   text-align: center;
   border-radius: 12px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  background: #f9fafc;
-  padding-top: 10px;
-}
-
-.task-status__item:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  background: #f5f8ff;
+  gap: 4px; /* 👈 уменьшает расстояние между кругом и подписью */
 }
 
 /* === SVG-круги === */
 .task-status__item svg {
-  margin-bottom: 10px;
+  margin-bottom: 4px; /* 👈 было 10px, теперь ближе к подписи */
   transform: rotate(0deg);
 }
 
@@ -57,15 +67,29 @@
   color: #333;
 }
 
-/* === Подпись статуса === */
-.task-status__label {
-  margin-top: auto;
-  font-size: 14px;
-  font-weight: 500;
+/* === Подписи снизу (Completed • In Progress • Not Started) === */
+.task-status__legend {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.task-status__legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
   color: #555;
 }
 
-/* === Цветовая палитра (если захочешь динамику) === */
+.task-status__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* === Цвета для статусов === */
 .task-status__item[data-status="completed"] .task-status__percent {
   color: #00c851;
 }
@@ -76,21 +100,4 @@
 
 .task-status__item[data-status="not-started"] .task-status__percent {
   color: #ff4444;
-}
-
-/* === Адаптив === */
-@media (max-width: 768px) {
-  .task-status__list {
-    justify-content: center;
-    gap: 1rem;
-  }
-
-  .task-status__item {
-    width: 90px;
-    height: 120px;
-  }
-
-  .task-status__title {
-    text-align: center;
-  }
 }
