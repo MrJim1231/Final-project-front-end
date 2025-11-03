@@ -1,5 +1,7 @@
 import "./TodoList.css";
-import { FiClipboard, FiPlus, FiMoreHorizontal } from "react-icons/fi";
+import "./TodoList.css";
+import { FiClipboard, FiPlus } from "react-icons/fi";
+import { IoEllipsisHorizontalOutline } from "react-icons/io5"; // 👈 правильный пакет!
 
 // ✅ Импорт изображений
 import todo1 from "../../../../shared/assets/images/dashboard/todo1.png";
@@ -77,7 +79,7 @@ export const TodoList = () => {
       {/* === Карточки === */}
       {tasks.map((task) => (
         <div key={task.id} className="todo-card">
-          {/* <FiMoreHorizontal className="todo-card__menu" /> */}
+          <IoEllipsisHorizontalOutline className="todo-card__menu" />
 
           <div className="todo-card__main">
             {/* Левая часть */}

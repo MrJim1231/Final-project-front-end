@@ -93,7 +93,7 @@
   padding: 18px 20px;
   border: 1.5px solid rgba(161, 163, 171, 0.35);
   border-radius: 12px;
-  background-color: #fff;
+  background-color: #f5f8ff;
   margin-bottom: 14px;
   transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
@@ -106,10 +106,10 @@
 /* ⋯ три точки (справа сверху) */
 .todo-card__menu {
   position: absolute;
-  top: 10px;
+  top: 2px;
   right: 14px;
   color: #a1a3ab;
-  font-size: 18px;
+  font-size: 26px;
   cursor: pointer;
 }
 
@@ -181,14 +181,15 @@
 }
 
 /* Правая часть */
+/* === Правая часть (картинка ниже заголовка) === */
 .todo-card__right {
   display: flex;
   flex-direction: column;
-  align-items: end;
-  gap: 24px;
-  /* align-items: center; */
+  align-items: flex-end; /* 👈 выравниваем картинку справа */
   justify-content: flex-start;
   width: 100px;
+  gap: 6px;
+  margin-top: 10px; /* 👈 слегка опускаем правую часть вниз */
 }
 
 .todo-card__img {
@@ -196,11 +197,12 @@
   height: 88px;
   border-radius: 10px;
   object-fit: cover;
+  margin-top: 8px; /* 👈 лёгкое смещение вниз от верхнего края */
 }
 
 .todo-card__date {
   font-size: 10px;
   color: #999;
   white-space: nowrap;
-  /* margin-top: 8px; */
+  text-align: right;
 }
