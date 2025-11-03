@@ -50,9 +50,7 @@
   align-items: center;
   width: 20px;
   height: 20px;
-  /* border: 1.5px solid #e03e3e; */
   color: #e03e3e; /* 🔴 красная иконка */
-  /* border-radius: 50%; */
   font-size: 12px;
 }
 
@@ -62,6 +60,7 @@
 
 /* === Карточки задач === */
 .todo-card {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -79,19 +78,39 @@
   transform: translateY(-1px);
 }
 
-/* === Заголовок задачи с кружком === */
+/* === Заголовок задачи === */
 .todo-card__header {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 6px;
+  position: relative;
 }
 
-.todo-card__status-dot {
-  width: 12px;
-  height: 12px;
+/* 🔵 Кружок слева (цвет зависит от статуса) */
+.todo-card__circle {
+  width: 14px;
+  height: 14px;
+  border: 2px solid;
   border-radius: 50%;
+  background: transparent;
   flex-shrink: 0;
+}
+
+/* ⋯ Три точки (поверх, справа вверху) */
+.todo-card__menu {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  color: #a1a3ab;
+  font-size: 18px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  z-index: 2;
+}
+
+.todo-card__menu:hover {
+  opacity: 0.6;
 }
 
 .todo-card__title {

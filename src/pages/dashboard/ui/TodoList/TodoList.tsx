@@ -1,5 +1,5 @@
 import "./TodoList.css";
-import { FiClipboard, FiPlus } from "react-icons/fi"; // 👈 иконки
+import { FiClipboard, FiPlus, FiMoreHorizontal } from "react-icons/fi"; // 👈 иконки
 
 // ✅ Импорт локальных изображений
 import todo1 from "../../../../shared/assets/images/dashboard/todo1.png";
@@ -10,11 +10,11 @@ export const TodoList = () => {
   const tasks = [
     {
       title: "Attend Nischal’s Birthday Party",
-      desc: "Buy gifts and pick up cake from the bakery. (6 PM | Fresh Elements)",
+      desc: "Buy gifts on the way and pick up cake from the bakery. (6 PM | Fresh Elements)",
       date: "20/06/2023",
       priority: "High",
       status: "Not Started",
-      image: todo1, // ✅ локальное изображение
+      image: todo1,
     },
     {
       title: "Landing Page Design for TravelDays",
@@ -34,14 +34,15 @@ export const TodoList = () => {
     },
   ];
 
+  // 🎨 Функция возвращает цвет кружка по статусу
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Not Started":
-        return "#ff4444";
+        return "#ff4444"; // красный
       case "In Progress":
-        return "#007bff";
+        return "#007bff"; // синий
       case "Completed":
-        return "#00c851";
+        return "#00c851"; // зелёный
       default:
         return "#ccc";
     }
@@ -49,13 +50,14 @@ export const TodoList = () => {
 
   return (
     <div className="todo-list">
+      {/* === Заголовок списка === */}
       <div className="todo-list__header">
         <div className="todo-list__title-wrapper">
           <FiClipboard className="todo-list__icon" />
           <h3 className="todo-list__title">To-Do</h3>
         </div>
 
-        {/* ✅ Кнопка Add task */}
+        {/* === Кнопка добавления === */}
         <button className="todo-list__add">
           <span className="todo-list__add-icon">
             <FiPlus />
@@ -64,14 +66,20 @@ export const TodoList = () => {
         </button>
       </div>
 
+      {/* === Список задач === */}
       {tasks.map((task, i) => (
         <div key={i} className="todo-card">
+          {/* ⋯ три точки поверх карточки */}
+          <FiMoreHorizontal className="todo-card__menu" />
+
           <div className="todo-card__content">
             <div className="todo-card__header">
+              {/* 🔘 Кружок цвета статуса */}
               <span
-                className="todo-card__status-dot"
-                style={{ backgroundColor: getStatusColor(task.status) }}
+                className="todo-card__circle"
+                style={{ borderColor: getStatusColor(task.status) }}
               ></span>
+
               <h4 className="todo-card__title">{task.title}</h4>
             </div>
 
@@ -82,6 +90,7 @@ export const TodoList = () => {
                 Priority:{" "}
                 <span className="todo-card__priority">{task.priority}</span>
               </span>
+
               <span
                 className={`todo-card__status ${
                   task.status === "Not Started"
@@ -95,7 +104,7 @@ export const TodoList = () => {
               </span>
             </div>
 
-            <span className="todo-card__date">Created on {task.date}</span>
+            <span className="todo-card__date">Created on: {task.date}</span>
           </div>
 
           <img src={task.image} alt={task.title} className="todo-card__img" />
