@@ -1,0 +1,47 @@
+.my-task-page {
+  background-color: #f5f8ff;
+  min-height: 100%;
+  margin-bottom: 20px;
+}
+
+/* === Контент: 2 колонки === */
+.my-task-page__content {
+  display: flex;
+  gap: 2rem;
+  align-items: stretch; /* 👈 обе колонки одинаковой высоты */
+}
+
+/* === Левая колонка (список задач) === */
+.my-task-page__left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+}
+
+.my-task-page__left .my-task-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* === Правая колонка (детали задачи) === */
+.my-task-page__right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+
+/* === Заголовок и подзаголовок === */
+.my-task-page__title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #e03e3e;
+  margin-bottom: 4px;
+}
+
+.my-task-page__subtitle {
+  font-size: 14px;
+  color: #777;
+}
