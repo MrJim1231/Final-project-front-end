@@ -26,10 +26,26 @@
   color: #a1a3ab;
 }
 
+/* === Подчеркивание под заголовком === */
 .vital-task-list__title {
   font-size: 16px;
   font-weight: 600;
-  /* color: #e03e3e; */
+  color: #000;
+  position: relative; /* 👈 для псевдоэлемента */
+  display: inline-block;
+  padding-bottom: 4px; /* отступ для линии */
+}
+
+/* === Красная полоска === */
+.vital-task-list__title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 32px; /* длина полоски */
+  height: 2px;
+  background-color: #ff6767; /* цвет акцента */
+  border-radius: 2px;
 }
 
 /* === Карточка задачи === */
