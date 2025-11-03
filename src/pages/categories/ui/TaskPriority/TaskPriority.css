@@ -1,56 +1,123 @@
-.task-priority {
+.priority-block {
   background: #f5f8ff;
-  border: 1px solid rgba(161, 163, 171, 0.3);
   border-radius: 12px;
-  padding: 20px;
 }
 
-.task-priority__header {
+/* === Заголовок === */
+.priority-block__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
-.task-priority__title {
+.priority-block__title {
   font-size: 16px;
   font-weight: 600;
   color: #000;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 4px;
 }
 
-.task-priority__add {
-  color: #ff6767;
+/* 🔴 Красная полоска под заголовком */
+.priority-block__title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 32px;
+  height: 2px;
+  background-color: #ff6767;
+  border-radius: 2px;
+}
+
+/* === Кнопка Add === */
+.priority-block__add {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #a1a3ab;
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 12px;
+  font-weight: 500;
+  transition: opacity 0.2s;
 }
 
-.task-priority__table {
+.priority-block__add-icon {
+  font-size: 14px;
+  color: #ff6767;
+  position: relative;
+  top: 1px;
+}
+
+.priority-block__add:hover {
+  opacity: 0.8;
+}
+
+/* === Таблица === */
+.priority-table {
+  border: 1px solid rgba(161, 163, 171, 0.3);
+  border-radius: 12px;
+  background-color: #fff;
+  overflow: hidden;
+  width: 100%;
+}
+
+.priority-table__inner {
   width: 100%;
   border-collapse: collapse;
 }
 
-.task-priority__table th,
-.task-priority__table td {
-  border: 1px solid rgba(161, 163, 171, 0.3);
-  text-align: left;
-  padding: 10px;
-  font-size: 14px;
-  color: #333;
+.priority-table__inner thead {
+  border-bottom: 1px solid rgba(161, 163, 171, 0.3);
 }
 
-.task-priority__table th {
-  background-color: #fff;
+/* === Заголовки колонок === */
+.priority-table__col {
+  border-left: 1px solid rgba(161, 163, 171, 0.3);
+  text-align: center;
+  padding: 12px 8px;
+  font-size: 14px;
+  color: #000;
   font-weight: 600;
 }
 
-.task-priority__actions {
-  display: flex;
-  gap: 8px;
+.priority-table__col:first-child {
+  border-left: none;
 }
 
-.btn {
+/* === Ячейки === */
+.priority-table__cell {
+  border-left: 1px solid rgba(161, 163, 171, 0.3);
+  text-align: center;
+  padding: 14px 10px;
+  font-size: 14px;
+  color: #333;
+  vertical-align: middle;
+}
+
+.priority-table__row:last-child .priority-table__cell {
+  border-bottom: none;
+}
+
+.priority-table__row:hover td {
+  background-color: #f9fbff;
+  transition: background-color 0.2s ease;
+}
+
+/* === Действия === */
+.priority-table__actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+/* === Кнопки === */
+.priority-btn {
   border: none;
   border-radius: 6px;
   padding: 6px 10px;
@@ -58,19 +125,17 @@
   cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
+  transition: opacity 0.2s;
 }
 
-.btn--edit {
+.priority-btn--edit,
+.priority-btn--delete {
   background: #f24e1e;
   color: #fff;
 }
 
-.btn--delete {
-  background: #f24e1e;
-  color: #fff;
-}
-
-.btn:hover {
+.priority-btn:hover {
   opacity: 0.85;
 }
