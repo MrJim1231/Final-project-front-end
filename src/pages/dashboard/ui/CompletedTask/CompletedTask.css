@@ -5,7 +5,9 @@
   padding: 24px 28px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(161, 163, 171, 0.15);
-  max-width: 466px;
+  /* max-width: 466px; */
+  min-width: 423px;
+  min-height: 436px;
 }
 
 /* === Заголовок блока === */
@@ -28,9 +30,10 @@
 }
 
 .completed-task__title {
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 600;
-  color: #00c851;
+  /* color: #00c851; */
+  color: #f24e1e;
 }
 
 /* === Карточка задачи === */

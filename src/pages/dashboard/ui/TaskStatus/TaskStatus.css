@@ -6,8 +6,8 @@
   /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); */
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(161, 163, 171, 0.15);
-  width: 423px;
-  height: 263px;
+  min-width: 423px;
+  min-height: 263px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -27,9 +27,10 @@
 }
 
 .task-status__title {
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 600;
-  color: #e03e3e;
+  /* color: #e03e3e; */
+  color: #ff6767;
 }
 
 /* === Круги === */
