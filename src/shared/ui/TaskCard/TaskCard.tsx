@@ -9,7 +9,7 @@ interface TaskCardProps {
   priority?: "Low" | "Moderate" | "High" | "Extreme";
   image?: string;
   completedAt?: string;
-  type?: "default" | "completed"; // completed = для CompletedTask
+  type?: "default" | "completed" | "vital"; // 👈 добавлен тип "vital"
 }
 
 export const TaskCard = ({
@@ -37,9 +37,9 @@ export const TaskCard = ({
 
   return (
     <div
-      className={`task-card ${
-        type === "completed" ? "task-card--completed" : ""
-      }`}
+      className={`task-card 
+        ${type === "completed" ? "task-card--completed" : ""} 
+        ${type === "vital" ? "task-card--vital" : ""}`}
     >
       <IoEllipsisHorizontalOutline className="task-card__menu" />
 

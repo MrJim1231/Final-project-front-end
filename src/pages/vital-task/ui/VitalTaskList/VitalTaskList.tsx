@@ -47,6 +47,7 @@ export const VitalTaskList = () => {
           priority={task.priority as "Extreme" | "Moderate"}
           status={task.status as "Not Started" | "In Progress" | "Completed"}
           image={task.image}
+          type="vital" // 👈 добавлено
         />
       ))}
     </div>

@@ -124,3 +124,37 @@
 .task-card--completed {
   background: #fff;
 }
+
+/* 🟡 Для Vital Tasks (точно по макету 365x134) */
+.task-card--vital {
+  padding: 10px;
+  min-width: 365px;
+  min-height: 134px;
+  box-sizing: border-box;
+}
+
+.task-card--vital .task-card__main {
+  align-items: flex-end; /* выравнивание по нижнему краю */
+  gap: 16px;
+}
+
+.task-card--vital .task-card__right {
+  justify-content: flex-end; /* картинка сверху, дата под ней */
+  gap: 6px;
+}
+
+.task-card--vital .task-card__left {
+  gap: 20px;
+}
+
+.task-card--vital .task-card__img {
+  width: 88px;
+  height: 88px;
+  margin-bottom: 2px; /* визуальное совпадение с датой */
+}
+
+.task-card--vital .task-card__date {
+  font-size: 10px;
+  color: #999;
+  text-align: right;
+}
