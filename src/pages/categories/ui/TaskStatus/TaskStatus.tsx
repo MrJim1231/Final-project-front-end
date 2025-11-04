@@ -1,7 +1,7 @@
 import "./TaskStatus.css";
 import { FiEdit2, FiTrash2, FiPlus } from "react-icons/fi";
 import { useState } from "react";
-import { AddModal } from "../AddModal/AddModal"; // 👈 импорт модалки
+import { AddModal } from "../AddModal/AddModal";
 
 export const TaskStatus = () => {
   const [statuses, setStatuses] = useState([
@@ -10,6 +10,7 @@ export const TaskStatus = () => {
     "Not Started",
   ]);
   const [showModal, setShowModal] = useState(false);
+  const [editIndex, setEditIndex] = useState<number | null>(null);
 
   // === Добавление нового статуса ===
   const handleAddStatus = (value: string) => {
@@ -19,6 +20,28 @@ export const TaskStatus = () => {
     setShowModal(false);
   };
 
+  // === Редактирование статуса ===
+  const handleEditStatus = (value: string) => {
+    if (editIndex !== null && value.trim()) {
+      setStatuses((prev) =>
+        prev.map((item, i) => (i === editIndex ? value.trim() : item))
+      );
+    }
+    setEditIndex(null);
+    setShowModal(false);
+  };
+
+  // === Удаление статуса ===
+  const handleDeleteStatus = (index: number) => {
+    setStatuses((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // === Открытие модалки на редактирование ===
+  const openEditModal = (index: number) => {
+    setEditIndex(index);
+    setShowModal(true);
+  };
+
   return (
     <div className="status-block">
       {/* === Заголовок блока === */}
@@ -26,7 +49,10 @@ export const TaskStatus = () => {
         <h3 className="status-block__title">Task Status</h3>
         <button
           className="status-block__add"
-          onClick={() => setShowModal(true)} // 👈 открываем модалку
+          onClick={() => {
+            setEditIndex(null);
+            setShowModal(true);
+          }}
         >
           <FiPlus className="status-block__add-icon" />
           Add Task Status
@@ -53,10 +79,16 @@ export const TaskStatus = () => {
                 <td className="status-table__cell">{i + 1}</td>
                 <td className="status-table__cell">{status}</td>
                 <td className="status-table__cell status-table__actions">
-                  <button className="status-btn status-btn--edit">
+                  <button
+                    className="status-btn status-btn--edit"
+                    onClick={() => openEditModal(i)} // 👈 открыть модалку редактирования
+                  >
                     <FiEdit2 /> Edit
                   </button>
-                  <button className="status-btn status-btn--delete">
+                  <button
+                    className="status-btn status-btn--delete"
+                    onClick={() => handleDeleteStatus(i)}
+                  >
                     <FiTrash2 /> Delete
                   </button>
                 </td>
@@ -66,13 +98,18 @@ export const TaskStatus = () => {
         </table>
       </div>
 
-      {/* === Модалка добавления === */}
+      {/* === Модалка === */}
       {showModal && (
         <AddModal
-          title="Add Task Status"
+          title={editIndex !== null ? "Edit Task Status" : "Add Task Status"}
           inputLabel="Task Status Title"
-          onClose={() => setShowModal(false)}
-          onSubmit={handleAddStatus}
+          confirmText={editIndex !== null ? "Update" : "Create"}
+          cancelText="Cancel"
+          onClose={() => {
+            setShowModal(false);
+            setEditIndex(null);
+          }}
+          onSubmit={editIndex !== null ? handleEditStatus : handleAddStatus}
         />
       )}
     </div>
