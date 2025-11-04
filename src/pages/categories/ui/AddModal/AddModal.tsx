@@ -31,20 +31,25 @@ export const AddModal: React.FC<AddModalProps> = ({
     <div className="modal-overlay">
       <div className="modal">
         <div className="modal__header">
-          <h3 className="modal__title">Add Task Priority</h3>
+          <h3 className="modal__title">{title}</h3>{" "}
+          {/* ✅ динамический заголовок */}
           <button className="modal__close" onClick={onClose}>
             Go Back
           </button>
         </div>
 
         <div className="modal__content">
+          {/* ✅ вывод подзаголовка, если есть */}
+          {subtitle && <p className="modal__subtitle">{subtitle}</p>}
+
           <form onSubmit={handleSubmit} className="modal__form">
-            <label className="modal__label">{inputLabel}</label>
+            {inputLabel && <label className="modal__label">{inputLabel}</label>}
             <input
               type="text"
               value={value}
               onChange={(e) => setValue(e.target.value)}
               className="modal__input"
+              required
             />
             <div className="modal__actions">
               <button type="submit" className="modal__btn modal__btn--confirm">

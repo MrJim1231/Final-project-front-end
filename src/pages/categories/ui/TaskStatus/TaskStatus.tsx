@@ -1,15 +1,33 @@
 import "./TaskStatus.css";
 import { FiEdit2, FiTrash2, FiPlus } from "react-icons/fi";
+import { useState } from "react";
+import { AddModal } from "../AddModal/AddModal"; // 👈 импорт модалки
 
 export const TaskStatus = () => {
-  const statuses = ["Completed", "In Progress", "Not Started"];
+  const [statuses, setStatuses] = useState([
+    "Completed",
+    "In Progress",
+    "Not Started",
+  ]);
+  const [showModal, setShowModal] = useState(false);
+
+  // === Добавление нового статуса ===
+  const handleAddStatus = (value: string) => {
+    if (value.trim()) {
+      setStatuses((prev) => [...prev, value.trim()]);
+    }
+    setShowModal(false);
+  };
 
   return (
     <div className="status-block">
       {/* === Заголовок блока === */}
       <div className="status-block__header">
         <h3 className="status-block__title">Task Status</h3>
-        <button className="status-block__add">
+        <button
+          className="status-block__add"
+          onClick={() => setShowModal(true)} // 👈 открываем модалку
+        >
           <FiPlus className="status-block__add-icon" />
           Add Task Status
         </button>
@@ -47,6 +65,16 @@ export const TaskStatus = () => {
           </tbody>
         </table>
       </div>
+
+      {/* === Модалка добавления === */}
+      {showModal && (
+        <AddModal
+          title="Add Task Status"
+          inputLabel="Task Status Title"
+          onClose={() => setShowModal(false)}
+          onSubmit={handleAddStatus}
+        />
+      )}
     </div>
   );
 };
