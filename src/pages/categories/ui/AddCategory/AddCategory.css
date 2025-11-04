@@ -17,10 +17,25 @@
   margin-bottom: 28px;
 }
 
+/* === Заголовок с красной полоской под текстом === */
 .add-category__title {
   font-size: 18px;
   font-weight: 600;
   color: #111;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 6px; /* расстояние между текстом и полоской */
+}
+
+.add-category__title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 32px;
+  height: 2px;
+  background-color: #ff6767; /* 🔴 красная полоска */
+  border-radius: 2px;
 }
 
 .add-category__title span {
@@ -30,8 +45,9 @@
 .add-category__back {
   background: none;
   border: none;
-  color: #6a6d75;
+  /* color: #6a6d75; */
   font-size: 13px;
+  font-weight: 700;
   cursor: pointer;
   text-decoration: underline;
 }
@@ -44,7 +60,8 @@
 
 .add-category__label {
   font-size: 14px;
-  color: #333;
+  font-weight: 700;
+  /* color: #333; */
 }
 
 .add-category__input {
@@ -54,26 +71,41 @@
   border-radius: 4px;
 }
 
+/* === Кнопки Add / Cancel === */
 .add-category__buttons {
   display: flex;
   gap: 10px;
-  margin-top: 8px;
+  margin-top: 16px;
 }
 
 .btn {
   border: none;
-  padding: 6px 16px;
-  border-radius: 4px;
+  padding: 10px 24px; /* ✅ больше кликабельность */
+  border-radius: 6px;
   font-size: 14px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
   cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
 }
 
+/* 🔸 Оранжевые кнопки одинакового стиля */
 .btn--add {
-  background: #e44b2e;
+  background: #ff4d2f;
   color: #fff;
 }
 
+.btn--add:hover {
+  background: #e04327;
+  transform: translateY(-1px);
+}
+
 .btn--cancel {
-  background: #f3f3f3;
-  color: #555;
+  background: #ff4d2f;
+  color: #fff;
+}
+
+.btn--cancel:hover {
+  background: #e04327;
+  transform: translateY(-1px);
 }

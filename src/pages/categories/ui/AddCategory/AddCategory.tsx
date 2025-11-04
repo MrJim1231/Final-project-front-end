@@ -42,7 +42,7 @@ export const AddCategory = () => {
 
         <div className="add-category__buttons">
           <button type="submit" className="btn btn--add">
-            Add
+            Create
           </button>
           <button
             type="button"
