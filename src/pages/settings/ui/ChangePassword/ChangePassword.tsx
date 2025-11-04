@@ -1,12 +1,18 @@
 import "./ChangePassword.css";
 import userAvatar from "../../../../shared/assets/images/avatar.png";
+import { useNavigate } from "react-router-dom"; // 👈 импортируем хук навигации
 
 export const ChangePassword = () => {
+  const navigate = useNavigate(); // 👈 создаём экземпляр навигации
+
   return (
     <section className="settings">
       <div className="settings__header">
         <h3 className="settings__title">Change Password</h3>
-        <button className="settings__back">Go Back</button>
+        {/* 🔙 Кнопка возврата */}
+        <button className="settings__back" onClick={() => navigate(-1)}>
+          Go Back
+        </button>
       </div>
 
       <div className="settings__content">
@@ -43,9 +49,12 @@ export const ChangePassword = () => {
             >
               Update Password
             </button>
+
+            {/* ❌ Кнопка Cancel возвращает назад */}
             <button
               type="button"
               className="settings__btn settings__btn--cancel"
+              onClick={() => navigate(-1)}
             >
               Cancel
             </button>
