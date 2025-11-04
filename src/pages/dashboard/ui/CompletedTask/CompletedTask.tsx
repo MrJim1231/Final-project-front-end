@@ -1,7 +1,8 @@
 import "./CompletedTask.css";
 import { FiCheckSquare } from "react-icons/fi";
-import { IoEllipsisHorizontalOutline } from "react-icons/io5";
+import { TaskCard } from "../../../../shared/ui/TaskCard";
 
+// 🖼 Импорт изображений
 import dogImg from "../../../../shared/assets/images/dashboard/dog.png";
 import meetingImg from "../../../../shared/assets/images/dashboard/meeting.png";
 
@@ -35,42 +36,15 @@ export const CompletedTask = () => {
 
       {/* === Список карточек === */}
       {tasks.map((task) => (
-        <div key={task.id} className="completed-card">
-          <IoEllipsisHorizontalOutline className="completed-card__menu" />
-
-          <div className="completed-card__main">
-            {/* Левая часть */}
-            <div className="completed-card__left">
-              <div className="completed-card__header">
-                <span
-                  className="completed-card__circle"
-                  style={{ borderColor: "#00C851" }}
-                ></span>
-                <h4 className="completed-card__title">{task.title}</h4>
-              </div>
-
-              <p className="completed-card__desc">{task.desc}</p>
-
-              <div className="completed-card__bottom">
-                <span className="completed-card__status">
-                  Status: <span className="status--green">Completed</span>
-                </span>
-                <span className="completed-card__date">
-                  Completed {task.completedAt}.
-                </span>
-              </div>
-            </div>
-
-            {/* Правая часть (картинка) */}
-            <div className="completed-card__right">
-              <img
-                src={task.image}
-                alt={task.title}
-                className="completed-card__img"
-              />
-            </div>
-          </div>
-        </div>
+        <TaskCard
+          key={task.id}
+          title={task.title}
+          desc={task.desc}
+          status="Completed"
+          completedAt={task.completedAt}
+          image={task.image}
+          type="completed"
+        />
       ))}
     </div>
   );

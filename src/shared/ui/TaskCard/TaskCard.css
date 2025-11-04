@@ -1,0 +1,112 @@
+.task-card {
+  position: relative;
+  padding: 18px 20px;
+  border: 1.5px solid rgba(161, 163, 171, 0.35);
+  border-radius: 12px;
+  background-color: #f5f8ff;
+  margin-bottom: 14px;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.task-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
+}
+
+.task-card__menu {
+  position: absolute;
+  top: 4px;
+  right: 14px;
+  color: #a1a3ab;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.task-card__main {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.task-card__left {
+  flex: 1;
+  position: relative;
+  padding-left: 20px;
+}
+
+.task-card__circle {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  border: 2px solid;
+  border-radius: 50%;
+}
+
+.task-card__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 4px;
+}
+
+.task-card__desc {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.45;
+}
+
+.task-card__bottom {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 10px;
+  color: #777;
+  margin-top: 8px;
+}
+
+.task-card__priority {
+  color: #0088cc;
+  font-weight: 500;
+}
+
+.status--red {
+  color: #ff4444;
+}
+
+.status--blue {
+  color: #007bff;
+}
+
+.status--green {
+  color: #00c851;
+}
+
+.task-card__right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  width: 100px;
+  gap: 8px;
+}
+
+.task-card__img {
+  width: 88px;
+  height: 88px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.task-card__date {
+  font-size: 10px;
+  color: #999;
+  white-space: nowrap;
+  text-align: right;
+}
+
+/* ✅ Для Completed карточек */
+.task-card--completed {
+  background: #fff;
+}

@@ -1,9 +1,8 @@
 import "./TodoList.css";
-import "./TodoList.css";
 import { FiClipboard, FiPlus } from "react-icons/fi";
-import { IoEllipsisHorizontalOutline } from "react-icons/io5"; // 👈 правильный пакет!
+import { TaskCard } from "../../../../shared/ui/TaskCard";
 
-// ✅ Импорт изображений
+// 🖼 Импорт изображений
 import todo1 from "../../../../shared/assets/images/dashboard/todo1.png";
 import todo2 from "../../../../shared/assets/images/dashboard/todo2.png";
 import todo3 from "../../../../shared/assets/images/dashboard/todo3.png";
@@ -39,19 +38,6 @@ export const TodoList = () => {
     },
   ];
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Not Started":
-        return "#ff4444";
-      case "In Progress":
-        return "#007bff";
-      case "Completed":
-        return "#00c851";
-      default:
-        return "#ccc";
-    }
-  };
-
   return (
     <div className="todo-list">
       {/* === Заголовок секции === */}
@@ -78,51 +64,15 @@ export const TodoList = () => {
 
       {/* === Карточки === */}
       {tasks.map((task) => (
-        <div key={task.id} className="todo-card">
-          <IoEllipsisHorizontalOutline className="todo-card__menu" />
-
-          <div className="todo-card__main">
-            {/* Левая часть */}
-            <div className="todo-card__left">
-              <div className="todo-card__header">
-                <span
-                  className="todo-card__circle"
-                  style={{ borderColor: getStatusColor(task.status) }}
-                ></span>
-                <h4 className="todo-card__title">{task.title}</h4>
-              </div>
-              <p className="todo-card__desc">{task.desc}</p>
-
-              <div className="todo-card__bottom">
-                <span>
-                  Priority:{" "}
-                  <span className="todo-card__priority">{task.priority}</span>
-                </span>
-                <span
-                  className={`todo-card__status ${
-                    task.status === "Not Started"
-                      ? "status--red"
-                      : task.status === "In Progress"
-                      ? "status--blue"
-                      : "status--green"
-                  }`}
-                >
-                  Status: {task.status}
-                </span>
-              </div>
-            </div>
-
-            {/* Правая часть (картинка + дата) */}
-            <div className="todo-card__right">
-              <img
-                src={task.image}
-                alt={task.title}
-                className="todo-card__img"
-              />
-              <span className="todo-card__date">Created on: {task.date}</span>
-            </div>
-          </div>
-        </div>
+        <TaskCard
+          key={task.id}
+          title={task.title}
+          desc={task.desc}
+          date={task.date}
+          priority={task.priority as "Moderate" | "High"}
+          status={task.status as "Not Started" | "In Progress" | "Completed"}
+          image={task.image}
+        />
       ))}
     </div>
   );

@@ -1,7 +1,8 @@
 import "./VitalTaskList.css";
 import { FiAlertTriangle } from "react-icons/fi";
-import { IoEllipsisHorizontalOutline } from "react-icons/io5";
+import { TaskCard } from "../../../../shared/ui/TaskCard";
 
+// 🖼 Импорт изображений
 import task1 from "../../../../shared/assets/images/vital-task/dog.png";
 import task2 from "../../../../shared/assets/images/vital-task/hospital.png";
 
@@ -27,73 +28,26 @@ export const VitalTaskList = () => {
     },
   ];
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Not Started":
-        return "#ff4444";
-      case "In Progress":
-        return "#007bff";
-      case "Completed":
-        return "#00c851";
-      default:
-        return "#ccc";
-    }
-  };
-
   return (
     <div className="vital-task-list">
+      {/* === Заголовок секции === */}
       <div className="vital-task-list__header">
         <div className="vital-task-list__title-wrapper">
-          {/* <FiAlertTriangle className="vital-task-list__icon" /> */}
           <h3 className="vital-task-list__title">Vital Tasks</h3>
         </div>
       </div>
 
+      {/* === Список карточек === */}
       {tasks.map((task) => (
-        <div key={task.id} className="vital-card">
-          <IoEllipsisHorizontalOutline className="vital-card__menu" />
-
-          <div className="vital-card__main">
-            <div className="vital-card__left">
-              <div className="vital-card__header">
-                <span
-                  className="vital-card__circle"
-                  style={{ borderColor: getStatusColor(task.status) }}
-                ></span>
-                <h4 className="vital-card__title">{task.title}</h4>
-              </div>
-
-              <p className="vital-card__desc">{task.desc}</p>
-
-              <div className="vital-card__bottom">
-                <span>
-                  Priority:{" "}
-                  <span className="vital-card__priority">{task.priority}</span>
-                </span>
-                <span
-                  className={`vital-card__status ${
-                    task.status === "Not Started"
-                      ? "status--red"
-                      : task.status === "In Progress"
-                      ? "status--blue"
-                      : "status--green"
-                  }`}
-                >
-                  Status: {task.status}
-                </span>
-              </div>
-            </div>
-
-            <div className="vital-card__right">
-              <img
-                src={task.image}
-                alt={task.title}
-                className="vital-card__img"
-              />
-              <span className="vital-card__date">Created on: {task.date}</span>
-            </div>
-          </div>
-        </div>
+        <TaskCard
+          key={task.id}
+          title={task.title}
+          desc={task.desc}
+          date={task.date}
+          priority={task.priority as "Extreme" | "Moderate"}
+          status={task.status as "Not Started" | "In Progress" | "Completed"}
+          image={task.image}
+        />
       ))}
     </div>
   );

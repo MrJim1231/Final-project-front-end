@@ -1,5 +1,5 @@
 import "./MyTaskList.css";
-import { IoEllipsisHorizontalOutline } from "react-icons/io5";
+import { TaskCard } from "../../../../shared/ui/TaskCard";
 
 // 🖼 Импорт изображений
 import task1 from "../../../../shared/assets/images/my-task/docs.png";
@@ -27,19 +27,6 @@ export const MyTaskList = () => {
     },
   ];
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Not Started":
-        return "#ff4444";
-      case "In Progress":
-        return "#007bff";
-      case "Completed":
-        return "#00c851";
-      default:
-        return "#ccc";
-    }
-  };
-
   return (
     <div className="my-task-list">
       <div className="my-task-list__header">
@@ -47,46 +34,15 @@ export const MyTaskList = () => {
       </div>
 
       {tasks.map((task) => (
-        <div key={task.id} className="my-card">
-          <IoEllipsisHorizontalOutline className="my-card__menu" />
-
-          <div className="my-card__main">
-            <div className="my-card__left">
-              <div className="my-card__header">
-                <span
-                  className="my-card__circle"
-                  style={{ borderColor: getStatusColor(task.status) }}
-                ></span>
-                <h4 className="my-card__title">{task.title}</h4>
-              </div>
-
-              <p className="my-card__desc">{task.desc}</p>
-
-              <div className="my-card__bottom">
-                <span>
-                  Priority:{" "}
-                  <span className="my-card__priority">{task.priority}</span>
-                </span>
-                <span
-                  className={`my-card__status ${
-                    task.status === "Not Started"
-                      ? "status--red"
-                      : task.status === "In Progress"
-                      ? "status--blue"
-                      : "status--green"
-                  }`}
-                >
-                  Status: {task.status}
-                </span>
-              </div>
-            </div>
-
-            <div className="my-card__right">
-              <img src={task.image} alt={task.title} className="my-card__img" />
-              <span className="my-card__date">Created on: {task.date}</span>
-            </div>
-          </div>
-        </div>
+        <TaskCard
+          key={task.id}
+          title={task.title}
+          desc={task.desc}
+          date={task.date}
+          priority={task.priority as "Extreme" | "Moderate"}
+          status={task.status as "Not Started" | "In Progress" | "Completed"}
+          image={task.image}
+        />
       ))}
     </div>
   );
