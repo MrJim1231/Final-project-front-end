@@ -12,7 +12,7 @@
   border: 1px solid rgba(161, 163, 171, 0.6);
   padding: 20px;
   align-items: stretch; /* 👈 растягиваем обе колонки */
-  margin-bottom: 20px;
+  /* margin-bottom: 20px; */
 }
 
 /* Левая колонка (To-Do) */

@@ -3,6 +3,7 @@
   min-height: 100%;
   padding: 20px 28px;
   border-radius: 16px;
+  border: 1px solid rgba(161, 163, 171, 0.6);
 }
 
 .categories-page__header {
@@ -53,7 +54,7 @@
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
 }
 
 .categories-page__add-btn:hover {
