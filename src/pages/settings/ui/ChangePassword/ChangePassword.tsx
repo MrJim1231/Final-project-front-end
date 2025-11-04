@@ -1,11 +1,11 @@
-import "./Settings.css";
-import userAvatar from "../../../shared/assets/images/avatar.png"; // ⚙️ замени на свой путь
+import "./ChangePassword.css";
+import userAvatar from "../../../../shared/assets/images/avatar.png";
 
-export const Settings = () => {
+export const ChangePassword = () => {
   return (
     <section className="settings">
       <div className="settings__header">
-        <h3 className="settings__title">Account Information</h3>
+        <h3 className="settings__title">Change Password</h3>
         <button className="settings__back">Go Back</button>
       </div>
 
@@ -19,31 +19,21 @@ export const Settings = () => {
           </div>
         </div>
 
-        {/* === Form === */}
+        {/* === Password form === */}
         <form className="settings__form">
           <label className="settings__label">
-            First Name
-            <input type="text" className="settings__input" />
+            Current Password
+            <input type="password" className="settings__input" />
           </label>
 
           <label className="settings__label">
-            Last Name
-            <input type="text" className="settings__input" />
+            New Password
+            <input type="password" className="settings__input" />
           </label>
 
           <label className="settings__label">
-            Email Address
-            <input type="email" className="settings__input" />
-          </label>
-
-          <label className="settings__label">
-            Contact Number
-            <input type="tel" className="settings__input" />
-          </label>
-
-          <label className="settings__label">
-            Position
-            <input type="text" className="settings__input" />
+            Confirm Password
+            <input type="password" className="settings__input" />
           </label>
 
           <div className="settings__actions">
@@ -51,13 +41,13 @@ export const Settings = () => {
               type="submit"
               className="settings__btn settings__btn--update"
             >
-              Update Info
+              Update Password
             </button>
             <button
               type="button"
-              className="settings__btn settings__btn--password"
+              className="settings__btn settings__btn--cancel"
             >
-              Change Password
+              Cancel
             </button>
           </div>
         </form>

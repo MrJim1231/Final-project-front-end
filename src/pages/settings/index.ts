@@ -1,1 +1,1 @@
-export { Settings } from "./ui/Settings"; // для settings
+export { Settings } from "./ui/Settings/Settings"; // для settings
