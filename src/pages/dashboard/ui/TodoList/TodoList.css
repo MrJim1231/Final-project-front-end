@@ -1,4 +1,4 @@
-/* === Общий контейнер === */
+/* === Контейнер списка === */
 .todo-list {
   background: #f5f8ff;
   border-radius: 16px;
@@ -6,7 +6,7 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(161, 163, 171, 0.15);
   min-width: 466px;
-  /* margin: 0 auto 24px; */
+  box-sizing: border-box;
 }
 
 /* === Заголовок блока === */
@@ -31,7 +31,6 @@
 .todo-list__title {
   font-size: 15px;
   font-weight: 600;
-  /* color: #e03e3e; */
   color: #ff6767;
 }
 
@@ -63,7 +62,7 @@
   opacity: 0.7;
 }
 
-/* === Дата под заголовком === */
+/* === Секция даты под заголовком === */
 .todo-list__date-section {
   display: flex;
   align-items: center;
@@ -84,126 +83,4 @@
 
 .todo-list__today {
   color: #999;
-}
-
-/* === Карточка задачи (402x166) === */
-.todo-card {
-  position: relative;
-  min-width: 402px;
-  min-height: 166px;
-  padding: 18px 20px;
-  border: 1.5px solid rgba(161, 163, 171, 0.35);
-  border-radius: 12px;
-  background-color: #f5f8ff;
-  margin-bottom: 14px;
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
-}
-
-.todo-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-  transform: translateY(-1px);
-}
-
-/* ⋯ три точки (справа сверху) */
-.todo-card__menu {
-  position: absolute;
-  top: 2px;
-  right: 14px;
-  color: #a1a3ab;
-  font-size: 26px;
-  cursor: pointer;
-}
-
-/* === Основная структура карточки === */
-.todo-card__main {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
-  height: 100%;
-}
-
-/* Левая часть */
-.todo-card__left {
-  flex: 1;
-  position: relative;
-  padding-left: 20px; /* отступ для кружка */
-}
-
-.todo-card__circle {
-  position: absolute;
-  top: 2px;
-  left: 0;
-  width: 14px;
-  height: 14px;
-  border: 2px solid;
-  border-radius: 50%;
-}
-
-.todo-card__title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #222;
-  margin-bottom: 4px;
-}
-
-.todo-card__desc {
-  font-size: 14px;
-  color: #555;
-  line-height: 1.45;
-  flex-grow: 1;
-}
-
-/* === Нижняя строка (приоритет и статус) === */
-.todo-card__bottom {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  font-size: 10px;
-  color: #777;
-  margin-top: 8px;
-}
-
-.todo-card__priority {
-  color: #0088cc;
-  font-weight: 500;
-}
-
-.todo-card__status.status--red {
-  color: #ff4444;
-}
-
-.todo-card__status.status--blue {
-  color: #007bff;
-}
-
-.todo-card__status.status--green {
-  color: #00c851;
-}
-
-/* Правая часть */
-/* === Правая часть (картинка ниже заголовка) === */
-.todo-card__right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end; /* 👈 выравниваем картинку справа */
-  justify-content: flex-start;
-  width: 100px;
-  gap: 7px;
-  margin-top: 10px; /* 👈 слегка опускаем правую часть вниз */
-}
-
-.todo-card__img {
-  width: 88px;
-  height: 88px;
-  border-radius: 10px;
-  object-fit: cover;
-  margin-top: 8px; /* 👈 лёгкое смещение вниз от верхнего края */
-}
-
-.todo-card__date {
-  font-size: 10px;
-  color: #999;
-  white-space: nowrap;
-  text-align: right;
 }
