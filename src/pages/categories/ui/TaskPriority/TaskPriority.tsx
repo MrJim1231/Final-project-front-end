@@ -1,15 +1,29 @@
 import "./TaskPriority.css";
 import { FiEdit2, FiTrash2, FiPlus } from "react-icons/fi";
+import React, { useState } from "react";
+import { AddModal } from "../AddModal/AddModal"; // 👈 импорт модалки
 
 export const TaskPriority = () => {
-  const priorities = ["Extreme", "Moderate", "Low"];
+  const [priorities, setPriorities] = useState(["Extreme", "Moderate", "Low"]);
+  const [showModal, setShowModal] = useState(false);
+
+  // === Добавление нового приоритета ===
+  const handleAddPriority = (value: string) => {
+    if (value.trim()) {
+      setPriorities((prev) => [...prev, value.trim()]);
+    }
+    setShowModal(false);
+  };
 
   return (
     <div className="priority-block">
       {/* === Заголовок блока === */}
       <div className="priority-block__header">
         <h3 className="priority-block__title">Task Priority</h3>
-        <button className="priority-block__add">
+        <button
+          className="priority-block__add"
+          onClick={() => setShowModal(true)} // 👈 Открываем модалку
+        >
           <FiPlus className="priority-block__add-icon" />
           Add New Priority
         </button>
@@ -49,6 +63,16 @@ export const TaskPriority = () => {
           </tbody>
         </table>
       </div>
+
+      {/* === Модалка для добавления === */}
+      {showModal && (
+        <AddModal
+          title="Add Task Priority"
+          inputLabel="Task Priority Title"
+          onClose={() => setShowModal(false)}
+          onSubmit={handleAddPriority}
+        />
+      )}
     </div>
   );
 };
