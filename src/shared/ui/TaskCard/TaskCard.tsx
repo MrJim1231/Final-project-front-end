@@ -44,6 +44,7 @@ export const TaskCard = ({
       <IoEllipsisHorizontalOutline className="task-card__menu" />
 
       <div className="task-card__main">
+        {/* === Левая часть === */}
         <div className="task-card__left">
           <div className="task-card__header">
             <span
@@ -85,9 +86,12 @@ export const TaskCard = ({
           )}
         </div>
 
+        {/* === Правая часть === */}
         {image && (
           <div className="task-card__right">
-            <img src={image} alt={title} className="task-card__img" />
+            <div className="task-card__image-wrapper">
+              <img src={image} alt={title} className="task-card__img" />
+            </div>
             {date && type !== "completed" && (
               <span className="task-card__date">Created on: {date}</span>
             )}

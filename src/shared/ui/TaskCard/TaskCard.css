@@ -1,5 +1,7 @@
 .task-card {
   position: relative;
+  display: flex;
+  flex-direction: column;
   padding: 18px 20px;
   border: 1.5px solid rgba(161, 163, 171, 0.35);
   border-radius: 12px;
@@ -13,31 +15,37 @@
   transform: translateY(-1px);
 }
 
+/* ⋯ Меню */
 .task-card__menu {
   position: absolute;
-  top: 4px;
-  right: 14px;
+  top: 6px;
+  right: 12px;
   color: #a1a3ab;
   font-size: 22px;
   cursor: pointer;
 }
 
+/* === Основная структура карточки === */
 .task-card__main {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
+  align-items: flex-end; /* 👈 выравнивание по нижнему краю */
+  gap: 18px;
 }
 
+/* === Левая часть === */
 .task-card__left {
   flex: 1;
   position: relative;
   padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .task-card__circle {
   position: absolute;
-  top: 2px;
+  top: 3px;
   left: 0;
   width: 14px;
   height: 14px;
@@ -49,22 +57,25 @@
   font-size: 16px;
   font-weight: 600;
   color: #222;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .task-card__desc {
   font-size: 14px;
   color: #555;
   line-height: 1.45;
+  margin: 0;
 }
 
+/* === Нижняя строка (приоритет и статус) === */
 .task-card__bottom {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 14px;
   font-size: 10px;
   color: #777;
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
 .task-card__priority {
@@ -84,10 +95,12 @@
   color: #00c851;
 }
 
+/* === Правая часть (картинка + дата) === */
 .task-card__right {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  justify-content: flex-end; /* 👈 прижимаем вниз */
   width: 100px;
   gap: 8px;
 }
@@ -97,6 +110,7 @@
   height: 88px;
   border-radius: 10px;
   object-fit: cover;
+  display: block;
 }
 
 .task-card__date {
