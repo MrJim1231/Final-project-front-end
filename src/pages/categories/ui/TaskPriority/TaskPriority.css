@@ -61,7 +61,7 @@
 .priority-table {
   border: 1px solid rgba(161, 163, 171, 0.3);
   border-radius: 12px;
-  background-color: #fff;
+  background-color: #f5f8ff;
   overflow: hidden;
   width: 100%;
 }
@@ -121,7 +121,8 @@
   border: none;
   border-radius: 6px;
   padding: 6px 10px;
-  font-size: 13px;
+  font-size: 15px;
+  font-family: "Montserrat", sans-serif;
   cursor: pointer;
   display: flex;
   align-items: center;
