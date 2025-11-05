@@ -5,8 +5,9 @@
   padding: 24px 28px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(161, 163, 171, 0.15);
-  min-width: 466px;
+  /* min-width: 466px; */
   box-sizing: border-box;
+  height: 100%;
 }
 
 /* === Заголовок блока === */
