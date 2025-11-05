@@ -1,19 +1,24 @@
 .my-task-page {
   background-color: #f5f8ff;
-  min-height: 100%;
-  /* margin-bottom: 20px; */
+  min-height: 100vh;
+  overflow-x: hidden; /* 🔹 убираем горизонтальный скролл */
+  box-sizing: border-box;
 }
 
 /* === Контент: 2 колонки === */
 .my-task-page__content {
-  display: flex;
-  gap: 1rem;
-  align-items: stretch; /* 👈 обе колонки одинаковой высоты */
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 🔹 две равные колонки */
+  gap: 1.5rem;
+  align-items: stretch;
+  margin-top: 2rem;
+  border: 1px solid rgba(161, 163, 171, 0.6);
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 /* === Левая колонка (список задач) === */
 .my-task-page__left {
-  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: stretch;
@@ -27,7 +32,6 @@
 
 /* === Правая колонка (детали задачи) === */
 .my-task-page__right {
-  flex: 1;
   display: flex;
   justify-content: center;
   align-items: stretch;
@@ -44,4 +48,33 @@
 .my-task-page__subtitle {
   font-size: 14px;
   color: #777;
+}
+
+/* === 📱 Адаптация под экраны === */
+
+/* 🔸 До 1200px — одна колонка */
+@media (max-width: 1200px) {
+  .my-task-page__content {
+    grid-template-columns: 1fr; /* 👈 одна колонка */
+  }
+
+  .my-task-page__right {
+    margin-top: 20px; /* 🔹 отступ между блоками */
+  }
+}
+
+/* 🔸 До 768px — чуть меньше отступов и шрифт */
+@media (max-width: 768px) {
+  .my-task-page__content {
+    padding: 16px;
+    gap: 1rem;
+  }
+
+  .my-task-page__title {
+    font-size: 16px;
+  }
+
+  .my-task-page__subtitle {
+    font-size: 13px;
+  }
 }
