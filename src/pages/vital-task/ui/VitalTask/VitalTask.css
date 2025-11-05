@@ -9,7 +9,7 @@
 .vital-page__content {
   display: grid;
   grid-template-columns: 1fr 1fr; /* 🔹 две колонки */
-  gap: 1.5rem;
+  gap: 1rem;
   align-items: stretch;
   box-sizing: border-box;
   margin-top: 2rem;

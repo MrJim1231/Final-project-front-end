@@ -9,7 +9,7 @@
 .my-task-page__content {
   display: grid;
   grid-template-columns: 1fr 1fr; /* 🔹 две равные колонки */
-  gap: 1.5rem;
+  gap: 1rem;
   align-items: stretch;
   margin-top: 2rem;
   border: 1px solid rgba(161, 163, 171, 0.6);
