@@ -8,7 +8,7 @@
   background-color: #f5f8ff;
   margin-bottom: 14px;
   transition: box-shadow 0.2s ease, transform 0.2s ease;
-  width: fit-content; /* 👈 карточка сжимается под контент */
+  /* width: fit-content; */
   max-width: 100%; /* 👈 не выйдет за границы контейнера */
 }
 
@@ -135,6 +135,7 @@
 .task-card--vital {
   padding: 10px;
   box-sizing: border-box;
+  width: fit-content;
 }
 
 /* === Large Screens (≥1400px) === */
