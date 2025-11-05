@@ -8,6 +8,8 @@
   background-color: #f5f8ff;
   margin-bottom: 14px;
   transition: box-shadow 0.2s ease, transform 0.2s ease;
+  width: fit-content; /* 👈 карточка сжимается под контент */
+  max-width: 100%; /* 👈 не выйдет за границы контейнера */
 }
 
 .task-card:hover {
@@ -26,17 +28,14 @@
 }
 
 /* === Верхняя часть: текст + картинка === */
+
 .task-card__top {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: 18px;
-  /* margin-bottom: 12px; */
 }
 
 /* === Левая часть === */
 .task-card__left {
-  flex: 1;
   position: relative;
   padding-left: 20px;
   display: flex;
@@ -59,14 +58,11 @@
   font-weight: 600;
   color: #222;
   margin: 0;
+  max-width: 232px; /* 👈 подбери под макет */
+  white-space: normal; /* разрешает перенос */
+  word-break: break-word;
 }
 
-/* .task-card__desc {
-  font-size: 14px;
-  color: #555;
-  line-height: 1.45;
-  margin: 0;
-} */
 .task-card__desc {
   font-size: 14px;
   color: #555;
@@ -96,7 +92,7 @@
 .task-card__bottom {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 6px;
   font-size: 11px;
   color: #777;
   padding-top: 10px;
