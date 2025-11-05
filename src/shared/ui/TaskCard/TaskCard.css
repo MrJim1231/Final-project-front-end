@@ -143,12 +143,23 @@
   .task-card {
     padding: 24px 20px;
   }
+  .task-card--vital {
+    padding: 10px;
+    box-sizing: border-box;
+    width: 100%;
+  }
 }
 
 /* 📱 Tablets */
 @media (max-width: 1200px) {
   .task-card {
     padding: 20px 16px;
+  }
+
+  .task-card--vital {
+    padding: 10px;
+    box-sizing: border-box;
+    width: 100%;
   }
 
   .task-card__bottom {
