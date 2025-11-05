@@ -13,9 +13,6 @@
   gap: 1rem;
   align-items: stretch;
   box-sizing: border-box;
-  margin-top: 2rem;
-  border: 1px solid rgba(161, 163, 171, 0.6);
-  padding: 20px;
 }
 
 /* === Левая колонка (список задач) === */
