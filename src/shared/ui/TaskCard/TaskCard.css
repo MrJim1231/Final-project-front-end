@@ -18,19 +18,20 @@
 /* ⋯ Меню */
 .task-card__menu {
   position: absolute;
-  top: 0px;
+  top: 0;
   right: 12px;
   color: #a1a3ab;
   font-size: 32px;
   cursor: pointer;
 }
 
-/* === Основная структура карточки === */
-.task-card__main {
+/* === Верхняя часть: текст + картинка === */
+.task-card__top {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end; /* 👈 выравнивание по нижнему краю */
+  align-items: flex-start;
   gap: 18px;
+  /* margin-bottom: 12px; */
 }
 
 /* === Левая часть === */
@@ -40,7 +41,7 @@
   padding-left: 20px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 18px;
 }
 
 .task-card__circle {
@@ -57,25 +58,53 @@
   font-size: 16px;
   font-weight: 600;
   color: #222;
-  margin-bottom: 2px;
+  margin: 0;
 }
 
+/* .task-card__desc {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.45;
+  margin: 0;
+} */
 .task-card__desc {
   font-size: 14px;
   color: #555;
   line-height: 1.45;
   margin: 0;
+
+  max-width: 213px; /* 👈 подбери под макет */
+  white-space: normal; /* разрешает перенос */
+  word-break: break-word;
 }
 
-/* === Нижняя строка (приоритет и статус) === */
+/* === Правая часть (картинка) === */
+.task-card__right {
+  flex-shrink: 0;
+}
+
+.task-card__img {
+  width: 88px;
+  height: 88px;
+  border-radius: 10px;
+  object-fit: cover;
+  display: block;
+  margin-top: 14px;
+}
+
+/* === Нижняя строка (priority, status, date) === */
 .task-card__bottom {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 14px;
-  font-size: 10px;
+  gap: 16px;
+  font-size: 11px;
   color: #777;
-  margin-top: 6px;
+  padding-top: 10px;
+  /* margin-top: 8px; */
+  white-space: nowrap;
+
+  /* 👇 добавляем смещение на тот же отступ, что и текст */
+  margin-left: 20px;
 }
 
 .task-card__priority {
@@ -95,29 +124,10 @@
   color: #00c851;
 }
 
-/* === Правая часть (картинка + дата) === */
-.task-card__right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-content: flex-end; /* 👈 прижимаем вниз */
-  width: 100px;
-  gap: 8px;
-}
-
-.task-card__img {
-  width: 88px;
-  height: 88px;
-  border-radius: 10px;
-  object-fit: cover;
-  display: block;
-}
-
 .task-card__date {
-  font-size: 10px;
   color: #999;
+  font-size: 11px;
   white-space: nowrap;
-  text-align: right;
 }
 
 /* ✅ Для Completed карточек */
@@ -125,65 +135,28 @@
   background: #fff;
 }
 
-/* 🟡 Для Vital Tasks (точно по макету 365x134) */
+/* 🟡 Для Vital Tasks */
 .task-card--vital {
   padding: 10px;
-  min-width: 365px;
-  min-height: 134px;
   box-sizing: border-box;
 }
 
-.task-card--vital .task-card__main {
-  align-items: flex-end; /* выравнивание по нижнему краю */
-  gap: 16px;
-}
-
-.task-card--vital .task-card__right {
-  justify-content: flex-end; /* картинка сверху, дата под ней */
-  gap: 6px;
-}
-
-.task-card--vital .task-card__left {
-  gap: 20px;
-}
-
-.task-card--vital .task-card__img {
-  width: 88px;
-  height: 88px;
-  margin-bottom: 2px; /* визуальное совпадение с датой */
-}
-
-.task-card--vital .task-card__date {
-  font-size: 10px;
-  color: #999;
-  text-align: right;
-}
-
-/* === Для больших экранов (≥1400px) === */
+/* === Large Screens (≥1400px) === */
 @media (min-width: 1400px) {
   .task-card {
     padding: 24px 20px;
   }
-  .task-card__main {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 18px;
-  }
-
-  .task-card__left {
-    flex: 1;
-    position: relative;
-    padding-left: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-  }
 }
 
-/* 📱 Планшеты */
+/* 📱 Tablets */
 @media (max-width: 1200px) {
   .task-card {
-    padding: 24px 20px;
+    padding: 20px 16px;
+  }
+
+  .task-card__bottom {
+    flex-wrap: wrap;
+    white-space: normal;
+    margin-left: 16px;
   }
 }

@@ -9,7 +9,7 @@ interface TaskCardProps {
   priority?: "Low" | "Moderate" | "High" | "Extreme";
   image?: string;
   completedAt?: string;
-  type?: "default" | "completed" | "vital"; // 👈 добавлен тип "vital"
+  type?: "default" | "completed" | "vital";
 }
 
 export const TaskCard = ({
@@ -43,8 +43,8 @@ export const TaskCard = ({
     >
       <IoEllipsisHorizontalOutline className="task-card__menu" />
 
-      <div className="task-card__main">
-        {/* === Левая часть === */}
+      {/* === Верхняя часть: текст слева, картинка справа === */}
+      <div className="task-card__top">
         <div className="task-card__left">
           <div className="task-card__header">
             <span
@@ -53,50 +53,35 @@ export const TaskCard = ({
             ></span>
             <h4 className="task-card__title">{title}</h4>
           </div>
-
           <p className="task-card__desc">{desc}</p>
-
-          {type === "completed" ? (
-            <div className="task-card__bottom">
-              <span className="task-card__status status--green">
-                Status: Completed
-              </span>
-              <span className="task-card__date">Completed {completedAt}</span>
-            </div>
-          ) : (
-            <div className="task-card__bottom">
-              {priority && (
-                <span>
-                  Priority:{" "}
-                  <span className="task-card__priority">{priority}</span>
-                </span>
-              )}
-              <span
-                className={`task-card__status ${
-                  status === "Not Started"
-                    ? "status--red"
-                    : status === "In Progress"
-                    ? "status--blue"
-                    : "status--green"
-                }`}
-              >
-                Status: {status}
-              </span>
-            </div>
-          )}
         </div>
 
-        {/* === Правая часть === */}
         {image && (
           <div className="task-card__right">
-            <div className="task-card__image-wrapper">
-              <img src={image} alt={title} className="task-card__img" />
-            </div>
-            {date && type !== "completed" && (
-              <span className="task-card__date">Created on: {date}</span>
-            )}
+            <img src={image} alt={title} className="task-card__img" />
           </div>
         )}
+      </div>
+
+      {/* === Нижняя часть: приоритет, статус и дата === */}
+      <div className="task-card__bottom">
+        {priority && (
+          <span>
+            Priority: <span className="task-card__priority">{priority}</span>
+          </span>
+        )}
+        <span
+          className={`task-card__status ${
+            status === "Not Started"
+              ? "status--red"
+              : status === "In Progress"
+              ? "status--blue"
+              : "status--green"
+          }`}
+        >
+          Status: {status}
+        </span>
+        {date && <span className="task-card__date">Created on: {date}</span>}
       </div>
     </div>
   );
