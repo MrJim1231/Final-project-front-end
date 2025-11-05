@@ -8,7 +8,8 @@
 /* === Контент: 2 колонки === */
 .vital-page__content {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* 🔹 две колонки */
+  /* grid-template-columns: 1fr 1fr; */
+  grid-template-columns: 0.8fr 1.2fr; /* 👈 левая уже, правая шире */
   gap: 1rem;
   align-items: stretch;
   box-sizing: border-box;
