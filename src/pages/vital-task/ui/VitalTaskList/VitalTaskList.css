@@ -9,7 +9,7 @@
   flex-direction: column;
   gap: 14px;
 
-  max-width: 466px;
+  /* max-width: 466px; */
   width: 100%;
   box-sizing: border-box;
 }

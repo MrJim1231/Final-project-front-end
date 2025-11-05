@@ -7,8 +7,12 @@
 /* === Контент: 2 колонки === */
 .vital-page__content {
   display: flex;
-  gap: 2rem;
-  align-items: stretch; /* 👈 обе колонки одной высоты */
+  align-items: stretch;
+  box-sizing: border-box;
+  gap: 1rem;
+  /* margin-top: 2rem; */
+  /* border: 1px solid rgba(161, 163, 171, 0.6); */
+  /* padding: 20px; */
 }
 
 /* === Левая колонка (список задач) === */
