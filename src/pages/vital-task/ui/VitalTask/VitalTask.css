@@ -8,14 +8,10 @@
 /* === Контент: 2 колонки === */
 .vital-page__content {
   display: grid;
-  /* grid-template-columns: 1fr 1fr; */
   grid-template-columns: 0.8fr 1.2fr; /* 👈 левая уже, правая шире */
   gap: 1rem;
   align-items: stretch;
   box-sizing: border-box;
-  margin-top: 2rem;
-  border: 1px solid rgba(161, 163, 171, 0.6);
-  padding: 20px;
 }
 
 /* === Левая колонка (список задач) === */
