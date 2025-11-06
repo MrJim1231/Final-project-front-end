@@ -3,7 +3,7 @@ import "./TodoList.css";
 import { FiClipboard, FiPlus } from "react-icons/fi";
 import { TaskCard } from "../../../../shared/ui/TaskCard";
 import { AddTaskModal } from "../AddTaskModal/AddTaskModal";
-import { getTodos } from "../../../../shared/api/todos";
+import { getTodos, createTodo } from "../../../../shared/api/todos";
 import type { Todo } from "../../../../shared/api/todos";
 
 export const TodoList = () => {
@@ -11,7 +11,7 @@ export const TodoList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Загружаем данные из mockAPI
+  // ✅ Загружаем задачи с mockAPI при монтировании
   useEffect(() => {
     const fetchTodos = async () => {
       try {
@@ -26,22 +26,38 @@ export const TodoList = () => {
     fetchTodos();
   }, []);
 
-  // ✅ Добавление новой задачи (локально)
-  const handleAddTask = (newTask: any) => {
-    const taskWithId = {
-      id: String(Date.now()),
-      title: newTask.title,
-      description: newTask.description,
-      createdAt: newTask.date,
-      priority: newTask.priority,
-      status: "Not Started" as const,
-      image: newTask.image ? URL.createObjectURL(newTask.image) : "",
-    };
-    setTasks((prev) => [taskWithId, ...prev]);
-    setIsModalOpen(false);
+  // ✅ Добавление новой задачи в базу (mockAPI)
+  const handleAddTask = async (form: any) => {
+    try {
+      const newTodo = {
+        title: form.title,
+        description: form.description,
+        createdAt: form.date || new Date().toISOString(),
+        priority: form.priority || "Low",
+        status: "Not Started" as const,
+        image:
+          form.image instanceof File
+            ? URL.createObjectURL(form.image)
+            : form.image || "",
+      };
+
+      // Отправляем задачу в mockAPI
+      const created = await createTodo(newTodo);
+
+      // Обновляем локальное состояние (вверху списка)
+      setTasks((prev) => [created, ...prev]);
+
+      // Закрываем модалку
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Ошибка при добавлении задачи:", error);
+      alert("Не удалось добавить задачу 😢");
+    }
   };
 
-  if (loading) return <p>Loading tasks...</p>;
+  if (loading) {
+    return <p>Loading tasks...</p>;
+  }
 
   return (
     <div className="todo-list">
@@ -67,18 +83,22 @@ export const TodoList = () => {
         <span className="todo-list__today">Today</span>
       </div>
 
-      {/* === Карточки === */}
-      {tasks.map((task) => (
-        <TaskCard
-          key={task.id}
-          title={task.title}
-          desc={task.description}
-          date={new Date(task.createdAt).toLocaleDateString()}
-          priority={task.priority}
-          status={task.status}
-          image={task.image}
-        />
-      ))}
+      {/* === Список карточек === */}
+      {tasks.length > 0 ? (
+        tasks.map((task) => (
+          <TaskCard
+            key={task.id}
+            title={task.title}
+            desc={task.description}
+            date={new Date(task.createdAt).toLocaleDateString()}
+            priority={task.priority}
+            status={task.status}
+            image={task.image}
+          />
+        ))
+      ) : (
+        <p>No tasks yet. Add your first one!</p>
+      )}
 
       {/* === Модалка добавления === */}
       {isModalOpen && (

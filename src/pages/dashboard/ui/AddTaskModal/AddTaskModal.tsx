@@ -16,7 +16,10 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
     priority: "",
     description: "",
     image: null as File | null,
+    imageUrl: "", // 🔹 новое поле для ссылки
   });
+
+  const [showUrlInput, setShowUrlInput] = useState(false); // 🔹 управляем появлением поля URL
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -26,12 +29,19 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
-    setForm({ ...form, image: file });
+    setForm({ ...form, image: file, imageUrl: "" }); // сбрасываем URL если выбрали файл
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(form);
+
+    // 🔹 если указана ссылка — используем её как изображение
+    const finalForm = {
+      ...form,
+      image: form.imageUrl || form.image,
+    };
+
+    onSubmit(finalForm);
     onClose();
   };
 
@@ -46,7 +56,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
           </button>
         </div>
 
-        {/* === Content wrapper (рамка) === */}
+        {/* === Content wrapper === */}
         <div className="addtask-modal__content">
           <form className="addtask-modal__form" onSubmit={handleSubmit}>
             <label>
@@ -126,17 +136,49 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
 
               <div className="addtask-modal__upload">
                 <label>Upload Image</label>
+
                 <div className="addtask-modal__upload-box">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    id="upload"
-                  />
-                  <p>
-                    Drag & Drop files here
-                    <br /> or <span>Browse</span>
-                  </p>
+                  {/* === Поле для выбора файла === */}
+                  {!showUrlInput && (
+                    <>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        id="upload"
+                      />
+                      <p>
+                        Drag & Drop files here
+                        <br /> or{" "}
+                        <span
+                          className="addtask-modal__browse"
+                          onClick={() => setShowUrlInput(true)}
+                        >
+                          Browse
+                        </span>
+                      </p>
+                    </>
+                  )}
+
+                  {/* === Поле для вставки ссылки === */}
+                  {showUrlInput && (
+                    <div className="addtask-modal__url-input">
+                      <input
+                        type="text"
+                        name="imageUrl"
+                        value={form.imageUrl}
+                        onChange={handleChange}
+                        placeholder="Paste image URL here..."
+                      />
+                      <button
+                        type="button"
+                        className="addtask-modal__url-back"
+                        onClick={() => setShowUrlInput(false)}
+                      >
+                        Back
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
