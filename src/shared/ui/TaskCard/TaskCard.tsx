@@ -12,7 +12,7 @@ interface TaskCardProps {
   image?: string;
   completedAt?: string;
   type?: "default" | "completed" | "vital";
-  onDelete?: (id: string) => void; // 👈 добавлено
+  onDelete?: (id: string) => void;
 }
 
 export const TaskCard = ({
@@ -89,7 +89,6 @@ export const TaskCard = ({
 
         {isMenuOpen && (
           <div className="task-card__actions">
-            <p className="task-card__actions-title">Actions</p>
             <ul>
               {actions.map((action) => (
                 <li
