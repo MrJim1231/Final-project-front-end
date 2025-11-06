@@ -25,10 +25,25 @@
   justify-content: space-between;
 }
 
-/* Существующие стили */
+.dashboard__burger {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  margin-right: 1rem;
+  cursor: pointer;
+  color: #ff5e5e;
+  transition: opacity 0.2s ease;
+}
+
+.dashboard__burger:hover {
+  opacity: 0.8;
+}
+
 .dashboard__header-logo {
   font-size: 32px;
   font-weight: 700;
+  user-select: none;
 }
 
 .dashboard__header-logo-highlight {
@@ -40,7 +55,7 @@
   display: flex;
   align-items: center;
   margin: 0 2rem;
-  max-width: 695px; /* ← было 500px */
+  max-width: 695px;
   background-color: #f5f8ff;
   border-radius: 10px;
   padding-right: 4px;
@@ -89,7 +104,6 @@
   display: flex;
   flex-direction: column;
   margin-left: 1rem;
-  /* text-align: right; */
 }
 
 .dashboard__header-day {
@@ -101,4 +115,39 @@
 .dashboard__header-full-date {
   color: #00aaff;
   font-size: 0.85rem;
+}
+
+/* === 📱 Адаптив для мобильных === */
+@media (max-width: 768px) {
+  .dashboard__header {
+    padding: 20px 16px;
+  }
+
+  .dashboard__header-container {
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* Показываем бургер */
+  .dashboard__burger {
+    display: block;
+  }
+
+  /* Логотип по центру */
+  /* .dashboard__header-logo {
+    font-size: 24px;
+    text-align: center;
+    flex: 1;
+  } */
+
+  /* Прячем поиск и кнопки справа */
+  .dashboard__header-search,
+  .dashboard__header-actions {
+    display: none;
+  }
+
+  /* Немного уменьшаем шрифт логотипа */
+  .dashboard__header-logo-highlight {
+    color: #ff5e5e;
+  }
 }

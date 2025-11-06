@@ -1,6 +1,8 @@
+import { useState } from "react";
 import "./TodoList.css";
 import { FiClipboard, FiPlus } from "react-icons/fi";
 import { TaskCard } from "../../../../shared/ui/TaskCard";
+import { AddTaskModal } from "../AddTaskModal/AddTaskModal"; // 👈 подключаем модалку
 
 // 🖼 Импорт изображений
 import todo1 from "../../../../shared/assets/images/dashboard/todo1.png";
@@ -8,7 +10,7 @@ import todo2 from "../../../../shared/assets/images/dashboard/todo2.png";
 import todo3 from "../../../../shared/assets/images/dashboard/todo3.png";
 
 export const TodoList = () => {
-  const tasks = [
+  const [tasks, setTasks] = useState([
     {
       id: 1,
       title: "Attend Nischal’s Birthday Party",
@@ -36,7 +38,25 @@ export const TodoList = () => {
       status: "Completed",
       image: todo3,
     },
-  ];
+  ]);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // ✅ Добавление новой задачи из модалки
+  const handleAddTask = (newTask: any) => {
+    const taskWithId = {
+      id: tasks.length + 1,
+      title: newTask.title,
+      desc: newTask.description,
+      date: newTask.date,
+      priority: newTask.priority,
+      status: "Not Started",
+      image: newTask.image ? URL.createObjectURL(newTask.image) : todo1,
+    };
+
+    setTasks((prev) => [taskWithId, ...prev]);
+    setIsModalOpen(false);
+  };
 
   return (
     <div className="todo-list">
@@ -47,7 +67,7 @@ export const TodoList = () => {
           <h3 className="todo-list__title">To-Do</h3>
         </div>
 
-        <button className="todo-list__add">
+        <button className="todo-list__add" onClick={() => setIsModalOpen(true)}>
           <span className="todo-list__add-icon">
             <FiPlus />
           </span>
@@ -69,11 +89,19 @@ export const TodoList = () => {
           title={task.title}
           desc={task.desc}
           date={task.date}
-          priority={task.priority as "Moderate" | "High"}
+          priority={task.priority as "Moderate" | "High" | "Low"}
           status={task.status as "Not Started" | "In Progress" | "Completed"}
           image={task.image}
         />
       ))}
+
+      {/* === Модалка добавления === */}
+      {isModalOpen && (
+        <AddTaskModal
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={handleAddTask}
+        />
+      )}
     </div>
   );
 };

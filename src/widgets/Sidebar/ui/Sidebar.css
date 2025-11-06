@@ -1,9 +1,8 @@
 .dashboard__sidebar {
   width: 260px;
-  flex-shrink: 0; /* 👈 чтобы Sidebar не сжимался */
+  flex-shrink: 0;
   background-color: #ff5e5e;
   color: white;
-  /* height: 100vh; */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -11,9 +10,11 @@
   border-radius: 0 16px 16px 0;
   position: relative;
   min-height: 100%;
-  height: auto; /* 👈 убираем фиксированную высоту */
+  height: auto;
+  transition: left 0.3s ease;
 }
 
+/* === Профиль === */
 .dashboard__sidebar-profile {
   position: relative;
   margin-bottom: 1rem;
@@ -47,6 +48,7 @@
   line-height: 1.2;
 }
 
+/* === Навигация === */
 .dashboard__sidebar-nav {
   display: flex;
   flex-direction: column;
@@ -78,10 +80,12 @@
   font-weight: 600;
 }
 
+/* === Иконки === */
 .dashboard__sidebar-icon {
   font-size: 1.1rem;
 }
 
+/* === Logout === */
 .dashboard__sidebar-logout {
   display: flex;
   align-items: center;
@@ -98,4 +102,67 @@
 
 .dashboard__sidebar-logout:hover {
   opacity: 0.7;
+}
+
+/* === 📱 Адаптив === */
+@media (max-width: 768px) {
+  .dashboard__sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 80%;
+    max-width: 300px;
+    height: 100vh;
+    z-index: 200;
+    border-radius: 0;
+    padding: 6rem 1rem 2rem;
+    transition: left 0.3s ease;
+  }
+
+  .dashboard__sidebar.open {
+    left: 0;
+  }
+
+  /* Затемнение фона при открытом меню */
+  .dashboard__overlay {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 150;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+  }
+
+  .dashboard__overlay.show {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .dashboard__sidebar-avatar {
+    /* top: -60px; */
+    width: 70px;
+    height: 70px;
+  }
+
+  .dashboard__sidebar-name {
+    font-size: 1rem;
+  }
+
+  .dashboard__sidebar-email {
+    font-size: 0.8rem;
+  }
+
+  .dashboard__sidebar-link {
+    font-size: 0.9rem;
+    padding: 0.7rem 0.9rem;
+  }
+
+  .dashboard__sidebar-logout {
+    padding: 0.7rem 1rem;
+  }
 }
