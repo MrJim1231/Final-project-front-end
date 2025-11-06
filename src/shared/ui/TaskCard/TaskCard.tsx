@@ -22,6 +22,20 @@ interface TaskCardProps {
   onVitalUpdate?: (id: string, isVital: boolean) => void;
 }
 
+// === Форматирование времени "Completed X ago" ===
+const formatTimeAgo = (dateString?: string) => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  const now = new Date();
+  const diff = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+  if (diff < 60) return "just now";
+  if (diff < 3600) return `${Math.floor(diff / 60)} min ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)} hours ago`;
+  if (diff < 2592000) return `${Math.floor(diff / 86400)} days ago`;
+  return date.toLocaleDateString();
+};
+
 export const TaskCard = ({
   id,
   title,
@@ -30,6 +44,7 @@ export const TaskCard = ({
   status: initialStatus,
   priority,
   image,
+  completedAt,
   type: initialType = "default",
   vital = false,
   onDelete,
@@ -43,9 +58,10 @@ export const TaskCard = ({
   );
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [updating, setUpdating] = useState(false);
+  const [completedTime, setCompletedTime] = useState(completedAt || "");
   const menuRef = useRef<HTMLDivElement | null>(null);
 
-  // === Автоматически обновляем тип при изменении статуса или vital ===
+  // === Автоматически обновляем тип ===
   useEffect(() => {
     if (isVital) {
       setType("vital");
@@ -85,23 +101,23 @@ export const TaskCard = ({
   const handleActionClick = async (action: string) => {
     if (!id) return;
 
-    // 🗑️ Удаление
     if (action === "Delete" && onDelete) {
       onDelete(id);
       setIsMenuOpen(false);
       return;
     }
 
-    // ✅ Завершение задачи (Finish)
+    // ✅ Завершение задачи
     if (action === "Finish") {
       try {
         setUpdating(true);
-        // 👇 добавили сохранение даты завершения
+        const now = new Date().toISOString();
         const updated = await patchTodo(id, {
           status: "Completed",
-          completedAt: new Date().toISOString(), // ✅ фикс
+          completedAt: now,
         });
         setStatus(updated.status);
+        setCompletedTime(now);
         onStatusUpdate?.(id, updated.status);
       } catch (error) {
         console.error("Ошибка при обновлении статуса:", error);
@@ -131,7 +147,6 @@ export const TaskCard = ({
       return;
     }
 
-    console.log(`Действие: ${action}`);
     setIsMenuOpen(false);
   };
 
@@ -196,11 +211,13 @@ export const TaskCard = ({
 
       {/* === Нижняя часть === */}
       <div className="task-card__bottom">
-        {priority && (
+        {/* ✅ Показываем Priority и Created только если НЕ Completed */}
+        {status !== "Completed" && priority && (
           <span>
             Priority: <span className="task-card__priority">{priority}</span>
           </span>
         )}
+
         <span
           className={`task-card__status ${
             status === "Not Started"
@@ -212,7 +229,17 @@ export const TaskCard = ({
         >
           Status: {status}
         </span>
-        {date && <span className="task-card__date">Created on: {date}</span>}
+
+        {/* ✅ Показываем время завершения только для Completed */}
+        {status === "Completed" && completedTime && (
+          <span className="task-card__completed">
+            Completed {formatTimeAgo(completedTime)}.
+          </span>
+        )}
+
+        {status !== "Completed" && date && (
+          <span className="task-card__date">Created on: {date}</span>
+        )}
       </div>
     </div>
   );
