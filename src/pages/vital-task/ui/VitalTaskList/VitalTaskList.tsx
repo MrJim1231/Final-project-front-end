@@ -1,6 +1,5 @@
 import "./VitalTaskList.css";
 import { useEffect, useState } from "react";
-import { FiAlertTriangle } from "react-icons/fi";
 import { TaskCard } from "../../../../shared/ui/TaskCard";
 import { getTodos } from "../../../../shared/api/todos";
 import type { Todo } from "../../../../shared/api/todos";
@@ -34,7 +33,6 @@ export const VitalTaskList = () => {
       {/* === Заголовок секции === */}
       <div className="vital-task-list__header">
         <div className="vital-task-list__title-wrapper">
-          {/* <FiAlertTriangle className="vital-task-list__icon" /> */}
           <h3 className="vital-task-list__title">Vital Tasks</h3>
         </div>
       </div>
