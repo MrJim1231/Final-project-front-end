@@ -2,7 +2,7 @@ import "./CompletedTask.css";
 import { useEffect, useState } from "react";
 import { FiCheckSquare } from "react-icons/fi";
 import { TaskCard } from "../../../../shared/ui/TaskCard";
-import { getTodos } from "../../../../shared/api/todos";
+import { getTodos, deleteTodo } from "../../../../shared/api/todos";
 import type { Todo } from "../../../../shared/api/todos";
 
 export const CompletedTask = () => {
@@ -26,6 +26,18 @@ export const CompletedTask = () => {
     };
     fetchCompletedTasks();
   }, []);
+
+  // 🗑️ Удаление завершённой задачи
+  const handleDeleteTask = async (id: string) => {
+    if (!window.confirm("Удалить завершённую задачу?")) return;
+    try {
+      await deleteTodo(id);
+      setCompletedTasks((prev) => prev.filter((t) => t.id !== id));
+    } catch (error) {
+      console.error("Ошибка при удалении задачи:", error);
+      alert("Не удалось удалить задачу 😢");
+    }
+  };
 
   if (loading) {
     return (
@@ -57,6 +69,7 @@ export const CompletedTask = () => {
             image={task.image}
             completedAt={task.completedAt || "Recently completed"}
             type="completed"
+            onDelete={handleDeleteTask} // ✅ добавили обработчик удаления
           />
         ))
       ) : (
