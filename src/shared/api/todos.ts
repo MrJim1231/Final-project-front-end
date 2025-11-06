@@ -48,7 +48,7 @@ export const deleteTodo = async (id: string): Promise<void> => {
   }
 };
 
-// === Обновить задачу (например, статус) ===
+// === Обновить задачу (полное обновление) ===
 export const updateTodo = async (
   id: string,
   updatedFields: Partial<Todo>
@@ -59,5 +59,19 @@ export const updateTodo = async (
   } catch (error) {
     console.error("Ошибка при обновлении задачи:", error);
     throw new Error("Не удалось обновить задачу");
+  }
+};
+
+// === Частичное обновление (например, только статус) ===
+export const patchTodo = async (
+  id: string,
+  fields: Partial<Todo>
+): Promise<Todo> => {
+  try {
+    const { data } = await axios.patch<Todo>(`${API_URL}/${id}`, fields);
+    return data;
+  } catch (error) {
+    console.error("Ошибка при частичном обновлении:", error);
+    throw new Error("Не удалось изменить данные задачи");
   }
 };

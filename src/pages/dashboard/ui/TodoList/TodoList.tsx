@@ -3,7 +3,7 @@ import "./TodoList.css";
 import { FiClipboard, FiPlus } from "react-icons/fi";
 import { TaskCard } from "../../../../shared/ui/TaskCard";
 import { AddTaskModal } from "../AddTaskModal/AddTaskModal";
-import { getTodos, createTodo } from "../../../../shared/api/todos";
+import { getTodos, createTodo, deleteTodo } from "../../../../shared/api/todos";
 import type { Todo } from "../../../../shared/api/todos";
 
 export const TodoList = () => {
@@ -26,7 +26,7 @@ export const TodoList = () => {
     fetchTodos();
   }, []);
 
-  // ✅ Добавление новой задачи в базу (mockAPI)
+  // ✅ Добавление новой задачи в mockAPI
   const handleAddTask = async (form: any) => {
     try {
       const newTodo = {
@@ -41,17 +41,24 @@ export const TodoList = () => {
             : form.image || "",
       };
 
-      // Отправляем задачу в mockAPI
       const created = await createTodo(newTodo);
-
-      // Обновляем локальное состояние (вверху списка)
       setTasks((prev) => [created, ...prev]);
-
-      // Закрываем модалку
       setIsModalOpen(false);
     } catch (error) {
       console.error("Ошибка при добавлении задачи:", error);
       alert("Не удалось добавить задачу 😢");
+    }
+  };
+
+  // 🗑️ Удаление задачи из базы и состояния
+  const handleDeleteTask = async (id: string) => {
+    if (!window.confirm("Удалить задачу?")) return;
+    try {
+      await deleteTodo(id);
+      setTasks((prev) => prev.filter((t) => t.id !== id));
+    } catch (error) {
+      console.error("Ошибка при удалении задачи:", error);
+      alert("Не удалось удалить задачу 😢");
     }
   };
 
@@ -88,12 +95,14 @@ export const TodoList = () => {
         tasks.map((task) => (
           <TaskCard
             key={task.id}
+            id={task.id}
             title={task.title}
             desc={task.description}
             date={new Date(task.createdAt).toLocaleDateString()}
             priority={task.priority}
             status={task.status}
             image={task.image}
+            onDelete={handleDeleteTask} // 👈 передаём обработчик
           />
         ))
       ) : (

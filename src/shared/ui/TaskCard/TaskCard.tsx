@@ -1,7 +1,9 @@
 import "./TaskCard.css";
+import { useState, useRef, useEffect } from "react";
 import { IoEllipsisHorizontalOutline } from "react-icons/io5";
 
 interface TaskCardProps {
+  id?: string;
   title: string;
   desc: string;
   date?: string;
@@ -10,9 +12,11 @@ interface TaskCardProps {
   image?: string;
   completedAt?: string;
   type?: "default" | "completed" | "vital";
+  onDelete?: (id: string) => void; // 👈 добавлено
 }
 
 export const TaskCard = ({
+  id,
   title,
   desc,
   date,
@@ -21,7 +25,12 @@ export const TaskCard = ({
   image,
   completedAt,
   type = "default",
+  onDelete,
 }: TaskCardProps) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+
+  // === Цвет кружка статуса ===
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Not Started":
@@ -35,15 +44,68 @@ export const TaskCard = ({
     }
   };
 
+  // === Закрытие меню при клике вне ===
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // === Обработка кликов по действиям ===
+  const handleActionClick = (action: string) => {
+    if (action === "Delete" && id && onDelete) {
+      onDelete(id);
+      setIsMenuOpen(false);
+    } else {
+      console.log(`Действие: ${action}`);
+      setIsMenuOpen(false);
+    }
+  };
+
+  // === Меню действий ===
+  const actions = [
+    type === "vital" ? "Remove from Vital" : "Vital",
+    "Edit",
+    "Delete",
+    "Finish",
+  ];
+
   return (
     <div
       className={`task-card 
         ${type === "completed" ? "task-card--completed" : ""} 
         ${type === "vital" ? "task-card--vital" : ""}`}
     >
-      <IoEllipsisHorizontalOutline className="task-card__menu" />
+      {/* ⋯ Кнопка меню */}
+      <div className="task-card__menu-wrapper" ref={menuRef}>
+        <IoEllipsisHorizontalOutline
+          className="task-card__menu"
+          onClick={() => setIsMenuOpen((prev) => !prev)}
+        />
 
-      {/* === Верхняя часть: текст слева, картинка справа === */}
+        {isMenuOpen && (
+          <div className="task-card__actions">
+            <p className="task-card__actions-title">Actions</p>
+            <ul>
+              {actions.map((action) => (
+                <li
+                  key={action}
+                  className="task-card__action-item"
+                  onClick={() => handleActionClick(action)}
+                >
+                  {action}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+
+      {/* === Верхняя часть === */}
       <div className="task-card__top">
         <div className="task-card__left">
           <div className="task-card__header">
@@ -63,7 +125,7 @@ export const TaskCard = ({
         )}
       </div>
 
-      {/* === Нижняя часть: приоритет, статус и дата === */}
+      {/* === Нижняя часть === */}
       <div className="task-card__bottom">
         {priority && (
           <span>
