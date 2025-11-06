@@ -85,16 +85,22 @@ export const TaskCard = ({
   const handleActionClick = async (action: string) => {
     if (!id) return;
 
+    // 🗑️ Удаление
     if (action === "Delete" && onDelete) {
       onDelete(id);
       setIsMenuOpen(false);
       return;
     }
 
+    // ✅ Завершение задачи (Finish)
     if (action === "Finish") {
       try {
         setUpdating(true);
-        const updated = await patchTodo(id, { status: "Completed" });
+        // 👇 добавили сохранение даты завершения
+        const updated = await patchTodo(id, {
+          status: "Completed",
+          completedAt: new Date().toISOString(), // ✅ фикс
+        });
         setStatus(updated.status);
         onStatusUpdate?.(id, updated.status);
       } catch (error) {
@@ -107,6 +113,7 @@ export const TaskCard = ({
       return;
     }
 
+    // ⭐ Vital / Remove from Vital
     if (action === "Vital" || action === "Remove from Vital") {
       try {
         setUpdating(true);
