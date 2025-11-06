@@ -168,3 +168,99 @@
     margin-left: 16px;
   }
 }
+
+/* 📱 Мобильные */
+@media (max-width: 768px) {
+  .task-card {
+    flex-direction: column; /* 👉 картинка под текстом */
+    padding: 14px 16px;
+    margin-bottom: 12px;
+  }
+
+  .task-card__menu {
+    font-size: 26px;
+    right: 8px;
+  }
+
+  .task-card__top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .task-card__left {
+    padding-left: 16px;
+    gap: 12px;
+  }
+
+  .task-card__title {
+    font-size: 15px;
+    max-width: 100%;
+  }
+
+  .task-card__desc {
+    font-size: 13px;
+    line-height: 1.4;
+    max-width: 100%;
+  }
+
+  .task-card__right {
+    width: 100%;
+  }
+
+  .task-card__img {
+    width: 100%;
+    height: auto;
+    max-height: 180px;
+    margin-top: 10px;
+    border-radius: 10px;
+  }
+
+  .task-card__bottom {
+    flex-wrap: wrap;
+    font-size: 11px;
+    margin-left: 16px;
+    gap: 10px;
+  }
+
+  .task-card__priority,
+  .task-card__date {
+    font-size: 11px;
+  }
+}
+
+/* 📲 Маленькие телефоны */
+@media (max-width: 480px) {
+  .task-card {
+    padding: 12px 14px;
+    border-radius: 10px;
+  }
+
+  .task-card__title {
+    font-size: 14px;
+  }
+
+  .task-card__desc {
+    font-size: 12px;
+  }
+
+  .task-card__circle {
+    width: 10px;
+    height: 10px;
+  }
+
+  .task-card__bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    margin-left: 14px;
+  }
+
+  .task-card__img {
+    max-height: 140px;
+  }
+
+  .task-card__menu {
+    font-size: 22px;
+  }
+}

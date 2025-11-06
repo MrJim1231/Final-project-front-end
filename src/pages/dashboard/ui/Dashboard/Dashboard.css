@@ -9,7 +9,7 @@
 .dashboard-page__content {
   display: grid;
   grid-template-columns: 2fr 1fr; /* 🔹 Левая колонка шире */
-  gap: 1rem;
+  gap: 1.5rem;
   margin-top: 2rem;
   border: 1px solid rgba(161, 163, 171, 0.6);
   padding: 20px;
@@ -22,7 +22,6 @@
 .dashboard-page__left {
   display: flex;
   flex-direction: column;
-  /* height: 100%; */
 }
 
 /* Правая колонка */
@@ -38,10 +37,12 @@
 
 /* === 🧩 Адаптация под экраны === */
 
-/* 📱 Планшеты */
+/* 💻 Планшеты (до 1200px) */
 @media (max-width: 1200px) {
   .dashboard-page__content {
-    grid-template-columns: 1fr; /* 🔹 Один столбец */
+    grid-template-columns: 1fr; /* Один столбец */
+    gap: 1.25rem;
+    padding: 20px;
   }
 
   .dashboard-page__right {
@@ -49,14 +50,53 @@
   }
 }
 
-/* 📱 Мобильные */
-@media (max-width: 600px) {
+/* 📱 Мобильные (до 768px) */
+@media (max-width: 768px) {
   .dashboard-page__content {
+    display: flex;
+    flex-direction: column;
+    border: none;
     padding: 16px;
-    gap: 1rem;
+    gap: 1.25rem;
+  }
+
+  .dashboard-page__left,
+  .dashboard-page__right {
+    width: 100%;
   }
 
   .dashboard-page__right .completed-task {
     margin-top: 16px;
+  }
+
+  /* Уменьшаем внутренние отступы у карточек */
+  .task-card,
+  .status-block,
+  .completed-task {
+    padding: 14px;
+  }
+}
+
+/* 📲 Маленькие телефоны (до 480px) */
+@media (max-width: 480px) {
+  .dashboard-page__content {
+    padding: 12px;
+    gap: 0.75rem;
+  }
+
+  .dashboard-page__right .completed-task {
+    margin-top: 12px;
+  }
+
+  .task-card__title {
+    font-size: 14px;
+  }
+
+  .task-card__desc {
+    font-size: 12px;
+  }
+
+  .status-block__title {
+    font-size: 14px;
   }
 }
