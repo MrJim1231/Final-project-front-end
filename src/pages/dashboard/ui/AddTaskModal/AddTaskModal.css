@@ -14,12 +14,26 @@
   background: #fff;
   border-radius: 10px;
   width: 700px; /* 🔹 уменьшено с 918px */
-  height: 500px;
   max-width: 90%;
+  max-height: 90vh; /* 🔹 ограничение по высоте окна */
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-y: auto; /* 🔹 добавляем вертикальную прокрутку */
+  scrollbar-width: thin; /* 🔹 тонкий скролл (Firefox) */
+  scrollbar-color: #ff7a3a #f1f1f1;
+}
+
+/* === Скроллбар (для Chrome, Edge) === */
+.addtask-modal::-webkit-scrollbar {
+  width: 6px;
+}
+.addtask-modal::-webkit-scrollbar-thumb {
+  background-color: #ff7a3a;
+  border-radius: 4px;
+}
+.addtask-modal::-webkit-scrollbar-track {
+  background: #f1f1f1;
 }
 
 /* === Заголовок === */
@@ -238,7 +252,10 @@
 /* === Адаптация === */
 @media (max-width: 768px) {
   .addtask-modal {
-    width: 90%;
+    width: 95%;
+    max-height: 90vh;
+    overflow-y: auto; /* ✅ прокрутка */
+    border-radius: 8px;
   }
 
   .addtask-modal__content {
@@ -253,5 +270,25 @@
   .addtask-modal__btn {
     width: 100%;
     text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .addtask-modal__title {
+    font-size: 14px;
+  }
+
+  .addtask-modal__priority {
+    /* flex-direction: column; */
+    align-items: flex-start;
+  }
+
+  .addtask-modal__upload-box {
+    padding: 20px 6px;
+  }
+
+  .addtask-modal__btn {
+    padding: 10px 0;
+    width: 100%;
   }
 }
