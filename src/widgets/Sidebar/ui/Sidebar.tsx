@@ -9,11 +9,11 @@ import {
   FiHelpCircle,
   FiLogOut,
 } from "react-icons/fi";
-import { NavLink } from "react-router-dom"; // 👈 добавляем роутинг
+import { NavLink } from "react-router-dom";
 
-export const Sidebar = () => {
+export const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
   return (
-    <aside className="dashboard__sidebar">
+    <aside className={`dashboard__sidebar ${isOpen ? "open" : ""}`}>
       {/* === Верхняя часть === */}
       <div className="dashboard__sidebar-top">
         <div className="dashboard__sidebar-profile">

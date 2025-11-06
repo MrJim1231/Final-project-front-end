@@ -1,10 +1,17 @@
 import "./Header.css";
-import { FiSearch, FiBell, FiCalendar } from "react-icons/fi";
+import { FiSearch, FiBell, FiCalendar, FiMenu } from "react-icons/fi";
 
-export const Header = () => {
+export const Header = ({
+  onToggleSidebar,
+}: {
+  onToggleSidebar: () => void;
+}) => {
   return (
     <header className="dashboard__header">
       <div className="dashboard__header-container">
+        <button className="dashboard__burger" onClick={onToggleSidebar}>
+          <FiMenu />
+        </button>
         <div className="dashboard__header-logo">
           <span className="dashboard__header-logo-highlight">Dash</span>board
         </div>
