@@ -99,8 +99,10 @@ export const TodoList = () => {
     return <p>Loading tasks...</p>;
   }
 
-  // 🚫 Показываем только НЕ-vital задачи
-  const visibleTasks = tasks.filter((task) => !task.vital);
+  // 🚫 Показываем только те, что НЕ vital и НЕ completed
+  const visibleTasks = tasks.filter(
+    (task) => !task.vital && task.status !== "Completed"
+  );
 
   return (
     <div className="todo-list">
@@ -145,7 +147,7 @@ export const TodoList = () => {
           />
         ))
       ) : (
-        <p>No tasks yet. Add your first one!</p>
+        <p>No active tasks 🎯</p>
       )}
 
       {/* === Модалка добавления === */}
