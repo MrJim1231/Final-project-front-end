@@ -1,7 +1,7 @@
 import "./MyTaskList.css";
 import { useEffect, useState } from "react";
 import { TaskCard } from "../../../../shared/ui/TaskCard";
-import { getTodos } from "../../../../shared/api/todos";
+import { getTodos, deleteTodo } from "../../../../shared/api/todos";
 import type { Todo } from "../../../../shared/api/todos";
 
 export const MyTaskList = () => {
@@ -22,6 +22,19 @@ export const MyTaskList = () => {
     };
     fetchTasks();
   }, []);
+
+  // 🗑️ Удаление задачи
+  const handleDeleteTask = async (id: string) => {
+    if (!window.confirm("Удалить задачу?")) return;
+    try {
+      await deleteTodo(id);
+      // ✅ Удаляем задачу локально без перезагрузки
+      setTasks((prev) => prev.filter((t) => t.id !== id));
+    } catch (error) {
+      console.error("Ошибка при удалении задачи:", error);
+      alert("Не удалось удалить задачу 😢");
+    }
+  };
 
   if (loading) {
     return <p className="my-task-list__loading">Loading tasks...</p>;
@@ -54,6 +67,7 @@ export const MyTaskList = () => {
                 ? "completed"
                 : "default"
             }
+            onDelete={handleDeleteTask} // ✅ добавили обработчик
           />
         ))
       ) : (
