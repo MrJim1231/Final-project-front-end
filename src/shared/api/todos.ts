@@ -10,6 +10,7 @@ export interface Todo {
   status: "Not Started" | "In Progress" | "Completed";
   image?: string;
   vital?: boolean; // 👈 добавлено
+  completedAt?: string; // 👈 добавляем дату завершения
 }
 
 // === Базовый URL ===
