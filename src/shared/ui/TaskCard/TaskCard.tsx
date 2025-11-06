@@ -1,7 +1,7 @@
 import "./TaskCard.css";
 import { useState, useRef, useEffect } from "react";
 import { IoEllipsisHorizontalOutline } from "react-icons/io5";
-import { patchTodo } from "../../api/todos"; // 👈 добавили API
+import { patchTodo } from "../../api/todos";
 
 interface TaskCardProps {
   id?: string;
@@ -13,11 +13,13 @@ interface TaskCardProps {
   image?: string;
   completedAt?: string;
   type?: "default" | "completed" | "vital";
+  vital?: boolean;
   onDelete?: (id: string) => void;
   onStatusUpdate?: (
     id: string,
     newStatus: "Not Started" | "In Progress" | "Completed"
-  ) => void; // 👈 новый проп
+  ) => void;
+  onVitalUpdate?: (id: string, isVital: boolean) => void;
 }
 
 export const TaskCard = ({
@@ -28,14 +30,31 @@ export const TaskCard = ({
   status: initialStatus,
   priority,
   image,
-  type = "default",
+  type: initialType = "default",
+  vital = false,
   onDelete,
   onStatusUpdate,
+  onVitalUpdate,
 }: TaskCardProps) => {
   const [status, setStatus] = useState(initialStatus);
+  const [isVital, setIsVital] = useState(vital);
+  const [type, setType] = useState<"default" | "completed" | "vital">(
+    initialType
+  );
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [updating, setUpdating] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
+
+  // === Автоматически обновляем тип при изменении статуса или vital ===
+  useEffect(() => {
+    if (isVital) {
+      setType("vital");
+    } else if (status === "Completed") {
+      setType("completed");
+    } else {
+      setType("default");
+    }
+  }, [status, isVital]);
 
   // === Цвет кружка статуса ===
   const getStatusColor = (status: string) => {
@@ -62,27 +81,42 @@ export const TaskCard = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // === Обработка кликов по действиям ===
+  // === Обработка действий ===
   const handleActionClick = async (action: string) => {
     if (!id) return;
 
-    // Удаление
     if (action === "Delete" && onDelete) {
       onDelete(id);
       setIsMenuOpen(false);
       return;
     }
 
-    // ✅ Завершение задачи (Finish)
     if (action === "Finish") {
       try {
         setUpdating(true);
         const updated = await patchTodo(id, { status: "Completed" });
-        setStatus(updated.status); // обновляем локально
-        onStatusUpdate?.(id, updated.status); // обновляем в родителе
+        setStatus(updated.status);
+        onStatusUpdate?.(id, updated.status);
       } catch (error) {
         console.error("Ошибка при обновлении статуса:", error);
         alert("Не удалось обновить статус 😢");
+      } finally {
+        setUpdating(false);
+        setIsMenuOpen(false);
+      }
+      return;
+    }
+
+    if (action === "Vital" || action === "Remove from Vital") {
+      try {
+        setUpdating(true);
+        const newVital = !isVital;
+        const updated = await patchTodo(id, { vital: newVital });
+        setIsVital(updated.vital ?? newVital);
+        onVitalUpdate?.(id, updated.vital ?? newVital);
+      } catch (error) {
+        console.error("Ошибка при обновлении Vital:", error);
+        alert("Не удалось изменить важность задачи 😢");
       } finally {
         setUpdating(false);
         setIsMenuOpen(false);
@@ -94,9 +128,8 @@ export const TaskCard = ({
     setIsMenuOpen(false);
   };
 
-  // === Меню действий ===
   const actions = [
-    type === "vital" ? "Remove from Vital" : "Vital",
+    isVital ? "Remove from Vital" : "Vital",
     "Edit",
     "Delete",
     "Finish",
@@ -105,7 +138,7 @@ export const TaskCard = ({
   return (
     <div
       className={`task-card 
-        ${status === "Completed" ? "task-card--completed" : ""} 
+        ${type === "completed" ? "task-card--completed" : ""}
         ${type === "vital" ? "task-card--vital" : ""}`}
     >
       {/* ⋯ Кнопка меню */}
@@ -114,7 +147,6 @@ export const TaskCard = ({
           className="task-card__menu"
           onClick={() => setIsMenuOpen((prev) => !prev)}
         />
-
         {isMenuOpen && (
           <div className="task-card__actions">
             <ul>
@@ -142,11 +174,12 @@ export const TaskCard = ({
               className="task-card__circle"
               style={{ borderColor: getStatusColor(status) }}
             ></span>
-            <h4 className="task-card__title">{title}</h4>
+            <h4 className="task-card__title">
+              {title} {isVital && <span style={{ color: "#ff6767" }}>★</span>}
+            </h4>
           </div>
           <p className="task-card__desc">{desc}</p>
         </div>
-
         {image && (
           <div className="task-card__right">
             <img src={image} alt={title} className="task-card__img" />

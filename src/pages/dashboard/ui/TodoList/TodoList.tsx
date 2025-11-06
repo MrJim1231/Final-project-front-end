@@ -3,7 +3,12 @@ import "./TodoList.css";
 import { FiClipboard, FiPlus } from "react-icons/fi";
 import { TaskCard } from "../../../../shared/ui/TaskCard";
 import { AddTaskModal } from "../AddTaskModal/AddTaskModal";
-import { getTodos, createTodo, deleteTodo } from "../../../../shared/api/todos";
+import {
+  getTodos,
+  createTodo,
+  deleteTodo,
+  patchTodo, // 👈 добавили
+} from "../../../../shared/api/todos";
 import type { Todo } from "../../../../shared/api/todos";
 
 export const TodoList = () => {
@@ -35,6 +40,7 @@ export const TodoList = () => {
         createdAt: form.date || new Date().toISOString(),
         priority: form.priority || "Low",
         status: "Not Started" as const,
+        vital: false, // 👈 по умолчанию задача не "vital"
         image:
           form.image instanceof File
             ? URL.createObjectURL(form.image)
@@ -62,7 +68,7 @@ export const TodoList = () => {
     }
   };
 
-  // ✅ Обновление статуса после клика Finish
+  // ✅ Обновление статуса после Finish
   const handleStatusUpdate = (
     id: string,
     newStatus: "Not Started" | "In Progress" | "Completed"
@@ -74,12 +80,28 @@ export const TodoList = () => {
     );
   };
 
+  // ⭐ Обновление Vital (при клике "Vital" или "Remove from Vital")
+  const handleVitalUpdate = async (id: string, isVital: boolean) => {
+    try {
+      await patchTodo(id, { vital: isVital });
+      setTasks((prev) =>
+        prev.map((task) =>
+          task.id === id ? { ...task, vital: isVital } : task
+        )
+      );
+    } catch (error) {
+      console.error("Ошибка при обновлении важности задачи:", error);
+      alert("Не удалось обновить важность задачи 😢");
+    }
+  };
+
   if (loading) {
     return <p>Loading tasks...</p>;
   }
 
   return (
     <div className="todo-list">
+      {/* === Заголовок секции === */}
       <div className="todo-list__header">
         <div className="todo-list__title-wrapper">
           <FiClipboard className="todo-list__icon" />
@@ -94,12 +116,14 @@ export const TodoList = () => {
         </button>
       </div>
 
+      {/* === Дата под заголовком === */}
       <div className="todo-list__date-section">
         <span className="todo-list__day">20 June</span>
         <span className="todo-list__dot">•</span>
         <span className="todo-list__today">Today</span>
       </div>
 
+      {/* === Список карточек === */}
       {tasks.length > 0 ? (
         tasks.map((task) => (
           <TaskCard
@@ -111,14 +135,17 @@ export const TodoList = () => {
             priority={task.priority}
             status={task.status}
             image={task.image}
+            vital={task.vital} // 👈 передаём флаг
             onDelete={handleDeleteTask}
-            onStatusUpdate={handleStatusUpdate} // 👈 добавили
+            onStatusUpdate={handleStatusUpdate}
+            onVitalUpdate={handleVitalUpdate} // 👈 передаём обработчик
           />
         ))
       ) : (
         <p>No tasks yet. Add your first one!</p>
       )}
 
+      {/* === Модалка добавления === */}
       {isModalOpen && (
         <AddTaskModal
           onClose={() => setIsModalOpen(false)}

@@ -9,6 +9,7 @@ export interface Todo {
   priority: "Low" | "Moderate" | "High" | "Extreme";
   status: "Not Started" | "In Progress" | "Completed";
   image?: string;
+  vital?: boolean; // 👈 добавлено
 }
 
 // === Базовый URL ===
