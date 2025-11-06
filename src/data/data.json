@@ -2,17 +2,17 @@
   {
     "id": "1",
     "title": "Attend Nischal’s Birthday Party",
-    "desc": "Buy gifts on the way and pick up cake from the bakery. (6 PM | Fresh Elements)",
+    "description": "Buy gifts on the way and pick up cake from the bakery. (6 PM | Fresh Elements)",
     "priority": "Moderate",
     "status": "Not Started",
-    "image": "https://herbstlust.de/wp-content/uploads/2022/01/Spaziergang-spazieren-gehen-kalorien-Tipps-interessant-ideen-Anregungen-Alter-Senioren-Rentнер-Bewegung.jpeg",
+    "image": "https://newsib.net/wp-content/uploads/2022/06/17-2048x1070-0-700x467.jpg",
     "date": "2025-11-02",
     "type": "default"
   },
   {
     "id": "2",
     "title": "Landing Page Design for TravelDays",
-    "desc": "Get the work done by EOD and discuss with client before leaving. (4 PM | Meeting Room)",
+    "description": "Get the work done by EOD and discuss with client before leaving. (4 PM | Meeting Room)",
     "priority": "Moderate",
     "status": "In Progress",
     "image": "https://newsib.net/wp-content/uploads/2022/06/17-2048x1070-0-700x467.jpg",
@@ -22,7 +22,7 @@
   {
     "id": "3",
     "title": "Presentation on Final Product",
-    "desc": "Make sure everything is functioning and the team has all resources ready.",
+    "description": "Make sure everything is functioning and the team has all resources ready.",
     "priority": "Moderate",
     "status": "Completed",
     "image": "https://img.freepik.com/premium-photo/mom-with-two-kids-walking-city-park-city-life_160672-6976.jpg",
@@ -33,7 +33,7 @@
   {
     "id": "4",
     "title": "Grocery Shopping",
-    "desc": "Buy fruits, milk and vegetables from the supermarket.",
+    "description": "Buy fruits, milk and vegetables from the supermarket.",
     "priority": "Low",
     "status": "Not Started",
     "image": "https://orthomol.life/image/cache/catalog/image/catalog/foto/o_1cqfod97hb93latqd71ug5177q25.webp",
@@ -43,7 +43,7 @@
   {
     "id": "5",
     "title": "Call with Client",
-    "desc": "Schedule a Zoom call to discuss new requirements.",
+    "description": "Schedule a Zoom call to discuss new requirements.",
     "priority": "High",
     "status": "In Progress",
     "image": "https://coaching-way.com/wp-content/uploads/2017/07/savoring-walk-progulka-degustacija-01.jpeg",
@@ -53,22 +53,12 @@
   {
     "id": "6",
     "title": "Morning Coffee Walk",
-    "desc": "Take a refreshing morning walk with coffee and plan your day.",
+    "description": "Take a refreshing morning walk with coffee and plan your day.",
     "priority": "Low",
     "status": "Completed",
     "image": "https://amiel.club/uploads/posts/2022-03/1647646175_1-amiel-club-p-progulka-kartinki-1.jpg",
     "date": "2025-11-02",
     "completedAt": "2025-11-02",
     "type": "completed"
-  },
-  {
-    "id": "7",
-    "title": "Test Task",
-    "desc": "Temporary testing task for layout debugging.",
-    "priority": "Low",
-    "status": "Not Started",
-    "image": "https://herbstlust.de/wp-content/uploads/2022/01/Spaziergang-spazieren-gehen-kalorien-Tipps-interessant-ideen-Anregungen-Alter-Senioren-Rentнер-Bewegung.jpeg",
-    "date": "2025-11-16",
-    "type": "default"
   }
 ]
