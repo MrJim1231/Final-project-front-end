@@ -26,7 +26,7 @@ export const TodoList = () => {
     fetchTodos();
   }, []);
 
-  // ✅ Добавление новой задачи в mockAPI
+  // ✅ Добавление новой задачи
   const handleAddTask = async (form: any) => {
     try {
       const newTodo = {
@@ -50,7 +50,7 @@ export const TodoList = () => {
     }
   };
 
-  // 🗑️ Удаление задачи из базы и состояния
+  // 🗑️ Удаление задачи
   const handleDeleteTask = async (id: string) => {
     if (!window.confirm("Удалить задачу?")) return;
     try {
@@ -62,13 +62,24 @@ export const TodoList = () => {
     }
   };
 
+  // ✅ Обновление статуса после клика Finish
+  const handleStatusUpdate = (
+    id: string,
+    newStatus: "Not Started" | "In Progress" | "Completed"
+  ) => {
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === id ? { ...task, status: newStatus } : task
+      )
+    );
+  };
+
   if (loading) {
     return <p>Loading tasks...</p>;
   }
 
   return (
     <div className="todo-list">
-      {/* === Заголовок секции === */}
       <div className="todo-list__header">
         <div className="todo-list__title-wrapper">
           <FiClipboard className="todo-list__icon" />
@@ -83,14 +94,12 @@ export const TodoList = () => {
         </button>
       </div>
 
-      {/* === Дата под заголовком === */}
       <div className="todo-list__date-section">
         <span className="todo-list__day">20 June</span>
         <span className="todo-list__dot">•</span>
         <span className="todo-list__today">Today</span>
       </div>
 
-      {/* === Список карточек === */}
       {tasks.length > 0 ? (
         tasks.map((task) => (
           <TaskCard
@@ -102,14 +111,14 @@ export const TodoList = () => {
             priority={task.priority}
             status={task.status}
             image={task.image}
-            onDelete={handleDeleteTask} // 👈 передаём обработчик
+            onDelete={handleDeleteTask}
+            onStatusUpdate={handleStatusUpdate} // 👈 добавили
           />
         ))
       ) : (
         <p>No tasks yet. Add your first one!</p>
       )}
 
-      {/* === Модалка добавления === */}
       {isModalOpen && (
         <AddTaskModal
           onClose={() => setIsModalOpen(false)}

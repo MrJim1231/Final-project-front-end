@@ -54,7 +54,9 @@ export const updateTodo = async (
   updatedFields: Partial<Todo>
 ): Promise<Todo> => {
   try {
-    const { data } = await axios.put<Todo>(`${API_URL}/${id}`, updatedFields);
+    const { data } = await axios.put<Todo>(`${API_URL}/${id}`, updatedFields, {
+      headers: { "Content-Type": "application/json" },
+    });
     return data;
   } catch (error) {
     console.error("Ошибка при обновлении задачи:", error);
@@ -62,16 +64,19 @@ export const updateTodo = async (
   }
 };
 
-// === Частичное обновление (например, только статус) ===
+// ✅ === Частичное обновление (например, только статус) ===
+// Заменяем PATCH → PUT, чтобы избежать CORS-блокировки
 export const patchTodo = async (
   id: string,
   fields: Partial<Todo>
 ): Promise<Todo> => {
   try {
-    const { data } = await axios.patch<Todo>(`${API_URL}/${id}`, fields);
+    const { data } = await axios.put<Todo>(`${API_URL}/${id}`, fields, {
+      headers: { "Content-Type": "application/json" },
+    });
     return data;
   } catch (error) {
-    console.error("Ошибка при частичном обновлении:", error);
+    console.error("Ошибка при изменении задачи:", error);
     throw new Error("Не удалось изменить данные задачи");
   }
 };

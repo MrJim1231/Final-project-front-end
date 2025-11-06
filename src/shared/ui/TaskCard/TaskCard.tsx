@@ -1,6 +1,7 @@
 import "./TaskCard.css";
 import { useState, useRef, useEffect } from "react";
 import { IoEllipsisHorizontalOutline } from "react-icons/io5";
+import { patchTodo } from "../../api/todos"; // 👈 добавили API
 
 interface TaskCardProps {
   id?: string;
@@ -13,6 +14,10 @@ interface TaskCardProps {
   completedAt?: string;
   type?: "default" | "completed" | "vital";
   onDelete?: (id: string) => void;
+  onStatusUpdate?: (
+    id: string,
+    newStatus: "Not Started" | "In Progress" | "Completed"
+  ) => void; // 👈 новый проп
 }
 
 export const TaskCard = ({
@@ -20,14 +25,16 @@ export const TaskCard = ({
   title,
   desc,
   date,
-  status,
+  status: initialStatus,
   priority,
   image,
-  completedAt,
   type = "default",
   onDelete,
+  onStatusUpdate,
 }: TaskCardProps) => {
+  const [status, setStatus] = useState(initialStatus);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [updating, setUpdating] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   // === Цвет кружка статуса ===
@@ -56,14 +63,35 @@ export const TaskCard = ({
   }, []);
 
   // === Обработка кликов по действиям ===
-  const handleActionClick = (action: string) => {
-    if (action === "Delete" && id && onDelete) {
+  const handleActionClick = async (action: string) => {
+    if (!id) return;
+
+    // Удаление
+    if (action === "Delete" && onDelete) {
       onDelete(id);
       setIsMenuOpen(false);
-    } else {
-      console.log(`Действие: ${action}`);
-      setIsMenuOpen(false);
+      return;
     }
+
+    // ✅ Завершение задачи (Finish)
+    if (action === "Finish") {
+      try {
+        setUpdating(true);
+        const updated = await patchTodo(id, { status: "Completed" });
+        setStatus(updated.status); // обновляем локально
+        onStatusUpdate?.(id, updated.status); // обновляем в родителе
+      } catch (error) {
+        console.error("Ошибка при обновлении статуса:", error);
+        alert("Не удалось обновить статус 😢");
+      } finally {
+        setUpdating(false);
+        setIsMenuOpen(false);
+      }
+      return;
+    }
+
+    console.log(`Действие: ${action}`);
+    setIsMenuOpen(false);
   };
 
   // === Меню действий ===
@@ -77,8 +105,7 @@ export const TaskCard = ({
   return (
     <div
       className={`task-card 
-        ${isMenuOpen ? "menu-open" : ""} 
-        ${type === "completed" ? "task-card--completed" : ""} 
+        ${status === "Completed" ? "task-card--completed" : ""} 
         ${type === "vital" ? "task-card--vital" : ""}`}
     >
       {/* ⋯ Кнопка меню */}
@@ -94,8 +121,10 @@ export const TaskCard = ({
               {actions.map((action) => (
                 <li
                   key={action}
-                  className="task-card__action-item"
-                  onClick={() => handleActionClick(action)}
+                  className={`task-card__action-item ${
+                    updating ? "disabled" : ""
+                  }`}
+                  onClick={() => !updating && handleActionClick(action)}
                 >
                   {action}
                 </li>
