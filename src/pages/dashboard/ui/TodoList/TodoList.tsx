@@ -7,7 +7,7 @@ import {
   getTodos,
   createTodo,
   deleteTodo,
-  patchTodo, // 👈 добавили
+  patchTodo,
 } from "../../../../shared/api/todos";
 import type { Todo } from "../../../../shared/api/todos";
 
@@ -16,7 +16,7 @@ export const TodoList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Загружаем задачи с mockAPI при монтировании
+  // ✅ Загружаем задачи при монтировании
   useEffect(() => {
     const fetchTodos = async () => {
       try {
@@ -40,7 +40,7 @@ export const TodoList = () => {
         createdAt: form.date || new Date().toISOString(),
         priority: form.priority || "Low",
         status: "Not Started" as const,
-        vital: false, // 👈 по умолчанию задача не "vital"
+        vital: false,
         image:
           form.image instanceof File
             ? URL.createObjectURL(form.image)
@@ -68,7 +68,7 @@ export const TodoList = () => {
     }
   };
 
-  // ✅ Обновление статуса после Finish
+  // ✅ Обновление статуса
   const handleStatusUpdate = (
     id: string,
     newStatus: "Not Started" | "In Progress" | "Completed"
@@ -80,7 +80,7 @@ export const TodoList = () => {
     );
   };
 
-  // ⭐ Обновление Vital (при клике "Vital" или "Remove from Vital")
+  // ⭐ Обновление флага Vital
   const handleVitalUpdate = async (id: string, isVital: boolean) => {
     try {
       await patchTodo(id, { vital: isVital });
@@ -98,6 +98,9 @@ export const TodoList = () => {
   if (loading) {
     return <p>Loading tasks...</p>;
   }
+
+  // 🚫 Показываем только НЕ-vital задачи
+  const visibleTasks = tasks.filter((task) => !task.vital);
 
   return (
     <div className="todo-list">
@@ -124,8 +127,8 @@ export const TodoList = () => {
       </div>
 
       {/* === Список карточек === */}
-      {tasks.length > 0 ? (
-        tasks.map((task) => (
+      {visibleTasks.length > 0 ? (
+        visibleTasks.map((task) => (
           <TaskCard
             key={task.id}
             id={task.id}
@@ -135,10 +138,10 @@ export const TodoList = () => {
             priority={task.priority}
             status={task.status}
             image={task.image}
-            vital={task.vital} // 👈 передаём флаг
+            vital={task.vital}
             onDelete={handleDeleteTask}
             onStatusUpdate={handleStatusUpdate}
-            onVitalUpdate={handleVitalUpdate} // 👈 передаём обработчик
+            onVitalUpdate={handleVitalUpdate}
           />
         ))
       ) : (
