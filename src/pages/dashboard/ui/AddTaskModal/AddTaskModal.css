@@ -1,35 +1,40 @@
+/* === Затемнение фона === */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(10, 10, 10, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 100;
+  z-index: 99;
 }
 
+/* === Основной контейнер === */
 .addtask-modal {
   background: #fff;
-  width: 900px;
-  max-width: 95%;
-  border-radius: 8px;
+  border-radius: 10px;
+  width: 700px; /* 🔹 уменьшено с 918px */
+  max-width: 90%;
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
-  padding: 30px 40px;
+  overflow: hidden;
 }
 
+/* === Заголовок === */
 .addtask-modal__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  padding: 24px 32px 0 32px;
 }
 
 .addtask-modal__title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
+  color: #000;
   position: relative;
+  display: inline-block;
   padding-bottom: 6px;
 }
 
@@ -40,84 +45,128 @@
   left: 0;
   width: 32px;
   height: 2px;
-  background: #ff6767;
+  background-color: #ff6767;
   border-radius: 2px;
 }
 
 .addtask-modal__close {
-  border: none;
   background: none;
+  border: none;
   color: #000;
   font-weight: 700;
-  text-decoration: underline;
-  cursor: pointer;
   font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* === Рамка контента === */
+.addtask-modal__content {
+  border: 1px solid #dcdcdc;
+  margin: 16px 32px 32px 32px;
+  padding: 24px 32px;
+  border-radius: 8px;
 }
 
 /* === Форма === */
 .addtask-modal__form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
+/* === Поля Title и Date === */
+.addtask-modal__form input[type="text"],
+.addtask-modal__form input[type="date"] {
+  width: 100%;
+  border: 1px solid #cfcfcf;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.addtask-modal__form input:focus {
+  border-color: #ff6720;
+}
+
+/* === Текстовое поле Description === */
+.addtask-modal__form textarea {
+  width: 100%;
+  height: 100px;
+  border: 1px solid #cfcfcf;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 14px;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.addtask-modal__form textarea:focus {
+  border-color: #ff6720;
+}
+
+/* === Подписи к полям === */
 .addtask-modal__form label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   font-weight: 600;
   font-size: 14px;
   color: #333;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.addtask-modal__form input[type="text"],
-.addtask-modal__form input[type="date"],
-.addtask-modal__form textarea {
-  border: 1px solid #cfcfcf;
-  border-radius: 6px;
-  padding: 8px 10px;
-  font-size: 14px;
-  resize: none;
 }
 
 /* === Priority === */
 .addtask-modal__priority {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
+  flex-wrap: wrap;
   font-size: 13px;
   font-weight: 500;
 }
 
-.addtask-modal__priority label {
+.priority-item {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
   cursor: pointer;
+  user-select: none;
 }
 
-.addtask-modal__priority input {
+.priority-item input {
   display: none;
 }
 
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+.custom-box {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #aaa;
+  border-radius: 4px;
   display: inline-block;
+  transition: all 0.2s ease;
 }
 
-.dot--red {
+.priority-item input:checked + .custom-box.red {
   background: #ff4444;
+  border-color: #ff4444;
 }
-.dot--blue {
+.priority-item input:checked + .custom-box.blue {
   background: #007bff;
+  border-color: #007bff;
 }
-.dot--green {
+.priority-item input:checked + .custom-box.green {
   background: #00c851;
+  border-color: #00c851;
 }
 
-/* === Description & Upload === */
+.priority-item:hover .custom-box {
+  transform: scale(1.1);
+  border-color: #666;
+}
+
+/* === Описание и загрузка === */
 .addtask-modal__row {
   display: flex;
   justify-content: space-between;
@@ -136,7 +185,7 @@
   border: 1px dashed #cfcfcf;
   border-radius: 8px;
   text-align: center;
-  padding: 30px 10px;
+  padding: 28px 10px;
   font-size: 13px;
   color: #777;
   cursor: pointer;
@@ -152,32 +201,47 @@
 }
 
 .addtask-modal__upload-box span {
-  color: #ff5e5e;
+  color: #ff6720;
   font-weight: 600;
   cursor: pointer;
 }
 
-/* === Done Button === */
+/* === Кнопка Done === */
+.addtask-modal__actions {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 20px;
+}
+
 .addtask-modal__btn {
-  background: #ff5e5e;
-  color: #fff;
-  font-weight: 600;
   border: none;
   border-radius: 6px;
-  align-self: flex-start;
-  padding: 10px 36px;
+  background: #ff6720;
+  color: #fff;
+  font-weight: 600;
+  font-family: "Montserrat", sans-serif;
+  padding: 10px 42px;
+  font-size: 15px;
   cursor: pointer;
-  margin-top: 12px;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .addtask-modal__btn:hover {
-  background: #ff3838;
+  background: #ff7a3a;
+}
+
+.addtask-modal__btn:active {
+  transform: scale(0.97);
 }
 
 /* === Адаптация === */
 @media (max-width: 768px) {
   .addtask-modal {
+    width: 90%;
+  }
+
+  .addtask-modal__content {
+    margin: 10px 20px;
     padding: 20px;
   }
 
