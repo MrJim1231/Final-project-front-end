@@ -77,6 +77,7 @@ export const TaskCard = ({
   return (
     <div
       className={`task-card 
+        ${isMenuOpen ? "menu-open" : ""} 
         ${type === "completed" ? "task-card--completed" : ""} 
         ${type === "vital" ? "task-card--vital" : ""}`}
     >
