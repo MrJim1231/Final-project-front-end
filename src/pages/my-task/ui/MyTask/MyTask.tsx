@@ -1,6 +1,5 @@
-// src/pages/my-task/ui/MyTask/MyTask.tsx
 import "./MyTask.css";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { MyTaskList } from "../MyTaskList/MyTaskList";
 import { TaskDetails } from "../../../../entities/task/ui/TaskDetails/TaskDetails";
@@ -22,49 +21,46 @@ export const MyTask = () => {
     dispatch(fetchTasks());
   }, [dispatch]);
 
-  // 🔹 Мемоизируем фильтрованные активные задачи
-  const activeTasks = useMemo(
-    () => items.filter((t) => t.status !== "Completed" && !t.vital),
-    [items]
-  );
+  // ⚡️ Автоматически выбираем первую задачу после загрузки
+  useEffect(() => {
+    if (items.length > 0 && !selected) {
+      dispatch(selectTask(items[0])); // выбираем первую
+    }
+  }, [items, selected, dispatch]);
 
-  // 🗑️ Удаление текущей выбранной задачи
-  const handleDelete = async () => {
+  // 🔹 Фильтруем активные задачи (не Completed и не Vital)
+  const activeTasks = items.filter((t) => t.status !== "Completed" && !t.vital);
+
+  // 🗑️ Удаление текущей задачи
+  const handleDelete = () => {
     if (!selected) return;
-    if (!window.confirm(`Удалить задачу "${selected.title}"?`)) return;
+    if (window.confirm("Удалить задачу?")) {
+      const currentIndex = activeTasks.findIndex((t) => t.id === selected.id);
+      dispatch(removeTask(selected.id));
 
-    try {
-      await dispatch(removeTask(selected.id)).unwrap();
-
-      // ✅ выбираем следующую задачу
-      const nextTask = activeTasks.find((t) => t.id !== selected.id);
-      dispatch(selectTask(nextTask || null));
-    } catch (err) {
-      console.error("Ошибка при удалении задачи:", err);
-      alert("Не удалось удалить задачу 😢");
+      // Выбираем следующую задачу после удаления
+      const nextTask =
+        activeTasks[currentIndex + 1] || activeTasks[currentIndex - 1] || null;
+      dispatch(selectTask(nextTask));
     }
   };
 
-  // ✏️ Редактирование — пока просто сообщение, позже можно открыть модалку
+  // ✏️ Открыть редактирование
   const handleEdit = () => {
     if (selected) {
       alert(`Редактировать задачу: ${selected.title}`);
-      // ⬇️ в будущем: открыть модалку для редактирования
-      // dispatch(openEditModal(selected));
     }
   };
 
-  if (loading) return <p className="my-task-page__loading">Loading tasks...</p>;
+  if (loading) return <p>Loading tasks...</p>;
 
   return (
     <section className="my-task-page">
       <div className="my-task-page__content">
-        {/* === Левая колонка: список === */}
         <div className="my-task-page__left">
           <MyTaskList />
         </div>
 
-        {/* === Правая колонка: детали === */}
         <div className="my-task-page__right">
           {selected ? (
             <TaskDetails
