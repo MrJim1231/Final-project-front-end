@@ -1,125 +1,83 @@
+// src/pages/vital-task/ui/VitalTaskList/VitalTaskList.tsx
 import "./VitalTaskList.css";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { TaskCard } from "../../../../entities/task/ui/TaskCard";
-import { getTodos, deleteTodo, patchTodo } from "../../../../shared/api/todos";
+import {
+  fetchTasks,
+  removeTask,
+  updateTask,
+  selectTask,
+} from "../../../../entities/task/model/tasksSlice";
+import type { RootState, AppDispatch } from "../../../../app/providers/store";
 import type { Todo } from "../../../../shared/api/todos";
 
 interface VitalTaskListProps {
-  onSelectTask: (task: Todo | null) => void; // ✅ допускаем null
-  onTasksLoaded?: (tasks: Todo[]) => void;
+  onSelectTask: (task: Todo | null) => void;
 }
 
 export const VitalTaskList = ({ onSelectTask }: VitalTaskListProps) => {
-  const [vitalTasks, setVitalTasks] = useState<Todo[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
+  const dispatch = useDispatch<AppDispatch>();
+  const { items, loading, selected } = useSelector(
+    (state: RootState) => state.tasks
+  );
 
-  // 🚀 Загружаем только задачи с меткой "vital"
+  // 🚀 Загружаем задачи при монтировании
   useEffect(() => {
-    const fetchVitalTasks = async () => {
-      try {
-        const allTasks = await getTodos();
-        const vitalOnly = allTasks.filter((task) => task.vital === true);
-        setVitalTasks(vitalOnly);
+    dispatch(fetchTasks());
+  }, [dispatch]);
 
-        // ✅ Если есть задачи — выбираем первую по умолчанию
-        if (vitalOnly.length > 0) {
-          setActiveTaskId(vitalOnly[0].id);
-          onSelectTask(vitalOnly[0]);
-        }
-      } catch (error) {
-        console.error("Ошибка при загрузке Vital задач:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchVitalTasks();
-  }, [onSelectTask]);
+  // 🧩 Фильтруем только vital-задачи
+  const vitalTasks = items.filter((task) => task.vital);
 
   // 🗑️ Удаление задачи
-  const handleDeleteTask = async (id: string) => {
-    if (!window.confirm("Удалить задачу?")) return;
-    try {
-      await deleteTodo(id);
-      setVitalTasks((prev) => prev.filter((task) => task.id !== id));
-
-      if (activeTaskId === id) {
-        setActiveTaskId(null);
+  const handleDeleteTask = (id: string) => {
+    if (window.confirm("Удалить задачу?")) {
+      dispatch(removeTask(id));
+      if (selected?.id === id) {
+        dispatch(selectTask(null));
         onSelectTask(null);
       }
-    } catch (error) {
-      console.error("Ошибка при удалении задачи:", error);
-      alert("Не удалось удалить задачу 😢");
     }
   };
 
-  // 💫 Удаление из "Vital"
-  const handleVitalUpdate = async (id: string, isVital: boolean) => {
-    try {
-      await patchTodo(id, { vital: isVital });
-      if (!isVital) {
-        setVitalTasks((prev) => prev.filter((task) => task.id !== id));
+  // 💫 Удаление / добавление в "Vital"
+  const handleVitalUpdate = (id: string, isVital: boolean) => {
+    dispatch(updateTask({ id, vital: isVital }));
 
-        if (activeTaskId === id) {
-          setActiveTaskId(null);
-          onSelectTask(null);
-        }
-      }
-    } catch (error) {
-      console.error("Ошибка при изменении важности:", error);
-      alert("Не удалось обновить задачу 😢");
+    if (!isVital && selected?.id === id) {
+      dispatch(selectTask(null));
+      onSelectTask(null);
     }
   };
 
-  // ✅ При изменении статуса — обновляем локально и детали
-  const handleStatusUpdate = async (
+  // ✅ Обновление статуса (Finish)
+  const handleStatusUpdate = (
     id: string,
     newStatus: "Not Started" | "In Progress" | "Completed"
   ) => {
-    try {
-      const updateData =
-        newStatus === "Completed"
-          ? {
-              status: newStatus,
-              vital: false,
-              completedAt: new Date().toISOString(),
-            }
-          : {
-              status: newStatus,
-              completedAt: null, // ✅ очищаем “Completed on…”
-            };
-
-      const updated = await patchTodo(id, updateData);
-
-      // 🔥 если завершена — удаляем из списка
-      if (updated.status === "Completed") {
-        setVitalTasks((prev) => prev.filter((task) => task.id !== id));
-
-        if (activeTaskId === id) {
-          setActiveTaskId(null);
-          onSelectTask(null);
-        }
-      } else {
-        // иначе обновляем статус в списке
-        setVitalTasks((prev) =>
-          prev.map((t) =>
-            t.id === id
-              ? { ...t, status: updated.status, completedAt: null }
-              : t
-          )
-        );
-
-        // ✅ если эта карточка выбрана — обновляем блок деталей
-        if (activeTaskId === id) {
-          onSelectTask({
-            ...updated,
-            completedAt: null,
-          });
-        }
+    if (newStatus === "Completed") {
+      dispatch(
+        updateTask({
+          id,
+          status: "Completed",
+          vital: false,
+          completedAt: new Date().toISOString(),
+        })
+      );
+      // при завершении убираем выделение
+      if (selected?.id === id) {
+        dispatch(selectTask(null));
+        onSelectTask(null);
       }
-    } catch (error) {
-      console.error("Ошибка при обновлении статуса:", error);
-      alert("Не удалось обновить статус задачи 😢");
+    } else {
+      dispatch(
+        updateTask({
+          id,
+          status: newStatus,
+          completedAt: null,
+        })
+      );
     }
   };
 
@@ -142,11 +100,11 @@ export const VitalTaskList = ({ onSelectTask }: VitalTaskListProps) => {
           <div
             key={task.id}
             onClick={() => {
+              dispatch(selectTask(task));
               onSelectTask(task);
-              setActiveTaskId(task.id);
             }}
             className={`vital-task-list__item ${
-              activeTaskId === task.id ? "active" : ""
+              selected?.id === task.id ? "active" : ""
             }`}
           >
             <TaskCard
