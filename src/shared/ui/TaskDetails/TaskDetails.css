@@ -1,76 +1,61 @@
-.vital-details {
+.task-details {
   background: #f5f8ff;
   border: 1px solid rgba(161, 163, 171, 0.3);
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
   padding: 24px;
-  /* max-width: 440px; */
   width: 100%;
   display: flex;
   flex-direction: column;
-  /* justify-content: space-between; */
 }
 
-/* === Верхний блок === */
-.vital-details__top {
+/* === Верхняя часть === */
+.task-details__top {
   display: flex;
   align-items: flex-start;
   gap: 16px;
   margin-bottom: 16px;
 }
 
-.vital-details__img {
+.task-details__img {
   width: 120px;
   height: 120px;
   border-radius: 12px;
   object-fit: cover;
 }
 
-.vital-details__title {
+.task-details__title {
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 8px;
 }
 
-.vital-details__priority,
-.vital-details__status,
-.vital-details__date {
+.task-details__priority,
+.task-details__status,
+.task-details__date {
   font-size: 13px;
   color: #777;
   margin-bottom: 4px;
 }
 
-.vital-details__priority--red,
-.vital-details__status--red {
-  color: #ff4444;
-  font-weight: 500;
-}
-
 /* === Контент === */
-.vital-details__content p {
+.task-details__content p,
+.task-details__extra {
   font-size: 14px;
   color: #555;
   line-height: 1.6;
   margin-bottom: 10px;
 }
 
-.vital-details__list {
-  margin-top: 10px;
-  padding-left: 18px;
-  font-size: 14px;
-  color: #555;
-  line-height: 1.6;
-}
-
 /* === Кнопки === */
-.vital-details__actions {
+.task-details__actions {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
   margin-top: 16px;
 }
 
-.vital-details__btn {
+.task-details__btn {
   border: none;
   border-radius: 8px;
   padding: 8px 10px;
@@ -79,16 +64,16 @@
   transition: background 0.2s ease;
 }
 
-.vital-details__btn--delete {
+.task-details__btn--delete {
   background: #ff4444;
   color: #fff;
 }
 
-.vital-details__btn--edit {
+.task-details__btn--edit {
   background: #ff6767;
   color: #fff;
 }
 
-.vital-details__btn:hover {
+.task-details__btn:hover {
   opacity: 0.8;
 }
