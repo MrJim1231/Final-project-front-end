@@ -2,7 +2,7 @@ import "./CompletedTask.css";
 import { useEffect, useState } from "react";
 import { FiCheckSquare } from "react-icons/fi";
 import { TaskCard } from "../../../../entities/task/ui/TaskCard";
-import { getTodos, deleteTodo } from "../../../../shared/api/todos";
+import { getTodos, deleteTodo, patchTodo } from "../../../../shared/api/todos";
 import type { Todo } from "../../../../shared/api/todos";
 
 export const CompletedTask = () => {
@@ -27,7 +27,7 @@ export const CompletedTask = () => {
     fetchCompletedTasks();
   }, []);
 
-  // 🗑️ Удаление завершённой задачи
+  // 🗑️ Удаление задачи
   const handleDeleteTask = async (id: string) => {
     if (!window.confirm("Удалить завершённую задачу?")) return;
     try {
@@ -36,6 +36,23 @@ export const CompletedTask = () => {
     } catch (error) {
       console.error("Ошибка при удалении задачи:", error);
       alert("Не удалось удалить задачу 😢");
+    }
+  };
+
+  // 🔁 Обновление статуса (например, "Unfinish")
+  const handleStatusUpdate = async (
+    id: string,
+    newStatus: "Not Started" | "In Progress" | "Completed"
+  ) => {
+    try {
+      await patchTodo(id, { status: newStatus });
+      // ⚡ Мгновенно убираем задачу из списка, если она больше не Completed
+      if (newStatus !== "Completed") {
+        setCompletedTasks((prev) => prev.filter((t) => t.id !== id));
+      }
+    } catch (error) {
+      console.error("Ошибка при обновлении статуса:", error);
+      alert("Не удалось изменить статус 😢");
     }
   };
 
@@ -69,7 +86,8 @@ export const CompletedTask = () => {
             image={task.image}
             completedAt={task.completedAt || "Recently completed"}
             type="completed"
-            onDelete={handleDeleteTask} // ✅ добавили обработчик удаления
+            onDelete={handleDeleteTask}
+            onStatusUpdate={handleStatusUpdate} // ✅ добавили
           />
         ))
       ) : (
