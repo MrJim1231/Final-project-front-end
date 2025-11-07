@@ -65,8 +65,17 @@ export const TodoList = () => {
     return taskDate === selectedDate && !t.vital && t.status !== "Completed";
   });
 
+  // ✨ Форматируем выбранную дату для отображения
+  const dateObj = new Date(selectedDate);
+  const formattedDate = dateObj.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "long",
+  });
+  const isToday = selectedDate === new Date().toISOString().split("T")[0];
+
   return (
     <div className="todo-list">
+      {/* === Заголовок секции === */}
       <div className="todo-list__header">
         <div className="todo-list__title-wrapper">
           <FiClipboard className="todo-list__icon" />
@@ -77,6 +86,18 @@ export const TodoList = () => {
         </button>
       </div>
 
+      {/* === Отображение даты (например "20 June • Today") === */}
+      <div className="todo-list__date-section">
+        <span className="todo-list__day">{formattedDate}</span>
+        {isToday && (
+          <>
+            <span className="todo-list__dot">•</span>
+            <span className="todo-list__today">Today</span>
+          </>
+        )}
+      </div>
+
+      {/* === Список карточек === */}
       {visibleTasks.length > 0 ? (
         visibleTasks.map((task) => (
           <TaskCard
