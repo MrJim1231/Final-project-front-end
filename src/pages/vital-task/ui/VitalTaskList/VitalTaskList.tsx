@@ -14,11 +14,13 @@ import type { Todo } from "../../../../shared/api/todos";
 
 interface VitalTaskListProps {
   onSelectTask: (task: Todo | null) => void;
-  onTasksLoaded?: (tasks: Todo[]) => void; // 👈 обязательно эта строка
-  onTaskChanged?: (id: string) => void; // (опционально)
+  onTasksLoaded?: (tasks: Todo[]) => void; // ✅ нужен для выбора первой карточки
 }
 
-export const VitalTaskList = ({ onSelectTask }: VitalTaskListProps) => {
+export const VitalTaskList = ({
+  onSelectTask,
+  onTasksLoaded,
+}: VitalTaskListProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { items, loading, selected } = useSelector(
     (state: RootState) => state.tasks
@@ -31,6 +33,13 @@ export const VitalTaskList = ({ onSelectTask }: VitalTaskListProps) => {
 
   // 🧩 Фильтруем только vital-задачи
   const vitalTasks = items.filter((task) => task.vital);
+
+  // ⚡️ Сообщаем родителю, когда задачи загружены
+  useEffect(() => {
+    if (vitalTasks.length > 0 && onTasksLoaded) {
+      onTasksLoaded(vitalTasks);
+    }
+  }, [vitalTasks, onTasksLoaded]);
 
   // 🗑️ Удаление задачи
   const handleDeleteTask = (id: string) => {
@@ -67,36 +76,26 @@ export const VitalTaskList = ({ onSelectTask }: VitalTaskListProps) => {
           completedAt: new Date().toISOString(),
         })
       );
-      // при завершении убираем выделение
       if (selected?.id === id) {
         dispatch(selectTask(null));
         onSelectTask(null);
       }
     } else {
-      dispatch(
-        updateTask({
-          id,
-          status: newStatus,
-          completedAt: null,
-        })
-      );
+      dispatch(updateTask({ id, status: newStatus, completedAt: null }));
     }
   };
 
-  if (loading) {
+  if (loading)
     return <p className="vital-task-list__loading">Loading vital tasks...</p>;
-  }
 
   return (
     <div className="vital-task-list">
-      {/* === Заголовок секции === */}
       <div className="vital-task-list__header">
         <div className="vital-task-list__title-wrapper">
           <h3 className="vital-task-list__title">Vital Tasks</h3>
         </div>
       </div>
 
-      {/* === Список карточек === */}
       {vitalTasks.length > 0 ? (
         vitalTasks.map((task) => (
           <div
