@@ -1,4 +1,3 @@
-// src/pages/vital-task/ui/VitalTaskList/VitalTaskList.tsx
 import "./VitalTaskList.css";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,78 +9,82 @@ import {
   selectTask,
 } from "../../../../entities/task/model/tasksSlice";
 import type { RootState, AppDispatch } from "../../../../app/providers/store";
-import type { Todo } from "../../../../shared/api/todos";
 
-interface VitalTaskListProps {
-  onSelectTask: (task: Todo | null) => void;
-  onTasksLoaded?: (tasks: Todo[]) => void; // ✅ нужен для выбора первой карточки
-}
-
-export const VitalTaskList = ({
-  onSelectTask,
-  onTasksLoaded,
-}: VitalTaskListProps) => {
+export const VitalTaskList = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { items, loading, selected } = useSelector(
+  const { items, selected, loading } = useSelector(
     (state: RootState) => state.tasks
   );
 
-  // 🚀 Загружаем задачи при монтировании
+  // 🔹 Только vital-задачи
+  const vitalTasks = items.filter((t) => t.vital);
+
+  // 🚀 Загружаем при монтировании
   useEffect(() => {
     dispatch(fetchTasks());
   }, [dispatch]);
 
-  // 🧩 Фильтруем только vital-задачи
-  const vitalTasks = items.filter((task) => task.vital);
-
-  // ⚡️ Сообщаем родителю, когда задачи загружены
+  // ⚡ Автоматически выбираем первую задачу после загрузки
   useEffect(() => {
-    if (vitalTasks.length > 0 && onTasksLoaded) {
-      onTasksLoaded(vitalTasks);
+    if (vitalTasks.length > 0 && !selected) {
+      dispatch(selectTask(vitalTasks[0]));
     }
-  }, [vitalTasks, onTasksLoaded]);
+  }, [vitalTasks, selected, dispatch]);
+
+  // ⚡ Следим, если выбранная задача исчезла из списка (удалена / снята из vital)
+  useEffect(() => {
+    if (selected && !vitalTasks.find((t) => t.id === selected.id)) {
+      const next = vitalTasks[0] || null;
+      dispatch(selectTask(next));
+    }
+  }, [vitalTasks, selected, dispatch]);
 
   // 🗑️ Удаление задачи
   const handleDeleteTask = (id: string) => {
     if (window.confirm("Удалить задачу?")) {
+      const currentIndex = vitalTasks.findIndex((t) => t.id === id);
       dispatch(removeTask(id));
-      if (selected?.id === id) {
-        dispatch(selectTask(null));
-        onSelectTask(null);
-      }
+
+      const next =
+        vitalTasks[currentIndex + 1] || vitalTasks[currentIndex - 1] || null;
+      dispatch(selectTask(next));
     }
   };
 
-  // 💫 Удаление / добавление в "Vital"
+  // 💫 Добавление / снятие Vital
   const handleVitalUpdate = (id: string, isVital: boolean) => {
     dispatch(updateTask({ id, vital: isVital }));
 
+    // Если сняли vital у выбранной — выбираем другую
     if (!isVital && selected?.id === id) {
-      dispatch(selectTask(null));
-      onSelectTask(null);
+      const currentIndex = vitalTasks.findIndex((t) => t.id === id);
+      const next =
+        vitalTasks[currentIndex + 1] || vitalTasks[currentIndex - 1] || null;
+      dispatch(selectTask(next));
     }
   };
 
-  // ✅ Обновление статуса (Finish)
+  // ✅ Обновление статуса
   const handleStatusUpdate = (
     id: string,
     newStatus: "Not Started" | "In Progress" | "Completed"
   ) => {
-    if (newStatus === "Completed") {
-      dispatch(
-        updateTask({
-          id,
-          status: "Completed",
-          vital: false,
-          completedAt: new Date().toISOString(),
-        })
-      );
-      if (selected?.id === id) {
-        dispatch(selectTask(null));
-        onSelectTask(null);
-      }
-    } else {
-      dispatch(updateTask({ id, status: newStatus, completedAt: null }));
+    dispatch(
+      updateTask({
+        id,
+        status: newStatus,
+        vital: newStatus !== "Completed",
+        completedAt:
+          newStatus === "Completed" ? new Date().toISOString() : null,
+      })
+    );
+
+    // Если задача завершена — выбираем следующую
+    if (newStatus === "Completed" && selected?.id === id) {
+      const currentIndex = vitalTasks.findIndex((t) => t.id === id);
+      const next =
+        vitalTasks[currentIndex + 1] || vitalTasks[currentIndex - 1] || null;
+      dispatch(selectTask(next));
     }
   };
 
@@ -91,19 +94,14 @@ export const VitalTaskList = ({
   return (
     <div className="vital-task-list">
       <div className="vital-task-list__header">
-        <div className="vital-task-list__title-wrapper">
-          <h3 className="vital-task-list__title">Vital Tasks</h3>
-        </div>
+        <h3 className="vital-task-list__title">Vital Tasks</h3>
       </div>
 
       {vitalTasks.length > 0 ? (
         vitalTasks.map((task) => (
           <div
             key={task.id}
-            onClick={() => {
-              dispatch(selectTask(task));
-              onSelectTask(task);
-            }}
+            onClick={() => dispatch(selectTask(task))}
             className={`vital-task-list__item ${
               selected?.id === task.id ? "active" : ""
             }`}
