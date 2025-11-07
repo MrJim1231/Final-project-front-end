@@ -1,46 +1,25 @@
+// src/pages/my-task/ui/MyTaskList/MyTaskList.tsx
 import "./MyTaskList.css";
-import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { TaskCard } from "../../../../entities/task/ui/TaskCard";
 import {
-  fetchTasks,
-  removeTask,
-  updateTask,
   selectTask,
+  updateTask,
 } from "../../../../entities/task/model/tasksSlice";
 import type { RootState, AppDispatch } from "../../../../app/providers/store";
-import type { Todo } from "../../../../shared/api/todos";
 
-interface MyTaskListProps {
-  onSelectTask: (task: Todo | null) => void;
-}
-
-export const MyTaskList = ({ onSelectTask }: MyTaskListProps) => {
+export const MyTaskList = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { items, loading, selected } = useSelector(
+  const { items, selected, loading } = useSelector(
     (state: RootState) => state.tasks
   );
 
-  useEffect(() => {
-    dispatch(fetchTasks());
-  }, [dispatch]);
+  if (loading) return <p>Loading tasks...</p>;
 
-  // ✅ фильтруем активные задачи (не Completed и не Vital)
-  const tasks = items.filter((t) => t.status !== "Completed" && !t.vital);
+  // ✅ Отображаем только активные (не Completed и не Vital)
+  const activeTasks = items.filter((t) => t.status !== "Completed" && !t.vital);
 
-  // 🗑️ удалить задачу
-  const handleDeleteTask = (id: string) => {
-    if (confirm("Удалить задачу?")) {
-      dispatch(removeTask(id));
-    }
-  };
-
-  // ⭐ обновить важность (Vital)
-  const handleVitalUpdate = (id: string, isVital: boolean) => {
-    dispatch(updateTask({ id, vital: isVital }));
-  };
-
-  // ✅ обновить статус
+  // ✅ Обновление статуса
   const handleStatusUpdate = (
     id: string,
     newStatus: "Not Started" | "In Progress" | "Completed"
@@ -48,7 +27,10 @@ export const MyTaskList = ({ onSelectTask }: MyTaskListProps) => {
     dispatch(updateTask({ id, status: newStatus }));
   };
 
-  if (loading) return <p>Loading tasks...</p>;
+  // ✅ Добавление/удаление из Vital
+  const handleVitalUpdate = (id: string, isVital: boolean) => {
+    dispatch(updateTask({ id, vital: isVital }));
+  };
 
   return (
     <div className="my-task-list">
@@ -56,17 +38,14 @@ export const MyTaskList = ({ onSelectTask }: MyTaskListProps) => {
         <h3 className="my-task-list__title">My Tasks</h3>
       </div>
 
-      {tasks.length > 0 ? (
-        tasks.map((task) => (
+      {activeTasks.length > 0 ? (
+        activeTasks.map((task) => (
           <div
             key={task.id}
-            onClick={() => {
-              dispatch(selectTask(task));
-              onSelectTask(task);
-            }}
             className={`my-task-list__item ${
               selected?.id === task.id ? "active" : ""
             }`}
+            onClick={() => dispatch(selectTask(task))}
           >
             <TaskCard
               id={task.id}
@@ -78,7 +57,6 @@ export const MyTaskList = ({ onSelectTask }: MyTaskListProps) => {
               image={task.image}
               vital={task.vital || false}
               type="default"
-              onDelete={handleDeleteTask}
               onVitalUpdate={handleVitalUpdate}
               onStatusUpdate={handleStatusUpdate}
             />
