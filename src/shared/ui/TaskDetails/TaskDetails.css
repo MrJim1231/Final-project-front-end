@@ -39,12 +39,17 @@
 }
 
 /* === Контент === */
-.task-details__content p,
-.task-details__extra {
+.task-details__content {
   font-size: 14px;
   color: #555;
   line-height: 1.6;
   margin-bottom: 10px;
+}
+
+.task-details__completed {
+  color: #00c851;
+  font-weight: 500;
+  margin-top: 6px;
 }
 
 /* === Кнопки === */

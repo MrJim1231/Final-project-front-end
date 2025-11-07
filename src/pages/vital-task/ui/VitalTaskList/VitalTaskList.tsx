@@ -5,14 +5,14 @@ import { getTodos, deleteTodo, patchTodo } from "../../../../shared/api/todos";
 import type { Todo } from "../../../../shared/api/todos";
 
 interface VitalTaskListProps {
-  onSelectTask: (task: Todo) => void;
-  onTasksLoaded?: (tasks: Todo[]) => void; // ✅ добавь это
+  onSelectTask: (task: Todo | null) => void; // ✅ допускаем null
+  onTasksLoaded?: (tasks: Todo[]) => void;
 }
 
 export const VitalTaskList = ({ onSelectTask }: VitalTaskListProps) => {
   const [vitalTasks, setVitalTasks] = useState<Todo[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTaskId, setActiveTaskId] = useState<string | null>(null); // 👈 подсветка выбранной
+  const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
 
   // 🚀 Загружаем только задачи с меткой "vital"
   useEffect(() => {
@@ -43,10 +43,9 @@ export const VitalTaskList = ({ onSelectTask }: VitalTaskListProps) => {
       await deleteTodo(id);
       setVitalTasks((prev) => prev.filter((task) => task.id !== id));
 
-      // если удаляем выбранную — очищаем детали
       if (activeTaskId === id) {
         setActiveTaskId(null);
-        onSelectTask(null as unknown as Todo);
+        onSelectTask(null);
       }
     } catch (error) {
       console.error("Ошибка при удалении задачи:", error);
@@ -63,7 +62,7 @@ export const VitalTaskList = ({ onSelectTask }: VitalTaskListProps) => {
 
         if (activeTaskId === id) {
           setActiveTaskId(null);
-          onSelectTask(null as unknown as Todo);
+          onSelectTask(null);
         }
       }
     } catch (error) {
@@ -72,7 +71,7 @@ export const VitalTaskList = ({ onSelectTask }: VitalTaskListProps) => {
     }
   };
 
-  // ✅ При добавлении в Finish — убираем из vital и обновляем статус
+  // ✅ При изменении статуса — обновляем локально и детали
   const handleStatusUpdate = async (
     id: string,
     newStatus: "Not Started" | "In Progress" | "Completed"
@@ -85,23 +84,38 @@ export const VitalTaskList = ({ onSelectTask }: VitalTaskListProps) => {
               vital: false,
               completedAt: new Date().toISOString(),
             }
-          : { status: newStatus };
+          : {
+              status: newStatus,
+              completedAt: null, // ✅ очищаем “Completed on…”
+            };
 
       const updated = await patchTodo(id, updateData);
 
-      // 🔥 если завершена — удаляем из локального состояния
+      // 🔥 если завершена — удаляем из списка
       if (updated.status === "Completed") {
         setVitalTasks((prev) => prev.filter((task) => task.id !== id));
 
         if (activeTaskId === id) {
           setActiveTaskId(null);
-          onSelectTask(null as unknown as Todo);
+          onSelectTask(null);
         }
       } else {
-        // иначе просто обновляем статус
+        // иначе обновляем статус в списке
         setVitalTasks((prev) =>
-          prev.map((t) => (t.id === id ? { ...t, status: updated.status } : t))
+          prev.map((t) =>
+            t.id === id
+              ? { ...t, status: updated.status, completedAt: null }
+              : t
+          )
         );
+
+        // ✅ если эта карточка выбрана — обновляем блок деталей
+        if (activeTaskId === id) {
+          onSelectTask({
+            ...updated,
+            completedAt: null,
+          });
+        }
       }
     } catch (error) {
       console.error("Ошибка при обновлении статуса:", error);

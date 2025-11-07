@@ -4,13 +4,12 @@ import { FiEdit2, FiTrash2 } from "react-icons/fi";
 interface TaskDetailsProps {
   image?: string;
   title: string;
-  priority: string;
-  priorityColor?: string;
-  status: string;
-  statusColor?: string;
+  priority: "Low" | "Moderate" | "High" | "Extreme";
+  status: "Not Started" | "In Progress" | "Completed";
   date: string;
   description?: string;
-  extraContent?: React.ReactNode; // 👈 например, список или кастомный блок
+  completedAt?: string | null;
+  extraContent?: React.ReactNode;
   onDelete?: () => void;
   onEdit?: () => void;
 }
@@ -19,15 +18,44 @@ export const TaskDetails = ({
   image,
   title,
   priority,
-  priorityColor = "#ff4444",
   status,
-  statusColor = "#ff4444",
   date,
   description,
+  completedAt,
   extraContent,
   onDelete,
   onEdit,
 }: TaskDetailsProps) => {
+  // 🎨 Цвета по типу приоритета
+  const getPriorityColor = (level: string) => {
+    switch (level) {
+      case "Extreme":
+        return "#ff4444";
+      case "High":
+        return "#ff8800";
+      case "Moderate":
+        return "#007bff";
+      case "Low":
+        return "#00c851";
+      default:
+        return "#999";
+    }
+  };
+
+  // 🎨 Цвета по статусу
+  const getStatusColor = (s: string) => {
+    switch (s) {
+      case "Completed":
+        return "#00c851";
+      case "In Progress":
+        return "#007bff";
+      case "Not Started":
+        return "#ff4444";
+      default:
+        return "#999";
+    }
+  };
+
   return (
     <div className="task-details">
       {/* === Верхняя часть === */}
@@ -39,14 +67,16 @@ export const TaskDetails = ({
 
           <p className="task-details__priority">
             Priority:{" "}
-            <span style={{ color: priorityColor, fontWeight: 500 }}>
+            <span
+              style={{ color: getPriorityColor(priority), fontWeight: 500 }}
+            >
               {priority}
             </span>
           </p>
 
           <p className="task-details__status">
             Status:{" "}
-            <span style={{ color: statusColor, fontWeight: 500 }}>
+            <span style={{ color: getStatusColor(status), fontWeight: 500 }}>
               {status}
             </span>
           </p>
@@ -56,14 +86,21 @@ export const TaskDetails = ({
       </div>
 
       {/* === Контент === */}
-      {description && (
+      {(description || extraContent) && (
         <div className="task-details__content">
-          <p>{description}</p>
+          {description && <p>{description}</p>}
+          {extraContent}
         </div>
       )}
-      {extraContent && (
-        <div className="task-details__extra">{extraContent}</div>
-      )}
+
+      {/* === Низ карточки: единый стиль для всех === */}
+      <div className="task-details__footer">
+        {status === "Completed" && completedAt && (
+          <p className="task-details__completed">
+            ✅ Completed on {new Date(completedAt).toLocaleDateString()}
+          </p>
+        )}
+      </div>
 
       {/* === Кнопки === */}
       <div className="task-details__actions">
