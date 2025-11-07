@@ -1,3 +1,4 @@
+// src/pages/my-task/ui/MyTask/MyTask.tsx
 import "./MyTask.css";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,15 +22,24 @@ export const MyTask = () => {
     dispatch(fetchTasks());
   }, [dispatch]);
 
+  // 🔹 Отображаем только активные (не Completed и не Vital)
+  const activeTasks = items.filter((t) => t.status !== "Completed" && !t.vital);
+
   // ⚡️ Автоматически выбираем первую задачу после загрузки
   useEffect(() => {
-    if (items.length > 0 && !selected) {
-      dispatch(selectTask(items[0])); // выбираем первую
+    if (activeTasks.length > 0 && !selected) {
+      dispatch(selectTask(activeTasks[0]));
     }
-  }, [items, selected, dispatch]);
+  }, [activeTasks, selected, dispatch]);
 
-  // 🔹 Фильтруем активные задачи (не Completed и не Vital)
-  const activeTasks = items.filter((t) => t.status !== "Completed" && !t.vital);
+  // ⚡️ Следим, если выбранная задача пропала из списка
+  useEffect(() => {
+    if (selected && !activeTasks.find((t) => t.id === selected.id)) {
+      // если выбранная карточка исчезла — выбираем новую
+      const nextTask = activeTasks[0] || null;
+      dispatch(selectTask(nextTask));
+    }
+  }, [activeTasks, selected, dispatch]);
 
   // 🗑️ Удаление текущей задачи
   const handleDelete = () => {
@@ -45,7 +55,7 @@ export const MyTask = () => {
     }
   };
 
-  // ✏️ Открыть редактирование
+  // ✏️ Редактирование
   const handleEdit = () => {
     if (selected) {
       alert(`Редактировать задачу: ${selected.title}`);
