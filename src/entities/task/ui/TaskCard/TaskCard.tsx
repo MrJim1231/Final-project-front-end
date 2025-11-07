@@ -2,9 +2,7 @@ import "./TaskCard.css";
 import { useState, useRef, useEffect } from "react";
 import { IoEllipsisHorizontalOutline } from "react-icons/io5";
 import { patchTodo } from "../../../../shared/api/todos";
-
-// 🔹 резервная картинка
-const placeholderImg = "https://placehold.co/120x120?text=No+Image";
+import noImage from "../../../../shared/assets/images/no-image.jpeg"; // ✅ локальная заглушка
 
 interface TaskCardProps {
   id?: string;
@@ -96,10 +94,23 @@ export const TaskCard = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // === Проверяем корректность ссылки ===
+  const getSafeImageSrc = (src?: string) => {
+    if (!src) return noImage;
+    // ❌ Исключаем битые домены или пустые данные
+    if (
+      src.includes("wikia.nocookie.net") ||
+      src.includes("undefined") ||
+      src.includes("null")
+    ) {
+      return noImage;
+    }
+    return src.startsWith("http") ? src : noImage;
+  };
+
   // === Обработка действий ===
   const handleActionClick = async (action: string) => {
     if (!id) return;
-
     const closeMenu = () => setIsMenuOpen(false);
 
     try {
@@ -226,12 +237,13 @@ export const TaskCard = ({
 
         <div className="task-card__right">
           <img
-            src={image || placeholderImg}
+            src={getSafeImageSrc(image)}
             alt={title}
             className="task-card__img"
-            onError={(e) =>
-              ((e.target as HTMLImageElement).src = placeholderImg)
-            }
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              if (target.src !== noImage) target.src = noImage;
+            }}
           />
         </div>
       </div>
