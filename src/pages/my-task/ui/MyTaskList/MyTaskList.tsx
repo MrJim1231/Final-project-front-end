@@ -1,7 +1,7 @@
 import "./MyTaskList.css";
 import { useEffect, useState } from "react";
 import { TaskCard } from "../../../../shared/ui/TaskCard";
-import { getTodos, deleteTodo } from "../../../../shared/api/todos";
+import { getTodos, deleteTodo, patchTodo } from "../../../../shared/api/todos";
 import type { Todo } from "../../../../shared/api/todos";
 
 export const MyTaskList = () => {
@@ -13,7 +13,7 @@ export const MyTaskList = () => {
     const fetchTasks = async () => {
       try {
         const data = await getTodos();
-        // ✅ Оставляем только "обычные" задачи — не Completed и не Vital
+        // ✅ Показываем только обычные задачи (не Completed и не Vital)
         const filtered = data.filter(
           (t) => t.status !== "Completed" && !t.vital
         );
@@ -39,6 +39,20 @@ export const MyTaskList = () => {
     }
   };
 
+  // ⭐ Добавление или удаление из Vital
+  const handleVitalUpdate = async (id: string, isVital: boolean) => {
+    try {
+      await patchTodo(id, { vital: isVital });
+      // 🔥 Если задача стала Vital → убираем из MyTaskList
+      if (isVital) {
+        setTasks((prev) => prev.filter((t) => t.id !== id));
+      }
+    } catch (error) {
+      console.error("Ошибка при изменении важности задачи:", error);
+      alert("Не удалось обновить задачу 😢");
+    }
+  };
+
   if (loading) {
     return <p className="my-task-list__loading">Loading tasks...</p>;
   }
@@ -61,8 +75,9 @@ export const MyTaskList = () => {
             status={task.status}
             image={task.image}
             vital={task.vital || false}
-            type="default" // ✅ теперь всегда default
+            type="default"
             onDelete={handleDeleteTask}
+            onVitalUpdate={handleVitalUpdate} // 👈 добавлено
           />
         ))
       ) : (
