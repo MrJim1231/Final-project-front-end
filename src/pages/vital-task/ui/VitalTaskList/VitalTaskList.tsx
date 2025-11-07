@@ -14,6 +14,8 @@ import type { Todo } from "../../../../shared/api/todos";
 
 interface VitalTaskListProps {
   onSelectTask: (task: Todo | null) => void;
+  onTasksLoaded?: (tasks: Todo[]) => void; // 👈 обязательно эта строка
+  onTaskChanged?: (id: string) => void; // (опционально)
 }
 
 export const VitalTaskList = ({ onSelectTask }: VitalTaskListProps) => {
