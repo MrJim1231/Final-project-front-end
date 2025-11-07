@@ -22,7 +22,7 @@ interface TaskCardProps {
   onVitalUpdate?: (id: string, isVital: boolean) => void;
 }
 
-// === Форматирование времени "Completed X ago" ===
+// === Формат времени завершения ===
 const formatTimeAgo = (dateString?: string) => {
   if (!dateString) return "";
   const date = new Date(dateString);
@@ -61,7 +61,7 @@ export const TaskCard = ({
   const [completedTime, setCompletedTime] = useState(completedAt || "");
   const menuRef = useRef<HTMLDivElement | null>(null);
 
-  // === Автоматически обновляем тип ===
+  // === Автообновление типа ===
   useEffect(() => {
     if (isVital) {
       setType("vital");
@@ -97,7 +97,7 @@ export const TaskCard = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // === Обработка действий ===
+  // === Обработка кликов по действиям ===
   const handleActionClick = async (action: string) => {
     if (!id) return;
 
@@ -107,7 +107,6 @@ export const TaskCard = ({
       return;
     }
 
-    // ✅ Завершение задачи
     if (action === "Finish") {
       try {
         setUpdating(true);
@@ -129,7 +128,6 @@ export const TaskCard = ({
       return;
     }
 
-    // ⭐ Vital / Remove from Vital
     if (action === "Vital" || action === "Remove from Vital") {
       try {
         setUpdating(true);
@@ -159,11 +157,11 @@ export const TaskCard = ({
 
   return (
     <div
-      className={`task-card 
-        ${type === "completed" ? "task-card--completed" : ""}
-        ${type === "vital" ? "task-card--vital" : ""}`}
+      className={`task-card ${isMenuOpen ? "menu-open" : ""} ${
+        type === "completed" ? "task-card--completed" : ""
+      } ${type === "vital" ? "task-card--vital" : ""}`}
     >
-      {/* ⋯ Кнопка меню */}
+      {/* ⋯ Меню */}
       <div className="task-card__menu-wrapper" ref={menuRef}>
         <IoEllipsisHorizontalOutline
           className="task-card__menu"
@@ -202,6 +200,7 @@ export const TaskCard = ({
           </div>
           <p className="task-card__desc">{desc}</p>
         </div>
+
         {image && (
           <div className="task-card__right">
             <img src={image} alt={title} className="task-card__img" />
@@ -211,7 +210,6 @@ export const TaskCard = ({
 
       {/* === Нижняя часть === */}
       <div className="task-card__bottom">
-        {/* ✅ Показываем Priority и Created только если НЕ Completed */}
         {status !== "Completed" && priority && (
           <span>
             Priority: <span className="task-card__priority">{priority}</span>
@@ -230,7 +228,6 @@ export const TaskCard = ({
           Status: {status}
         </span>
 
-        {/* ✅ Показываем время завершения только для Completed */}
         {status === "Completed" && completedTime && (
           <span className="task-card__completed">
             Completed {formatTimeAgo(completedTime)}.
