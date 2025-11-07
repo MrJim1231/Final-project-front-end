@@ -10,13 +10,14 @@ import {
   patchTodo,
 } from "../../../../shared/api/todos";
 import type { Todo } from "../../../../shared/api/todos";
+import { useDateContext } from "../../../../shared/context/DateContext";
 
 export const TodoList = () => {
   const [tasks, setTasks] = useState<Todo[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const { selectedDate } = useDateContext(); // 👈 выбранная дата
 
-  // ✅ Загружаем задачи при монтировании
   useEffect(() => {
     const fetchTodos = async () => {
       try {
@@ -31,32 +32,6 @@ export const TodoList = () => {
     fetchTodos();
   }, []);
 
-  // ✅ Добавление новой задачи
-  const handleAddTask = async (form: any) => {
-    try {
-      const newTodo = {
-        title: form.title,
-        description: form.description,
-        createdAt: form.date || new Date().toISOString(),
-        priority: form.priority || "Low",
-        status: "Not Started" as const,
-        vital: false,
-        image:
-          form.image instanceof File
-            ? URL.createObjectURL(form.image)
-            : form.image || "",
-      };
-
-      const created = await createTodo(newTodo);
-      setTasks((prev) => [created, ...prev]);
-      setIsModalOpen(false);
-    } catch (error) {
-      console.error("Ошибка при добавлении задачи:", error);
-      alert("Не удалось добавить задачу 😢");
-    }
-  };
-
-  // 🗑️ Удаление задачи
   const handleDeleteTask = async (id: string) => {
     if (!window.confirm("Удалить задачу?")) return;
     try {
@@ -64,71 +39,49 @@ export const TodoList = () => {
       setTasks((prev) => prev.filter((t) => t.id !== id));
     } catch (error) {
       console.error("Ошибка при удалении задачи:", error);
-      alert("Не удалось удалить задачу 😢");
     }
   };
 
-  // ✅ Обновление статуса
   const handleStatusUpdate = (
     id: string,
     newStatus: "Not Started" | "In Progress" | "Completed"
   ) => {
     setTasks((prev) =>
-      prev.map((task) =>
-        task.id === id ? { ...task, status: newStatus } : task
-      )
+      prev.map((t) => (t.id === id ? { ...t, status: newStatus } : t))
     );
   };
 
-  // ⭐ Обновление флага Vital
   const handleVitalUpdate = async (id: string, isVital: boolean) => {
     try {
       await patchTodo(id, { vital: isVital });
       setTasks((prev) =>
-        prev.map((task) =>
-          task.id === id ? { ...task, vital: isVital } : task
-        )
+        prev.map((t) => (t.id === id ? { ...t, vital: isVital } : t))
       );
     } catch (error) {
-      console.error("Ошибка при обновлении важности задачи:", error);
-      alert("Не удалось обновить важность задачи 😢");
+      console.error("Ошибка при обновлении важности:", error);
     }
   };
 
-  if (loading) {
-    return <p>Loading tasks...</p>;
-  }
+  if (loading) return <p>Loading tasks...</p>;
 
-  // 🚫 Показываем только те, что НЕ vital и НЕ completed
-  const visibleTasks = tasks.filter(
-    (task) => !task.vital && task.status !== "Completed"
-  );
+  // 🔹 Фильтруем задачи по выбранной дате
+  const visibleTasks = tasks.filter((t) => {
+    const taskDate = new Date(t.createdAt).toISOString().split("T")[0];
+    return taskDate === selectedDate && !t.vital && t.status !== "Completed";
+  });
 
   return (
     <div className="todo-list">
-      {/* === Заголовок секции === */}
       <div className="todo-list__header">
         <div className="todo-list__title-wrapper">
           <FiClipboard className="todo-list__icon" />
           <h3 className="todo-list__title">To-Do</h3>
         </div>
-
         <button className="todo-list__add" onClick={() => setIsModalOpen(true)}>
-          <span className="todo-list__add-icon">
-            <FiPlus />
-          </span>
-          Add task
+          <FiPlus /> Add task
         </button>
       </div>
 
-      {/* === Дата под заголовком === */}
-      <div className="todo-list__date-section">
-        <span className="todo-list__day">20 June</span>
-        <span className="todo-list__dot">•</span>
-        <span className="todo-list__today">Today</span>
-      </div>
-
-      {/* === Список карточек === */}
       {visibleTasks.length > 0 ? (
         visibleTasks.map((task) => (
           <TaskCard
@@ -147,14 +100,13 @@ export const TodoList = () => {
           />
         ))
       ) : (
-        <p>No active tasks 🎯</p>
+        <p>No tasks for this date 🎯</p>
       )}
 
-      {/* === Модалка добавления === */}
       {isModalOpen && (
         <AddTaskModal
           onClose={() => setIsModalOpen(false)}
-          onSubmit={handleAddTask}
+          onSubmit={() => {}}
         />
       )}
     </div>
