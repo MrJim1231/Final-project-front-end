@@ -1,7 +1,7 @@
 import "./VitalTaskList.css";
 import { useEffect, useState } from "react";
 import { TaskCard } from "../../../../shared/ui/TaskCard";
-import { getTodos } from "../../../../shared/api/todos";
+import { getTodos, deleteTodo, patchTodo } from "../../../../shared/api/todos";
 import type { Todo } from "../../../../shared/api/todos";
 
 export const VitalTaskList = () => {
@@ -23,6 +23,33 @@ export const VitalTaskList = () => {
     };
     fetchVitalTasks();
   }, []);
+
+  // 🗑️ Удаление задачи
+  const handleDeleteTask = async (id: string) => {
+    if (!window.confirm("Удалить задачу?")) return;
+    try {
+      await deleteTodo(id);
+      // 🔥 Удаляем задачу локально
+      setVitalTasks((prev) => prev.filter((task) => task.id !== id));
+    } catch (error) {
+      console.error("Ошибка при удалении задачи:", error);
+      alert("Не удалось удалить задачу 😢");
+    }
+  };
+
+  // 💫 Удаление из "Vital"
+  const handleVitalUpdate = async (id: string, isVital: boolean) => {
+    try {
+      await patchTodo(id, { vital: isVital });
+      // 🔥 Если убрали флаг — убираем из списка
+      if (!isVital) {
+        setVitalTasks((prev) => prev.filter((task) => task.id !== id));
+      }
+    } catch (error) {
+      console.error("Ошибка при изменении важности:", error);
+      alert("Не удалось обновить задачу 😢");
+    }
+  };
 
   if (loading) {
     return <p className="vital-task-list__loading">Loading vital tasks...</p>;
@@ -51,6 +78,8 @@ export const VitalTaskList = () => {
             image={task.image}
             vital={true}
             type="vital"
+            onDelete={handleDeleteTask} // 🗑️ удаление
+            onVitalUpdate={handleVitalUpdate} // 💫 удаление из vital
           />
         ))
       ) : (
