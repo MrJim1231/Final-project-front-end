@@ -14,12 +14,13 @@ export const MyTaskList = () => {
     (state: RootState) => state.tasks
   );
 
-  if (loading) return <p>Loading tasks...</p>;
+  // 🌀 Показ загрузки
+  if (loading) return <p className="my-task-list__loading">Loading tasks...</p>;
 
   // ✅ Отображаем только активные (не Completed и не Vital)
   const activeTasks = items.filter((t) => t.status !== "Completed" && !t.vital);
 
-  // ✅ Обновление статуса
+  // 🔄 Обновление статуса
   const handleStatusUpdate = (
     id: string,
     newStatus: "Not Started" | "In Progress" | "Completed"
@@ -27,9 +28,15 @@ export const MyTaskList = () => {
     dispatch(updateTask({ id, status: newStatus }));
   };
 
-  // ✅ Добавление/удаление из Vital
+  // ⭐ Добавление/удаление из Vital
   const handleVitalUpdate = (id: string, isVital: boolean) => {
     dispatch(updateTask({ id, vital: isVital }));
+  };
+
+  // ✅ Выбор задачи (для отображения в TaskDetails)
+  const handleSelectTask = (taskId: string) => {
+    const found = items.find((t) => t.id === taskId);
+    if (found) dispatch(selectTask(found));
   };
 
   return (
@@ -45,7 +52,7 @@ export const MyTaskList = () => {
             className={`my-task-list__item ${
               selected?.id === task.id ? "active" : ""
             }`}
-            onClick={() => dispatch(selectTask(task))}
+            onClick={() => handleSelectTask(task.id)}
           >
             <TaskCard
               id={task.id}
@@ -57,8 +64,8 @@ export const MyTaskList = () => {
               image={task.image}
               vital={task.vital || false}
               type="default"
-              onVitalUpdate={handleVitalUpdate}
               onStatusUpdate={handleStatusUpdate}
+              onVitalUpdate={handleVitalUpdate}
             />
           </div>
         ))

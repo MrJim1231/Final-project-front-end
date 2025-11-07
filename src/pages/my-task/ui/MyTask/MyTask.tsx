@@ -1,6 +1,6 @@
 // src/pages/my-task/ui/MyTask/MyTask.tsx
 import "./MyTask.css";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { MyTaskList } from "../MyTaskList/MyTaskList";
 import { TaskDetails } from "../../../../entities/task/ui/TaskDetails/TaskDetails";
@@ -22,38 +22,49 @@ export const MyTask = () => {
     dispatch(fetchTasks());
   }, [dispatch]);
 
-  // 🔹 Фильтруем только активные (не Completed и не Vital)
-  const activeTasks = items.filter((t) => t.status !== "Completed" && !t.vital);
+  // 🔹 Мемоизируем фильтрованные активные задачи
+  const activeTasks = useMemo(
+    () => items.filter((t) => t.status !== "Completed" && !t.vital),
+    [items]
+  );
 
-  // 🗑️ Удаление текущей задачи
-  const handleDelete = () => {
+  // 🗑️ Удаление текущей выбранной задачи
+  const handleDelete = async () => {
     if (!selected) return;
-    if (window.confirm("Удалить задачу?")) {
-      dispatch(removeTask(selected.id));
-      // выбираем следующую задачу после удаления
+    if (!window.confirm(`Удалить задачу "${selected.title}"?`)) return;
+
+    try {
+      await dispatch(removeTask(selected.id)).unwrap();
+
+      // ✅ выбираем следующую задачу
       const nextTask = activeTasks.find((t) => t.id !== selected.id);
       dispatch(selectTask(nextTask || null));
+    } catch (err) {
+      console.error("Ошибка при удалении задачи:", err);
+      alert("Не удалось удалить задачу 😢");
     }
   };
 
-  // ✏️ Редактирование (можно открыть модалку или что-то другое)
+  // ✏️ Редактирование — пока просто сообщение, позже можно открыть модалку
   const handleEdit = () => {
     if (selected) {
       alert(`Редактировать задачу: ${selected.title}`);
-      // в будущем можно dispatch(selectTask(selected)) + открыть модалку
+      // ⬇️ в будущем: открыть модалку для редактирования
+      // dispatch(openEditModal(selected));
     }
   };
 
-  if (loading) return <p>Loading tasks...</p>;
+  if (loading) return <p className="my-task-page__loading">Loading tasks...</p>;
 
   return (
     <section className="my-task-page">
       <div className="my-task-page__content">
+        {/* === Левая колонка: список === */}
         <div className="my-task-page__left">
-          {/* ✅ список задач теперь тоже берёт из Redux */}
           <MyTaskList />
         </div>
 
+        {/* === Правая колонка: детали === */}
         <div className="my-task-page__right">
           {selected ? (
             <TaskDetails
