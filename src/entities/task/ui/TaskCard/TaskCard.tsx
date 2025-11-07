@@ -3,6 +3,9 @@ import { useState, useRef, useEffect } from "react";
 import { IoEllipsisHorizontalOutline } from "react-icons/io5";
 import { patchTodo } from "../../../../shared/api/todos";
 
+// 🔹 резервная картинка
+const placeholderImg = "https://placehold.co/120x120?text=No+Image";
+
 interface TaskCardProps {
   id?: string;
   title: string;
@@ -63,16 +66,12 @@ export const TaskCard = ({
 
   // === Автообновление типа ===
   useEffect(() => {
-    if (isVital) {
-      setType("vital");
-    } else if (status === "Completed") {
-      setType("completed");
-    } else {
-      setType("default");
-    }
+    if (isVital) setType("vital");
+    else if (status === "Completed") setType("completed");
+    else setType("default");
   }, [status, isVital]);
 
-  // === Цвет кружка статуса ===
+  // === Цвет кружка ===
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Not Started":
@@ -101,17 +100,28 @@ export const TaskCard = ({
   const handleActionClick = async (action: string) => {
     if (!id) return;
 
-    // 🗑 Удаление
-    if (action === "Delete" && onDelete) {
-      onDelete(id);
-      setIsMenuOpen(false);
-      return;
-    }
+    const closeMenu = () => setIsMenuOpen(false);
 
-    // ✅ Завершить задачу
-    if (action === "Finish") {
-      try {
-        setUpdating(true);
+    try {
+      setUpdating(true);
+
+      // 🗑️ Удаление
+      if (action === "Delete" && onDelete) {
+        onDelete(id);
+        return closeMenu();
+      }
+
+      // ⭐ Vital toggle
+      if (action === "Vital" || action === "Remove from Vital") {
+        const newVital = !isVital;
+        const updated = await patchTodo(id, { vital: newVital });
+        setIsVital(updated.vital ?? newVital);
+        onVitalUpdate?.(id, updated.vital ?? newVital);
+        return closeMenu();
+      }
+
+      // ✅ Завершить задачу
+      if (action === "Finish") {
         const now = new Date().toISOString();
         const updated = await patchTodo(id, {
           status: "Completed",
@@ -120,85 +130,43 @@ export const TaskCard = ({
         setStatus(updated.status);
         setCompletedTime(now);
         onStatusUpdate?.(id, updated.status);
-      } catch (error) {
-        console.error("Ошибка при обновлении статуса:", error);
-      } finally {
-        setUpdating(false);
-        setIsMenuOpen(false);
+        return closeMenu();
       }
-      return;
-    }
 
-    // 🔄 Вернуть из Completed
-    if (action === "Unfinish") {
-      try {
-        setUpdating(true);
+      // 🔁 Вернуть из Completed
+      if (action === "Unfinish") {
         const updated = await patchTodo(id, { status: "In Progress" });
         setStatus(updated.status);
         setCompletedTime("");
         onStatusUpdate?.(id, updated.status);
-      } catch (error) {
-        console.error("Ошибка при возврате статуса:", error);
-      } finally {
-        setUpdating(false);
-        setIsMenuOpen(false);
+        return closeMenu();
       }
-      return;
-    }
 
-    // 🟦 Начать задачу
-    if (action === "Mark In Progress") {
-      try {
-        setUpdating(true);
+      // 🟦 В прогрессе
+      if (action === "Mark In Progress") {
         const updated = await patchTodo(id, { status: "In Progress" });
         setStatus(updated.status);
         onStatusUpdate?.(id, updated.status);
-      } catch (error) {
-        console.error("Ошибка при обновлении статуса:", error);
-      } finally {
-        setUpdating(false);
-        setIsMenuOpen(false);
+        return closeMenu();
       }
-      return;
-    }
 
-    // 🔴 Вернуть задачу в "Not Started"
-    if (action === "Unmark In Progress") {
-      try {
-        setUpdating(true);
+      // 🔴 Вернуть Not Started
+      if (action === "Unmark In Progress") {
         const updated = await patchTodo(id, { status: "Not Started" });
         setStatus(updated.status);
         onStatusUpdate?.(id, updated.status);
-      } catch (error) {
-        console.error("Ошибка при возврате статуса:", error);
-      } finally {
-        setUpdating(false);
-        setIsMenuOpen(false);
+        return closeMenu();
       }
-      return;
+    } catch (error) {
+      console.error("Ошибка при выполнении действия:", error);
+      alert("Не удалось выполнить действие 😢");
+    } finally {
+      setUpdating(false);
+      closeMenu();
     }
-
-    // ⭐ Vital toggle
-    if (action === "Vital" || action === "Remove from Vital") {
-      try {
-        setUpdating(true);
-        const newVital = !isVital;
-        const updated = await patchTodo(id, { vital: newVital });
-        setIsVital(updated.vital ?? newVital);
-        onVitalUpdate?.(id, updated.vital ?? newVital);
-      } catch (error) {
-        console.error("Ошибка при обновлении Vital:", error);
-      } finally {
-        setUpdating(false);
-        setIsMenuOpen(false);
-      }
-      return;
-    }
-
-    setIsMenuOpen(false);
   };
 
-  // === Динамический список действий ===
+  // === Список действий ===
   const actions = [
     isVital ? "Remove from Vital" : "Vital",
     "Edit",
@@ -256,11 +224,16 @@ export const TaskCard = ({
           <p className="task-card__desc">{desc}</p>
         </div>
 
-        {image && (
-          <div className="task-card__right">
-            <img src={image} alt={title} className="task-card__img" />
-          </div>
-        )}
+        <div className="task-card__right">
+          <img
+            src={image || placeholderImg}
+            alt={title}
+            className="task-card__img"
+            onError={(e) =>
+              ((e.target as HTMLImageElement).src = placeholderImg)
+            }
+          />
+        </div>
       </div>
 
       {/* === Нижняя часть === */}
