@@ -13,7 +13,11 @@ export const MyTaskList = () => {
     const fetchTasks = async () => {
       try {
         const data = await getTodos();
-        setTasks(data);
+        // ✅ Оставляем только "обычные" задачи — не Completed и не Vital
+        const filtered = data.filter(
+          (t) => t.status !== "Completed" && !t.vital
+        );
+        setTasks(filtered);
       } catch (error) {
         console.error("Ошибка при загрузке задач:", error);
       } finally {
@@ -28,7 +32,6 @@ export const MyTaskList = () => {
     if (!window.confirm("Удалить задачу?")) return;
     try {
       await deleteTodo(id);
-      // ✅ Удаляем задачу локально без перезагрузки
       setTasks((prev) => prev.filter((t) => t.id !== id));
     } catch (error) {
       console.error("Ошибка при удалении задачи:", error);
@@ -42,12 +45,10 @@ export const MyTaskList = () => {
 
   return (
     <div className="my-task-list">
-      {/* === Заголовок секции === */}
       <div className="my-task-list__header">
         <h3 className="my-task-list__title">My Tasks</h3>
       </div>
 
-      {/* === Список карточек === */}
       {tasks.length > 0 ? (
         tasks.map((task) => (
           <TaskCard
@@ -60,19 +61,13 @@ export const MyTaskList = () => {
             status={task.status}
             image={task.image}
             vital={task.vital || false}
-            type={
-              task.vital
-                ? "vital"
-                : task.status === "Completed"
-                ? "completed"
-                : "default"
-            }
-            onDelete={handleDeleteTask} // ✅ добавили обработчик
+            type="default" // ✅ теперь всегда default
+            onDelete={handleDeleteTask}
           />
         ))
       ) : (
         <p className="my-task-list__empty">
-          🗒 No tasks yet — create your first one!
+          🗒 No active tasks — create your first one!
         </p>
       )}
     </div>
