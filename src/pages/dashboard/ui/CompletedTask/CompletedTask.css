@@ -8,6 +8,7 @@
   min-width: 423px;
   min-height: 436px;
   box-sizing: border-box;
+  height: 100%;
 }
 
 /* === Заголовок секции === */

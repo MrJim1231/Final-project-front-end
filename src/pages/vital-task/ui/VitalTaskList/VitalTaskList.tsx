@@ -29,7 +29,6 @@ export const VitalTaskList = () => {
     if (!window.confirm("Удалить задачу?")) return;
     try {
       await deleteTodo(id);
-      // 🔥 Удаляем задачу локально
       setVitalTasks((prev) => prev.filter((task) => task.id !== id));
     } catch (error) {
       console.error("Ошибка при удалении задачи:", error);
@@ -41,13 +40,45 @@ export const VitalTaskList = () => {
   const handleVitalUpdate = async (id: string, isVital: boolean) => {
     try {
       await patchTodo(id, { vital: isVital });
-      // 🔥 Если убрали флаг — убираем из списка
       if (!isVital) {
         setVitalTasks((prev) => prev.filter((task) => task.id !== id));
       }
     } catch (error) {
       console.error("Ошибка при изменении важности:", error);
       alert("Не удалось обновить задачу 😢");
+    }
+  };
+
+  // ✅ При добавлении в Finish — убираем из vital и обновляем статус
+  const handleStatusUpdate = async (
+    id: string,
+    newStatus: "Not Started" | "In Progress" | "Completed"
+  ) => {
+    try {
+      // 👇 если завершили — убираем из vital сразу
+      const updateData =
+        newStatus === "Completed"
+          ? {
+              status: newStatus,
+              vital: false,
+              completedAt: new Date().toISOString(),
+            }
+          : { status: newStatus };
+
+      const updated = await patchTodo(id, updateData);
+
+      // 🔥 если задача завершена — удаляем из локального состояния
+      if (updated.status === "Completed") {
+        setVitalTasks((prev) => prev.filter((task) => task.id !== id));
+      } else {
+        // иначе просто обновляем статус в списке
+        setVitalTasks((prev) =>
+          prev.map((t) => (t.id === id ? { ...t, status: updated.status } : t))
+        );
+      }
+    } catch (error) {
+      console.error("Ошибка при обновлении статуса:", error);
+      alert("Не удалось обновить статус задачи 😢");
     }
   };
 
@@ -78,8 +109,9 @@ export const VitalTaskList = () => {
             image={task.image}
             vital={true}
             type="vital"
-            onDelete={handleDeleteTask} // 🗑️ удаление
-            onVitalUpdate={handleVitalUpdate} // 💫 удаление из vital
+            onDelete={handleDeleteTask}
+            onVitalUpdate={handleVitalUpdate}
+            onStatusUpdate={handleStatusUpdate} // ✅ обновление статуса
           />
         ))
       ) : (
