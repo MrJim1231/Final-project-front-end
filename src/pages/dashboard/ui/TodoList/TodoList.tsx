@@ -3,12 +3,7 @@ import "./TodoList.css";
 import { FiClipboard, FiPlus } from "react-icons/fi";
 import { TaskCard } from "../../../../shared/ui/TaskCard";
 import { AddTaskModal } from "../AddTaskModal/AddTaskModal";
-import {
-  getTodos,
-  createTodo,
-  deleteTodo,
-  patchTodo,
-} from "../../../../shared/api/todos";
+import { getTodos, deleteTodo, patchTodo } from "../../../../shared/api/todos";
 import type { Todo } from "../../../../shared/api/todos";
 import { useDateContext } from "../../../../shared/context/DateContext";
 
