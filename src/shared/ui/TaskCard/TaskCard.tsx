@@ -97,16 +97,18 @@ export const TaskCard = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // === Обработка кликов по действиям ===
+  // === Обработка действий ===
   const handleActionClick = async (action: string) => {
     if (!id) return;
 
+    // 🗑 Удаление
     if (action === "Delete" && onDelete) {
       onDelete(id);
       setIsMenuOpen(false);
       return;
     }
 
+    // ✅ Завершить задачу
     if (action === "Finish") {
       try {
         setUpdating(true);
@@ -120,7 +122,6 @@ export const TaskCard = ({
         onStatusUpdate?.(id, updated.status);
       } catch (error) {
         console.error("Ошибка при обновлении статуса:", error);
-        alert("Не удалось обновить статус 😢");
       } finally {
         setUpdating(false);
         setIsMenuOpen(false);
@@ -128,6 +129,56 @@ export const TaskCard = ({
       return;
     }
 
+    // 🔄 Вернуть из Completed
+    if (action === "Unfinish") {
+      try {
+        setUpdating(true);
+        const updated = await patchTodo(id, { status: "In Progress" });
+        setStatus(updated.status);
+        setCompletedTime("");
+        onStatusUpdate?.(id, updated.status);
+      } catch (error) {
+        console.error("Ошибка при возврате статуса:", error);
+      } finally {
+        setUpdating(false);
+        setIsMenuOpen(false);
+      }
+      return;
+    }
+
+    // 🟦 Начать задачу
+    if (action === "Mark In Progress") {
+      try {
+        setUpdating(true);
+        const updated = await patchTodo(id, { status: "In Progress" });
+        setStatus(updated.status);
+        onStatusUpdate?.(id, updated.status);
+      } catch (error) {
+        console.error("Ошибка при обновлении статуса:", error);
+      } finally {
+        setUpdating(false);
+        setIsMenuOpen(false);
+      }
+      return;
+    }
+
+    // 🔴 Вернуть задачу в "Not Started"
+    if (action === "Unmark In Progress") {
+      try {
+        setUpdating(true);
+        const updated = await patchTodo(id, { status: "Not Started" });
+        setStatus(updated.status);
+        onStatusUpdate?.(id, updated.status);
+      } catch (error) {
+        console.error("Ошибка при возврате статуса:", error);
+      } finally {
+        setUpdating(false);
+        setIsMenuOpen(false);
+      }
+      return;
+    }
+
+    // ⭐ Vital toggle
     if (action === "Vital" || action === "Remove from Vital") {
       try {
         setUpdating(true);
@@ -137,7 +188,6 @@ export const TaskCard = ({
         onVitalUpdate?.(id, updated.vital ?? newVital);
       } catch (error) {
         console.error("Ошибка при обновлении Vital:", error);
-        alert("Не удалось изменить важность задачи 😢");
       } finally {
         setUpdating(false);
         setIsMenuOpen(false);
@@ -148,11 +198,16 @@ export const TaskCard = ({
     setIsMenuOpen(false);
   };
 
+  // === Динамический список действий ===
   const actions = [
     isVital ? "Remove from Vital" : "Vital",
     "Edit",
     "Delete",
-    "Finish",
+    ...(status === "Not Started"
+      ? ["Mark In Progress", "Finish"]
+      : status === "In Progress"
+      ? ["Unmark In Progress", "Finish"]
+      : ["Unfinish", "Mark In Progress"]),
   ];
 
   return (
