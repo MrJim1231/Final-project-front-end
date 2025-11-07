@@ -4,9 +4,15 @@ import { TaskCard } from "../../../../shared/ui/TaskCard";
 import { getTodos, deleteTodo, patchTodo } from "../../../../shared/api/todos";
 import type { Todo } from "../../../../shared/api/todos";
 
-export const VitalTaskList = () => {
+interface VitalTaskListProps {
+  onSelectTask: (task: Todo) => void;
+  onTasksLoaded?: (tasks: Todo[]) => void; // ✅ добавь это
+}
+
+export const VitalTaskList = ({ onSelectTask }: VitalTaskListProps) => {
   const [vitalTasks, setVitalTasks] = useState<Todo[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeTaskId, setActiveTaskId] = useState<string | null>(null); // 👈 подсветка выбранной
 
   // 🚀 Загружаем только задачи с меткой "vital"
   useEffect(() => {
@@ -15,6 +21,12 @@ export const VitalTaskList = () => {
         const allTasks = await getTodos();
         const vitalOnly = allTasks.filter((task) => task.vital === true);
         setVitalTasks(vitalOnly);
+
+        // ✅ Если есть задачи — выбираем первую по умолчанию
+        if (vitalOnly.length > 0) {
+          setActiveTaskId(vitalOnly[0].id);
+          onSelectTask(vitalOnly[0]);
+        }
       } catch (error) {
         console.error("Ошибка при загрузке Vital задач:", error);
       } finally {
@@ -22,7 +34,7 @@ export const VitalTaskList = () => {
       }
     };
     fetchVitalTasks();
-  }, []);
+  }, [onSelectTask]);
 
   // 🗑️ Удаление задачи
   const handleDeleteTask = async (id: string) => {
@@ -30,6 +42,12 @@ export const VitalTaskList = () => {
     try {
       await deleteTodo(id);
       setVitalTasks((prev) => prev.filter((task) => task.id !== id));
+
+      // если удаляем выбранную — очищаем детали
+      if (activeTaskId === id) {
+        setActiveTaskId(null);
+        onSelectTask(null as unknown as Todo);
+      }
     } catch (error) {
       console.error("Ошибка при удалении задачи:", error);
       alert("Не удалось удалить задачу 😢");
@@ -42,6 +60,11 @@ export const VitalTaskList = () => {
       await patchTodo(id, { vital: isVital });
       if (!isVital) {
         setVitalTasks((prev) => prev.filter((task) => task.id !== id));
+
+        if (activeTaskId === id) {
+          setActiveTaskId(null);
+          onSelectTask(null as unknown as Todo);
+        }
       }
     } catch (error) {
       console.error("Ошибка при изменении важности:", error);
@@ -55,7 +78,6 @@ export const VitalTaskList = () => {
     newStatus: "Not Started" | "In Progress" | "Completed"
   ) => {
     try {
-      // 👇 если завершили — убираем из vital сразу
       const updateData =
         newStatus === "Completed"
           ? {
@@ -67,11 +89,16 @@ export const VitalTaskList = () => {
 
       const updated = await patchTodo(id, updateData);
 
-      // 🔥 если задача завершена — удаляем из локального состояния
+      // 🔥 если завершена — удаляем из локального состояния
       if (updated.status === "Completed") {
         setVitalTasks((prev) => prev.filter((task) => task.id !== id));
+
+        if (activeTaskId === id) {
+          setActiveTaskId(null);
+          onSelectTask(null as unknown as Todo);
+        }
       } else {
-        // иначе просто обновляем статус в списке
+        // иначе просто обновляем статус
         setVitalTasks((prev) =>
           prev.map((t) => (t.id === id ? { ...t, status: updated.status } : t))
         );
@@ -98,21 +125,31 @@ export const VitalTaskList = () => {
       {/* === Список карточек === */}
       {vitalTasks.length > 0 ? (
         vitalTasks.map((task) => (
-          <TaskCard
+          <div
             key={task.id}
-            id={task.id}
-            title={task.title}
-            desc={task.description}
-            date={new Date(task.createdAt).toLocaleDateString()}
-            priority={task.priority}
-            status={task.status}
-            image={task.image}
-            vital={true}
-            type="vital"
-            onDelete={handleDeleteTask}
-            onVitalUpdate={handleVitalUpdate}
-            onStatusUpdate={handleStatusUpdate} // ✅ обновление статуса
-          />
+            onClick={() => {
+              onSelectTask(task);
+              setActiveTaskId(task.id);
+            }}
+            className={`vital-task-list__item ${
+              activeTaskId === task.id ? "active" : ""
+            }`}
+          >
+            <TaskCard
+              id={task.id}
+              title={task.title}
+              desc={task.description}
+              date={new Date(task.createdAt).toLocaleDateString()}
+              priority={task.priority}
+              status={task.status}
+              image={task.image}
+              vital={true}
+              type="vital"
+              onDelete={handleDeleteTask}
+              onVitalUpdate={handleVitalUpdate}
+              onStatusUpdate={handleStatusUpdate}
+            />
+          </div>
         ))
       ) : (
         <p className="vital-task-list__empty">
