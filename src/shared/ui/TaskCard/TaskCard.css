@@ -189,11 +189,11 @@
 }
 
 /* 🟡 Для Vital Tasks */
-.task-card--vital {
+/* .task-card--vital {
   padding: 10px;
   box-sizing: border-box;
   width: fit-content;
-}
+} */
 
 /* === Large Screens (≥1400px) === */
 @media (min-width: 1400px) {

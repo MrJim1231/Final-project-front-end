@@ -4,6 +4,7 @@ import {
   FiGrid,
   FiZap,
   FiFileText,
+  FiCheckCircle, // ✅ добавлено
   FiList,
   FiSettings,
   FiHelpCircle,
@@ -57,6 +58,16 @@ export const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
             }
           >
             <FiFileText className="dashboard__sidebar-icon" /> My Task
+          </NavLink>
+
+          {/* ✅ Новая вкладка Completed */}
+          <NavLink
+            to="/completed-task"
+            className={({ isActive }) =>
+              `dashboard__sidebar-link ${isActive ? "active" : ""}`
+            }
+          >
+            <FiCheckCircle className="dashboard__sidebar-icon" /> Completed
           </NavLink>
 
           <NavLink
