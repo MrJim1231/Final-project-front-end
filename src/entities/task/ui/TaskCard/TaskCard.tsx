@@ -1,7 +1,7 @@
 import "./TaskCard.css";
 import { useState, useRef, useEffect } from "react";
 import { IoEllipsisHorizontalOutline } from "react-icons/io5";
-import { patchTodo } from "../../api/todos";
+import { patchTodo } from "../../../../shared/api/todos";
 
 interface TaskCardProps {
   id?: string;

@@ -1,6 +1,6 @@
 import "./CompletedTaskList.css";
 import { useEffect, useState } from "react";
-import { TaskCard } from "../../../../shared/ui/TaskCard";
+import { TaskCard } from "../../../../entities/task/ui/TaskCard";
 import { getTodos, deleteTodo } from "../../../../shared/api/todos";
 import type { Todo } from "../../../../shared/api/todos";
 

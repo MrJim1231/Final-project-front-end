@@ -1,7 +1,7 @@
 import "./MyTask.css";
 import { useState } from "react";
 import { MyTaskList } from "../MyTaskList/MyTaskList";
-import { TaskDetails } from "../../../../shared/ui/TaskDetails/TaskDetails";
+import { TaskDetails } from "../../../../entities/task/ui/TaskDetails/TaskDetails";
 import type { Todo } from "../../../../shared/api/todos";
 
 export const MyTask = () => {

@@ -1,7 +1,7 @@
 import "./VitalTask.css";
 import { useState } from "react";
 import { VitalTaskList } from "../VitalTaskList/VitalTaskList";
-import { TaskDetails } from "../../../../shared/ui/TaskDetails/TaskDetails";
+import { TaskDetails } from "../../../../entities/task/ui/TaskDetails/TaskDetails";
 import type { Todo } from "../../../../shared/api/todos";
 
 export const VitalTask = () => {

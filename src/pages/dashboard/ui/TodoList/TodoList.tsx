@@ -1,7 +1,7 @@
 import "./TodoList.css";
 import { FiClipboard, FiPlus } from "react-icons/fi";
 import { useEffect, useState } from "react";
-import { TaskCard } from "../../../../shared/ui/TaskCard";
+import { TaskCard } from "../../../../entities/task/ui/TaskCard";
 import { AddTaskModal } from "../AddTaskModal/AddTaskModal";
 import { useSelector, useDispatch } from "react-redux";
 import {
