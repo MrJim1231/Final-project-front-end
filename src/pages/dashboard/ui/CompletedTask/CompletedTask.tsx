@@ -1,70 +1,55 @@
 import "./CompletedTask.css";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { FiCheckSquare } from "react-icons/fi";
+import { useDispatch, useSelector } from "react-redux";
 import { TaskCard } from "../../../../entities/task/ui/TaskCard";
-import { getTodos, deleteTodo, patchTodo } from "../../../../shared/api/todos";
-import type { Todo } from "../../../../shared/api/todos";
+import {
+  fetchTasks,
+  removeTask,
+  updateTaskStatus,
+} from "../../../../entities/task/model/tasksSlice";
+import type { RootState, AppDispatch } from "../../../../app/providers/store";
 
 export const CompletedTask = () => {
-  const [completedTasks, setCompletedTasks] = useState<Todo[]>([]);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch<AppDispatch>();
+  const { items, loading } = useSelector((state: RootState) => state.tasks);
 
-  // 🚀 Загружаем только завершённые задачи
+  // 🚀 Загружаем задачи при первом открытии
   useEffect(() => {
-    const fetchCompletedTasks = async () => {
-      try {
-        const allTasks = await getTodos();
-        const completed = allTasks.filter(
-          (task) => task.status === "Completed"
-        );
-        setCompletedTasks(completed);
-      } catch (error) {
-        console.error("Ошибка при загрузке завершённых задач:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchCompletedTasks();
-  }, []);
+    if (items.length === 0) {
+      dispatch(fetchTasks());
+    }
+  }, [dispatch]);
+
+  // ✅ Получаем завершённые задачи реактивно
+  const completedTasks = useMemo(
+    () => items.filter((t) => t.status === "Completed"),
+    [items]
+  );
 
   // 🗑️ Удаление задачи
-  const handleDeleteTask = async (id: string) => {
+  const handleDeleteTask = (id: string) => {
     if (!window.confirm("Удалить завершённую задачу?")) return;
-    try {
-      await deleteTodo(id);
-      setCompletedTasks((prev) => prev.filter((t) => t.id !== id));
-    } catch (error) {
-      console.error("Ошибка при удалении задачи:", error);
-      alert("Не удалось удалить задачу 😢");
-    }
+    dispatch(removeTask(id));
   };
 
-  // 🔁 Обновление статуса (например, "Unfinish")
-  const handleStatusUpdate = async (
+  // 🔁 Обновление статуса (Unfinish)
+  const handleStatusUpdate = (
     id: string,
     newStatus: "Not Started" | "In Progress" | "Completed"
   ) => {
-    try {
-      await patchTodo(id, { status: newStatus });
-      // ⚡ Мгновенно убираем задачу из списка, если она больше не Completed
-      if (newStatus !== "Completed") {
-        setCompletedTasks((prev) => prev.filter((t) => t.id !== id));
-      }
-    } catch (error) {
-      console.error("Ошибка при обновлении статуса:", error);
-      alert("Не удалось изменить статус 😢");
-    }
+    dispatch(updateTaskStatus({ id, status: newStatus }));
+    // ⚡ Redux сам обновит store → карточка исчезнет из Completed
   };
 
-  if (loading) {
+  if (loading)
     return (
       <p className="completed-task__loading">Loading completed tasks...</p>
     );
-  }
 
   return (
     <div className="completed-task">
-      {/* === Заголовок блока === */}
+      {/* === Заголовок === */}
       <div className="completed-task__header">
         <div className="completed-task__title-wrapper">
           <FiCheckSquare className="completed-task__icon" />
@@ -81,13 +66,13 @@ export const CompletedTask = () => {
             title={task.title}
             desc={task.description}
             date={new Date(task.createdAt).toLocaleDateString()}
-            status={task.status}
             priority={task.priority}
+            status={task.status}
             image={task.image}
             completedAt={task.completedAt || "Recently completed"}
             type="completed"
-            onDelete={handleDeleteTask}
-            onStatusUpdate={handleStatusUpdate} // ✅ добавили
+            onDelete={() => handleDeleteTask(task.id)}
+            onStatusUpdate={handleStatusUpdate}
           />
         ))
       ) : (
