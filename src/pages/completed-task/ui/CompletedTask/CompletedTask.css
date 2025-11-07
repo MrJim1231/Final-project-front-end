@@ -20,7 +20,7 @@
 .completed-page__right {
   display: flex;
   justify-content: center;
-  align-items: center;
+  /* align-items: center; */
 }
 
 .completed-page__info {
