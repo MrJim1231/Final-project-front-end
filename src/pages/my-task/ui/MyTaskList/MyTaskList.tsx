@@ -71,7 +71,7 @@ export const MyTaskList = () => {
               image={task.image}
               vital={task.vital}
               type="default"
-              enableDesktopModal // ✅ Модалка и на десктопе
+              // enableDesktopModal
             />
           </div>
         ))

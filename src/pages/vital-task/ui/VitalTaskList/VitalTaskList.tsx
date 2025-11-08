@@ -71,7 +71,7 @@ export const VitalTaskList = () => {
               image={task.image}
               vital={task.vital}
               type="vital"
-              enableDesktopModal
+              // enableDesktopModal
             />
           </div>
         ))

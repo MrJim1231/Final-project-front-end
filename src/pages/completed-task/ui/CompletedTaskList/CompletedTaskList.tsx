@@ -71,7 +71,7 @@ export const CompletedTaskList = () => {
               image={task.image}
               type="completed"
               completedAt={task.completedAt ?? undefined}
-              enableDesktopModal
+              // enableDesktopModal
             />
           </div>
         ))
