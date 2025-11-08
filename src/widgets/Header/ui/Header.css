@@ -182,3 +182,90 @@
     transform: translateY(0);
   }
 }
+
+/* 📲 Мобильные экраны (до 480px) */
+@media (max-width: 480px) {
+  .dashboard__header {
+    padding: 14px 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  }
+
+  .dashboard__header-container {
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* === Бургер === */
+  .dashboard__burger {
+    display: block;
+    font-size: 1.6rem;
+    margin-right: 0.5rem;
+  }
+
+  /* === Логотип === */
+  .dashboard__header-logo {
+    flex: 1;
+    font-size: 22px;
+    text-align: center;
+    font-weight: 700;
+  }
+
+  .dashboard__header-logo-highlight {
+    color: #ff5e5e;
+  }
+
+  /* === Прячем поиск и уведомления === */
+  .dashboard__header-search {
+    display: none !important;
+  }
+
+  /* === Блок действий (оставляем только календарь) === */
+  .dashboard__header-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* 🔕 Скрываем кнопку уведомлений */
+  .dashboard__header-actions button:first-child {
+    display: none;
+  }
+
+  /* === Календарная кнопка === */
+  .dashboard__header-button {
+    background-color: transparent;
+    color: #ff5e5e;
+    border: 1.5px solid #ff5e5e;
+    padding: 6px 8px;
+    border-radius: 8px;
+    margin: 0;
+    font-size: 1.3rem;
+  }
+
+  .dashboard__header-button:hover {
+    background-color: #ffecec;
+  }
+
+  /* ❌ Скрываем текст даты полностью */
+  .dashboard__header-date {
+    display: none !important;
+  }
+
+  /* === Попап календаря === */
+  .dashboard__calendar-popup {
+    top: 46px;
+    right: 8px;
+    padding: 10px;
+    border-radius: 10px;
+    width: 160px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  }
+
+  .dashboard__calendar-input {
+    width: 100%;
+    font-size: 12px;
+    padding: 5px 8px;
+  }
+}
