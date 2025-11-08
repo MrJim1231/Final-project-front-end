@@ -36,3 +36,69 @@
   font-weight: 600;
   color: #f24e1e;
 }
+
+/* 📲 Маленькие экраны (до 480px) */
+@media (max-width: 480px) {
+  .completed-task {
+    min-width: unset; /* убираем фиксированную ширину */
+    min-height: unset;
+    width: 100%;
+    height: auto;
+    padding: 14px 16px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  /* Заголовок секции */
+  .completed-task__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    margin-bottom: 0.75rem;
+  }
+
+  .completed-task__icon {
+    font-size: 16px;
+  }
+
+  .completed-task__title {
+    font-size: 14px;
+  }
+
+  /* Карточки внутри completed-task */
+  .task-card {
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+
+  .task-card__title {
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .task-card__desc {
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  .task-card__status,
+  .task-card__priority,
+  .task-card__date,
+  .task-card__completed {
+    font-size: 11px;
+  }
+
+  /* Кнопки и иконки внутри карточек */
+  .task-card__menu {
+    font-size: 14px;
+  }
+
+  /* Текст “No completed tasks…” */
+  .completed-task__empty,
+  .completed-task__loading {
+    font-size: 12px;
+    text-align: center;
+    color: #666;
+  }
+}
