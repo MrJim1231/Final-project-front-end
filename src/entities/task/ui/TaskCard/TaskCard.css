@@ -6,7 +6,7 @@
   border: 1.5px solid rgba(161, 163, 171, 0.35);
   border-radius: 12px;
   background-color: #f5f8ff;
-  margin-bottom: 14px;
+  /* margin-bottom: 14px; */
   transition: box-shadow 0.2s ease, transform 0.2s ease;
   max-width: 100%;
   z-index: 1; /* базовый слой */

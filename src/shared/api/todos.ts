@@ -14,7 +14,7 @@ export interface Todo {
 }
 
 // === Базовый URL ===
-const API_URL = "https://6907339bb1879c890ed9165d.mockapi.io/todos";
+const API_URL = "https://690f630945e65ab24ac39edf.mockapi.io/todos";
 
 // === Получить все задачи ===
 export const getTodos = async (): Promise<Todo[]> => {
