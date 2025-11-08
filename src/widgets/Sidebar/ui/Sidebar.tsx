@@ -1,18 +1,34 @@
+// src/widgets/Sidebar/ui/Sidebar.tsx
 import "./Sidebar.css";
 import avatar from "../../../shared/assets/images/avatar.png";
 import {
   FiGrid,
   FiZap,
   FiFileText,
-  FiCheckCircle, // ✅ добавлено
+  FiCheckCircle,
   FiList,
   FiSettings,
   FiHelpCircle,
   FiLogOut,
 } from "react-icons/fi";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
-export const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
+interface SidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
+  const location = useLocation();
+
+  // ✅ Автоматически закрываем сайдбар при смене маршрута (только на мобильных)
+  useEffect(() => {
+    if (isOpen && window.innerWidth <= 992) {
+      onClose();
+    }
+  }, [location.pathname]);
+
   return (
     <aside className={`dashboard__sidebar ${isOpen ? "open" : ""}`}>
       {/* === Верхняя часть === */}
@@ -60,7 +76,6 @@ export const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
             <FiFileText className="dashboard__sidebar-icon" /> My Task
           </NavLink>
 
-          {/* ✅ Новая вкладка Completed */}
           <NavLink
             to="/completed-task"
             className={({ isActive }) =>

@@ -1,3 +1,4 @@
+// src/app/App.tsx
 import { useState, useEffect } from "react";
 import { Header } from "../widgets/Header";
 import { Sidebar } from "../widgets/Sidebar";
@@ -9,6 +10,7 @@ export const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+  const closeSidebar = () => setSidebarOpen(false);
 
   // 🔹 Блокируем прокрутку при открытом меню
   useEffect(() => {
@@ -17,18 +19,22 @@ export const App = () => {
 
   return (
     <>
+      {/* === Хедер === */}
       <Header onToggleSidebar={toggleSidebar} />
 
       {/* 🔹 Затемнение фона при открытом меню */}
       {sidebarOpen && (
         <div
           className="dashboard__overlay show"
-          onClick={toggleSidebar} // закрывает меню при клике на фон
+          onClick={closeSidebar} // 👈 закрываем меню при клике на фон
         ></div>
       )}
 
+      {/* === Основная сетка === */}
       <div className="dashboard__layout">
-        <Sidebar isOpen={sidebarOpen} />
+        {/* 👇 Передаём onClose в Sidebar */}
+        <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
+
         <main className="dashboard__content">
           {/* 🔹 Здесь динамически подгружается текущая страница */}
           <AppRouter />
