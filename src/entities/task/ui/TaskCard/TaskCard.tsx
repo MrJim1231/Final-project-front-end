@@ -21,6 +21,7 @@ interface TaskCardProps {
     newStatus: "Not Started" | "In Progress" | "Completed"
   ) => void;
   onVitalUpdate?: (id: string, isVital: boolean) => void;
+  showAlert?: boolean; // 👈 добавляем флаг для Dashboard
 }
 
 // === Формат времени завершения ===
@@ -51,6 +52,7 @@ export const TaskCard = ({
   onDelete,
   onStatusUpdate,
   onVitalUpdate,
+  showAlert = false, // 👈 по умолчанию alert выключен
 }: TaskCardProps) => {
   const [status, setStatus] = useState(initialStatus);
   const [isVital, setIsVital] = useState(vital);
@@ -97,7 +99,6 @@ export const TaskCard = ({
   // === Проверяем корректность ссылки ===
   const getSafeImageSrc = (src?: string) => {
     if (!src) return noImage;
-    // ❌ Исключаем битые домены или пустые данные
     if (
       src.includes("wikia.nocookie.net") ||
       src.includes("undefined") ||
@@ -116,13 +117,11 @@ export const TaskCard = ({
     try {
       setUpdating(true);
 
-      // 🗑️ Удаление
       if (action === "Delete" && onDelete) {
         onDelete(id);
         return closeMenu();
       }
 
-      // ⭐ Vital toggle
       if (action === "Vital" || action === "Remove from Vital") {
         const newVital = !isVital;
         const updated = await patchTodo(id, { vital: newVital });
@@ -131,7 +130,6 @@ export const TaskCard = ({
         return closeMenu();
       }
 
-      // ✅ Завершить задачу
       if (action === "Finish") {
         const now = new Date().toISOString();
         const updated = await patchTodo(id, {
@@ -144,7 +142,6 @@ export const TaskCard = ({
         return closeMenu();
       }
 
-      // 🔁 Вернуть из Completed
       if (action === "Unfinish") {
         const updated = await patchTodo(id, { status: "In Progress" });
         setStatus(updated.status);
@@ -153,7 +150,6 @@ export const TaskCard = ({
         return closeMenu();
       }
 
-      // 🟦 В прогрессе
       if (action === "Mark In Progress") {
         const updated = await patchTodo(id, { status: "In Progress" });
         setStatus(updated.status);
@@ -161,7 +157,6 @@ export const TaskCard = ({
         return closeMenu();
       }
 
-      // 🔴 Вернуть Not Started
       if (action === "Unmark In Progress") {
         const updated = await patchTodo(id, { status: "Not Started" });
         setStatus(updated.status);
@@ -174,6 +169,17 @@ export const TaskCard = ({
     } finally {
       setUpdating(false);
       closeMenu();
+    }
+  };
+
+  // === Клик по карточке ===
+  const handleCardClick = (e: React.MouseEvent) => {
+    const target = e.target as HTMLElement;
+    if (target.closest(".task-card__menu-wrapper")) return;
+
+    // ✅ показываем alert только если showAlert = true
+    if (showAlert) {
+      alert(`📝 Task: ${title}\n\n${desc || "No description"}`);
     }
   };
 
@@ -194,12 +200,16 @@ export const TaskCard = ({
       className={`task-card ${isMenuOpen ? "menu-open" : ""} ${
         type === "completed" ? "task-card--completed" : ""
       } ${type === "vital" ? "task-card--vital" : ""}`}
+      onClick={handleCardClick}
     >
       {/* ⋯ Меню */}
       <div className="task-card__menu-wrapper" ref={menuRef}>
         <IoEllipsisHorizontalOutline
           className="task-card__menu"
-          onClick={() => setIsMenuOpen((prev) => !prev)}
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsMenuOpen((prev) => !prev);
+          }}
         />
         {isMenuOpen && (
           <div className="task-card__actions">

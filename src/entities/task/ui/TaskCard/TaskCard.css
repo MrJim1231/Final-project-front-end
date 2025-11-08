@@ -186,6 +186,9 @@
 /* ✅ Для Completed карточек */
 .task-card--completed {
   background: #fff;
+  opacity: 0.7; /* визуально бледная */
+  pointer-events: auto; /* ✅ клики снова работают */
+  cursor: pointer;
 }
 
 /* 🟡 Для Vital Tasks */

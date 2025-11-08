@@ -73,6 +73,7 @@ export const CompletedTask = () => {
             type="completed"
             onDelete={() => handleDeleteTask(task.id)}
             onStatusUpdate={handleStatusUpdate}
+            showAlert={true} // ✅ добавь эту строку
           />
         ))
       ) : (

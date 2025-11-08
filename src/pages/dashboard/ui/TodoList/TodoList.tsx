@@ -93,6 +93,7 @@ export const TodoList = () => {
             vital={task.vital}
             onDelete={() => handleDeleteTask(task.id)}
             onStatusUpdate={(id, s) => handleStatusUpdate(id, s)}
+            showAlert={true} // 👈 только здесь включаем alert
           />
         ))
       ) : (
