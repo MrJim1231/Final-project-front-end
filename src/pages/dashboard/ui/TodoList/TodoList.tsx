@@ -2,7 +2,7 @@ import "./TodoList.css";
 import { FiClipboard, FiPlus } from "react-icons/fi";
 import { useEffect, useState } from "react";
 import { TaskCard } from "../../../../entities/task/ui/TaskCard";
-import { AddTaskModal } from "../AddTaskModal/AddTaskModal";
+import { AddTaskModal } from "../../../../entities/task/ui/AddTaskModal/AddTaskModal";
 import { useSelector, useDispatch } from "react-redux";
 import {
   fetchTasks,
