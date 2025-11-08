@@ -10,7 +10,7 @@ interface TaskDetailsModalProps {
   priority?: "Low" | "Moderate" | "High" | "Extreme";
   status?: "Not Started" | "In Progress" | "Completed";
   image?: string;
-  completedAt?: string;
+  completedAt?: string | null; // было: string | undefined
 }
 
 export const TaskDetailsModal = ({

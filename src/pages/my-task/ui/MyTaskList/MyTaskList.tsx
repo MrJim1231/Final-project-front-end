@@ -8,19 +8,20 @@ import {
 } from "../../../../entities/task/model/tasksSlice";
 import type { RootState, AppDispatch } from "../../../../app/providers/store";
 
-export const MyTaskList = () => {
+interface MyTaskListProps {
+  onSelectTask?: (taskId: string) => void; // 👈 добавили
+}
+
+export const MyTaskList = ({ onSelectTask }: MyTaskListProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { items, selected, loading } = useSelector(
     (state: RootState) => state.tasks
   );
 
-  // 🌀 Показ загрузки
   if (loading) return <p className="my-task-list__loading">Loading tasks...</p>;
 
-  // ✅ Отображаем только активные (не Completed и не Vital)
   const activeTasks = items.filter((t) => t.status !== "Completed" && !t.vital);
 
-  // 🔄 Обновление статуса
   const handleStatusUpdate = (
     id: string,
     newStatus: "Not Started" | "In Progress" | "Completed"
@@ -28,15 +29,16 @@ export const MyTaskList = () => {
     dispatch(updateTask({ id, status: newStatus }));
   };
 
-  // ⭐ Добавление/удаление из Vital
   const handleVitalUpdate = (id: string, isVital: boolean) => {
     dispatch(updateTask({ id, vital: isVital }));
   };
 
-  // ✅ Выбор задачи (для отображения в TaskDetails)
-  const handleSelectTask = (taskId: string) => {
-    const found = items.find((t) => t.id === taskId);
-    if (found) dispatch(selectTask(found));
+  const handleClick = (id: string) => {
+    if (onSelectTask) onSelectTask(id);
+    else {
+      const found = items.find((t) => t.id === id);
+      if (found) dispatch(selectTask(found));
+    }
   };
 
   return (
@@ -52,7 +54,7 @@ export const MyTaskList = () => {
             className={`my-task-list__item ${
               selected?.id === task.id ? "active" : ""
             }`}
-            onClick={() => handleSelectTask(task.id)}
+            onClick={() => handleClick(task.id)} // 👈 теперь управляем через проп
           >
             <TaskCard
               id={task.id}
