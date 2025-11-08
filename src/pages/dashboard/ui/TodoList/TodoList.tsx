@@ -85,7 +85,7 @@ export const TodoList = () => {
             key={task.id}
             id={task.id}
             title={task.title}
-            desc={task.description}
+            description={task.description} // ✅ правильное имя пропа
             date={new Date(task.createdAt).toLocaleDateString()}
             priority={task.priority}
             status={task.status}
