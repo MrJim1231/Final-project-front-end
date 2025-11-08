@@ -1,30 +1,38 @@
 import "./Header.css";
 import { useEffect, useState, useRef } from "react";
 import { FiSearch, FiBell, FiCalendar, FiMenu } from "react-icons/fi";
-import { useDateContext } from "../../../shared/context/DateContext";
+import { useDispatch, useSelector } from "react-redux";
+import { setSelectedDate } from "../../../entities/task/model/tasksSlice";
+import type { RootState, AppDispatch } from "../../../app/providers/store";
 
-export const Header = ({
-  onToggleSidebar,
-}: {
+interface HeaderProps {
   onToggleSidebar: () => void;
-}) => {
-  const { selectedDate, setSelectedDate } = useDateContext();
+}
+
+export const Header = ({ onToggleSidebar }: HeaderProps) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const selectedDate = useSelector(
+    (state: RootState) => state.tasks.selectedDate
+  );
+
   const [formattedDate, setFormattedDate] = useState("");
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const calendarRef = useRef<HTMLDivElement | null>(null);
 
-  // ✅ Устанавливаем текущую дату по Киеву при загрузке
+  // ✅ При загрузке страницы устанавливаем дату по Киеву
   useEffect(() => {
     const kyivNow = new Date().toLocaleString("en-CA", {
       timeZone: "Europe/Kyiv",
     });
     const dateOnly = kyivNow.split(",")[0]; // YYYY-MM-DD
-    setSelectedDate(dateOnly);
-  }, [setSelectedDate]);
+    dispatch(setSelectedDate(dateOnly));
+  }, [dispatch]);
 
   // ✅ Форматирование даты (DD.MM.YYYY, weekday)
   useEffect(() => {
     const date = new Date(selectedDate);
+    if (isNaN(date.getTime())) return;
+
     const weekday = date.toLocaleDateString("en-GB", {
       weekday: "long",
       timeZone: "Europe/Kyiv",
@@ -52,9 +60,9 @@ export const Header = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // ✅ Изменение даты через календарь
+  // ✅ Обновление даты через календарь
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedDate(e.target.value);
+    dispatch(setSelectedDate(e.target.value));
     setIsCalendarOpen(false);
   };
 
@@ -83,7 +91,7 @@ export const Header = ({
           </button>
         </div>
 
-        {/* === Блок действий справа === */}
+        {/* === Правая часть (уведомления, календарь, дата) === */}
         <div className="dashboard__header-actions" ref={calendarRef}>
           <button className="dashboard__header-button">
             <FiBell />
@@ -96,12 +104,12 @@ export const Header = ({
             <FiCalendar />
           </button>
 
-          {/* === Отображение даты === */}
+          {/* === Отображение текущей даты === */}
           <div className="dashboard__header-date">
             <span className="dashboard__header-full-date">{formattedDate}</span>
           </div>
 
-          {/* === Календарь === */}
+          {/* === Выпадающий календарь === */}
           {isCalendarOpen && (
             <div className="dashboard__calendar-popup">
               <input

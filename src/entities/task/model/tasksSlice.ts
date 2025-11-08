@@ -1,4 +1,3 @@
-// src/entities/task/model/tasksSlice.ts
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import {
@@ -15,6 +14,7 @@ interface TasksState {
   loading: boolean;
   selected: Todo | null;
   error?: string | null;
+  selectedDate: string; // 👈 добавлено
 }
 
 const initialState: TasksState = {
@@ -22,6 +22,7 @@ const initialState: TasksState = {
   loading: false,
   selected: null,
   error: null,
+  selectedDate: new Date().toISOString().split("T")[0], // 👈 текущая дата по умолчанию
 };
 
 // === 🟢 Получить все задачи ===
@@ -60,7 +61,7 @@ export const removeTask = createAsyncThunk(
 export const updateTaskStatus = createAsyncThunk(
   "tasks/updateStatus",
   async (
-    update: { id: string } & Partial<Todo>, // ✅ теперь можно передавать любые поля
+    update: { id: string } & Partial<Todo>, // ✅ можно передавать любые поля
     { rejectWithValue }
   ) => {
     try {
@@ -73,7 +74,7 @@ export const updateTaskStatus = createAsyncThunk(
   }
 );
 
-// === 🔵 Универсальное обновление (оставляем для совместимости) ===
+// === 🔵 Универсальное обновление (оставлено для совместимости) ===
 export const updateTask = createAsyncThunk(
   "tasks/update",
   async (update: Partial<Todo> & { id: string }, { rejectWithValue }) => {
@@ -96,7 +97,13 @@ const tasksSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
+
+    // === 📅 Новый экшен для выбора даты ===
+    setSelectedDate: (state, action: PayloadAction<string>) => {
+      state.selectedDate = action.payload;
+    },
   },
+
   extraReducers: (builder) => {
     builder
       // === Получение задач ===
@@ -155,5 +162,8 @@ const tasksSlice = createSlice({
   },
 });
 
-export const { selectTask, clearError } = tasksSlice.actions;
+// === Экспорт экшенов ===
+export const { selectTask, clearError, setSelectedDate } = tasksSlice.actions;
+
+// === Экспорт редьюсера ===
 export default tasksSlice.reducer;

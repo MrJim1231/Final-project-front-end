@@ -9,15 +9,15 @@ import {
   addNewTask,
 } from "../../../../entities/task/model/tasksSlice";
 import type { RootState, AppDispatch } from "../../../../app/providers/store";
-import { useDateContext } from "../../../../shared/context/DateContext";
 
 export const TodoList = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { items: tasks, loading } = useSelector(
-    (state: RootState) => state.tasks
-  );
+  const {
+    items: tasks,
+    loading,
+    selectedDate,
+  } = useSelector((state: RootState) => state.tasks);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { selectedDate } = useDateContext();
 
   // 🚀 Загружаем задачи при первом рендере
   useEffect(() => {
@@ -30,7 +30,7 @@ export const TodoList = () => {
       title: taskData.title,
       description: taskData.description,
       priority: taskData.priority || "Low",
-      status: "Not Started" as "Not Started",
+      status: "Not Started" as const,
       createdAt: taskData.date || new Date().toISOString(),
       image:
         typeof taskData.image === "string"
@@ -44,16 +44,16 @@ export const TodoList = () => {
     dispatch(addNewTask(newTask));
   };
 
-  // 📅 Фильтруем задачи по выбранной дате
+  // 📅 Фильтруем задачи по выбранной дате из Redux
   const visibleTasks = tasks.filter((t) => {
     const taskDate = new Date(t.createdAt).toISOString().split("T")[0];
     return taskDate === selectedDate && !t.vital && t.status !== "Completed";
   });
 
-  // 📆 Форматирование даты
-  const today = new Date(selectedDate);
-  const day = today.getDate();
-  const month = today.toLocaleString("en-US", { month: "long" });
+  // 📆 Форматирование даты (например, "8 November · Today")
+  const current = new Date(selectedDate);
+  const day = current.getDate();
+  const month = current.toLocaleString("en-US", { month: "long" });
   const isToday =
     new Date().toISOString().split("T")[0] === selectedDate ? "· Today" : "";
 
@@ -72,7 +72,7 @@ export const TodoList = () => {
         </button>
       </div>
 
-      {/* === Дата (20 June · Today) === */}
+      {/* === Текущая дата === */}
       <div className="todo-list__date">
         {day} {month} <span className="todo-list__today">{isToday}</span>
       </div>
@@ -91,14 +91,14 @@ export const TodoList = () => {
             image={task.image}
             vital={task.vital}
             showAlert={true}
-            enableDesktopModal // 👈 добавь это
+            enableDesktopModal // ✅ теперь модалка и на десктопе
           />
         ))
       ) : (
         <p>No tasks for this date 🎯</p>
       )}
 
-      {/* === Модалка добавления === */}
+      {/* === Модалка добавления задачи === */}
       {isModalOpen && (
         <AddTaskModal
           onClose={() => setIsModalOpen(false)}
