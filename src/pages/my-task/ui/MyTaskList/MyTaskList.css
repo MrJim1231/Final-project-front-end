@@ -9,14 +9,13 @@
   flex-direction: column;
   gap: 14px;
 
-  /* max-width: 466px; */
   width: 100%;
   box-sizing: border-box;
 }
 
 /* === Заголовок секции === */
 .my-task-list__header {
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 /* === Текст заголовка с подчеркиванием === */
@@ -39,4 +38,33 @@
   height: 2px;
   background-color: #ff6767;
   border-radius: 2px;
+}
+
+/* === Блок даты (8 November · Today) === */
+.my-task-list__date {
+  font-size: 13px;
+  color: #444;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.my-task-list__today {
+  color: #999;
+}
+
+/* === Список задач === */
+.my-task-list__item {
+  border-radius: 12px;
+  transition: background 0.2s ease;
+  cursor: pointer;
+}
+
+.my-task-list__item:hover {
+  background-color: rgba(255, 103, 103, 0.05);
+}
+
+.my-task-list__item.active {
+  background-color: rgba(255, 103, 103, 0.08);
 }
