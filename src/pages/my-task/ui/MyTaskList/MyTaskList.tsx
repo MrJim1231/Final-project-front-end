@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   fetchTasks,
   selectTask,
+  selectFirstTask, // 👈 добавим экшен для автоселекта
 } from "../../../../entities/task/model/tasksSlice";
 import type { RootState, AppDispatch } from "../../../../app/providers/store";
 import { useEffect } from "react";
@@ -24,13 +25,18 @@ export const MyTaskList = () => {
     }
   }, [dispatch]);
 
-  if (loading) return <p>Loading tasks...</p>;
-
   // 📅 Фильтруем задачи по выбранной дате из Redux
   const filteredTasks = tasks.filter((t) => {
     const taskDate = new Date(t.createdAt).toISOString().split("T")[0];
     return taskDate === selectedDate && !t.vital && t.status !== "Completed";
   });
+
+  // 🧠 Автоматически выбираем первую задачу, если ничего не выбрано
+  useEffect(() => {
+    if (filteredTasks.length > 0 && !selected) {
+      dispatch(selectFirstTask(filteredTasks));
+    }
+  }, [filteredTasks, selected, dispatch]);
 
   // 📆 Форматируем дату (например, "8 November · Today")
   const current = new Date(selectedDate);
@@ -38,6 +44,8 @@ export const MyTaskList = () => {
   const month = current.toLocaleString("en-US", { month: "long" });
   const isToday =
     new Date().toISOString().split("T")[0] === selectedDate ? "· Today" : "";
+
+  if (loading) return <p>Loading tasks...</p>;
 
   return (
     <div className="my-task-list">

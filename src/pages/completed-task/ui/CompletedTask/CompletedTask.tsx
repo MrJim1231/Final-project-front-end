@@ -1,6 +1,6 @@
 import "./CompletedTask.css";
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { CompletedTaskList } from "../CompletedTaskList/CompletedTaskList";
 import { TaskDetails } from "../../../../entities/task/ui/TaskDetails/TaskDetails";
 import { TaskDetailsModal } from "../../../../entities/task/ui/TaskDetailsModal/TaskDetailsModal";
@@ -8,6 +8,7 @@ import {
   fetchTasks,
   removeTask,
   selectTask,
+  selectFirstTask,
 } from "../../../../entities/task/model/tasksSlice";
 import type { RootState, AppDispatch } from "../../../../app/providers/store";
 
@@ -18,34 +19,54 @@ export const CompletedTask = () => {
     selected,
     selectedDate,
   } = useSelector((state: RootState) => state.tasks);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-  // 🚀 Загружаем задачи при монтировании
+  // 🚀 Подгружаем задачи при монтировании
   useEffect(() => {
-    if (tasks.length === 0) {
-      dispatch(fetchTasks());
-    }
+    if (tasks.length === 0) dispatch(fetchTasks());
   }, [dispatch]);
 
-  // 📱 Следим за шириной экрана
+  // 📱 Следим за изменением ширины экрана
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // 🗑️ Удалить задачу
+  // ✅ Фильтруем завершённые задачи за выбранную дату
+  const completedTasks = useMemo(
+    () =>
+      tasks.filter((t) => {
+        const taskDate = new Date(t.createdAt).toISOString().split("T")[0];
+        return taskDate === selectedDate && t.status === "Completed";
+      }),
+    [tasks, selectedDate]
+  );
+
+  // 🧠 Автоселект первой задачи
+  useEffect(() => {
+    if (!selected && completedTasks.length > 0) {
+      dispatch(selectFirstTask(completedTasks));
+    }
+  }, [completedTasks, selected, dispatch]);
+
+  // 🧹 Если выбранная пропала — выбираем следующую
+  useEffect(() => {
+    if (selected && !completedTasks.some((t) => t.id === selected.id)) {
+      if (completedTasks.length > 0) {
+        dispatch(selectFirstTask(completedTasks));
+      } else {
+        dispatch(selectTask(null));
+      }
+    }
+  }, [completedTasks, selected, dispatch]);
+
+  // 🗑️ Удаление задачи
   const handleDelete = (id: string) => {
     dispatch(removeTask(id));
-    if (selected?.id === id) dispatch(selectTask(null));
   };
-
-  // ✅ Фильтруем только завершённые задачи за выбранную дату
-  const completedTasks = tasks.filter((t) => {
-    const taskDate = new Date(t.createdAt).toISOString().split("T")[0];
-    return taskDate === selectedDate && t.status === "Completed";
-  });
 
   return (
     <section className="completed-page">
@@ -55,7 +76,7 @@ export const CompletedTask = () => {
           <CompletedTaskList />
         </div>
 
-        {/* === Правая колонка (для десктопа) === */}
+        {/* === Правая колонка (только для десктопа) === */}
         {!isMobile && (
           <div className="completed-page__right">
             {selected ? (

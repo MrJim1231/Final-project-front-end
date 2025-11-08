@@ -1,6 +1,6 @@
 import "./VitalTask.css";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { VitalTaskList } from "../VitalTaskList/VitalTaskList";
 import { TaskDetails } from "../../../../entities/task/ui/TaskDetails/TaskDetails";
 import { TaskDetailsModal } from "../../../../entities/task/ui/TaskDetailsModal/TaskDetailsModal";
@@ -8,6 +8,7 @@ import {
   fetchTasks,
   removeTask,
   selectTask,
+  selectFirstTask,
 } from "../../../../entities/task/model/tasksSlice";
 import type { RootState, AppDispatch } from "../../../../app/providers/store";
 
@@ -18,14 +19,13 @@ export const VitalTask = () => {
     selected,
     selectedDate,
   } = useSelector((state: RootState) => state.tasks);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   // 🚀 Подгружаем задачи при монтировании
   useEffect(() => {
-    if (tasks.length === 0) {
-      dispatch(fetchTasks());
-    }
+    if (tasks.length === 0) dispatch(fetchTasks());
   }, [dispatch]);
 
   // 📱 Следим за изменением ширины экрана
@@ -35,17 +35,38 @@ export const VitalTask = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // 📅 Фильтруем только vital-задачи для выбранной даты
+  const vitalTasks = useMemo(
+    () =>
+      tasks.filter((t) => {
+        const taskDate = new Date(t.createdAt).toISOString().split("T")[0];
+        return taskDate === selectedDate && t.vital;
+      }),
+    [tasks, selectedDate]
+  );
+
+  // 🧠 Автоселект первой задачи
+  useEffect(() => {
+    if (!selected && vitalTasks.length > 0) {
+      dispatch(selectFirstTask(vitalTasks));
+    }
+  }, [vitalTasks, selected, dispatch]);
+
+  // 🧹 Если выбранная пропала — выбираем следующую
+  useEffect(() => {
+    if (selected && !vitalTasks.some((t) => t.id === selected.id)) {
+      if (vitalTasks.length > 0) {
+        dispatch(selectFirstTask(vitalTasks));
+      } else {
+        dispatch(selectTask(null));
+      }
+    }
+  }, [vitalTasks, selected, dispatch]);
+
   // 🗑️ Удаление задачи
   const handleDelete = (id: string) => {
     dispatch(removeTask(id));
-    if (selected?.id === id) dispatch(selectTask(null));
   };
-
-  // 📅 Фильтруем только vital-задачи за выбранную дату
-  const vitalTasks = tasks.filter((t) => {
-    const taskDate = new Date(t.createdAt).toISOString().split("T")[0];
-    return taskDate === selectedDate && t.vital;
-  });
 
   return (
     <section className="vital-page">

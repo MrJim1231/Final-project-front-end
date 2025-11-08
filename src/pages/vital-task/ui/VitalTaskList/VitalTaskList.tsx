@@ -5,6 +5,7 @@ import { TaskCard } from "../../../../entities/task/ui/TaskCard";
 import {
   fetchTasks,
   selectTask,
+  selectFirstTask,
 } from "../../../../entities/task/model/tasksSlice";
 import type { RootState, AppDispatch } from "../../../../app/providers/store";
 
@@ -24,13 +25,18 @@ export const VitalTaskList = () => {
     }
   }, [dispatch]);
 
-  if (loading) return <p>Loading vital tasks...</p>;
-
   // 📅 Фильтруем только важные задачи за выбранную дату
   const vitalTasks = tasks.filter((t) => {
     const taskDate = new Date(t.createdAt).toISOString().split("T")[0];
     return taskDate === selectedDate && t.vital;
   });
+
+  // 🧠 Автоселект первой задачи
+  useEffect(() => {
+    if (vitalTasks.length > 0 && !selected) {
+      dispatch(selectFirstTask(vitalTasks));
+    }
+  }, [vitalTasks, selected, dispatch]);
 
   // 📆 Форматирование даты для отображения
   const current = new Date(selectedDate);
@@ -38,6 +44,8 @@ export const VitalTaskList = () => {
   const month = current.toLocaleString("en-US", { month: "long" });
   const isToday =
     new Date().toISOString().split("T")[0] === selectedDate ? "· Today" : "";
+
+  if (loading) return <p>Loading vital tasks...</p>;
 
   return (
     <div className="vital-task-list">

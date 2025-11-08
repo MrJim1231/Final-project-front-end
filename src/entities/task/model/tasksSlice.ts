@@ -14,7 +14,7 @@ interface TasksState {
   loading: boolean;
   selected: Todo | null;
   error?: string | null;
-  selectedDate: string; // 👈 добавлено
+  selectedDate: string; // 📅 текущая дата из календаря
 }
 
 const initialState: TasksState = {
@@ -22,7 +22,7 @@ const initialState: TasksState = {
   loading: false,
   selected: null,
   error: null,
-  selectedDate: new Date().toISOString().split("T")[0], // 👈 текущая дата по умолчанию
+  selectedDate: new Date().toISOString().split("T")[0], // по умолчанию сегодня
 };
 
 // === 🟢 Получить все задачи ===
@@ -57,13 +57,10 @@ export const removeTask = createAsyncThunk(
   }
 );
 
-// === 🟡 Универсальное обновление задачи (status, vital, completedAt и др.) ===
+// === 🟡 Универсальное обновление задачи ===
 export const updateTaskStatus = createAsyncThunk(
   "tasks/updateStatus",
-  async (
-    update: { id: string } & Partial<Todo>, // ✅ можно передавать любые поля
-    { rejectWithValue }
-  ) => {
+  async (update: { id: string } & Partial<Todo>, { rejectWithValue }) => {
     try {
       const { id, ...data } = update;
       const updated = await patchTodo(id, data);
@@ -74,7 +71,7 @@ export const updateTaskStatus = createAsyncThunk(
   }
 );
 
-// === 🔵 Универсальное обновление (оставлено для совместимости) ===
+// === 🔵 Универсальное обновление (старый вариант) ===
 export const updateTask = createAsyncThunk(
   "tasks/update",
   async (update: Partial<Todo> & { id: string }, { rejectWithValue }) => {
@@ -87,20 +84,38 @@ export const updateTask = createAsyncThunk(
   }
 );
 
+// === Slice ===
 const tasksSlice = createSlice({
   name: "tasks",
   initialState,
   reducers: {
+    // 📌 Выбор конкретной задачи
     selectTask: (state, action: PayloadAction<Todo | null>) => {
       state.selected = action.payload;
     },
+
+    // 🧹 Очистка выбранной задачи при переходе между страницами
+    clearSelected: (state) => {
+      state.selected = null;
+    },
+
+    // 📅 Установка выбранной даты (из календаря)
+    setSelectedDate: (state, action: PayloadAction<string>) => {
+      state.selectedDate = action.payload;
+    },
+
+    // ❗ Очистка ошибок
     clearError: (state) => {
       state.error = null;
     },
 
-    // === 📅 Новый экшен для выбора даты ===
-    setSelectedDate: (state, action: PayloadAction<string>) => {
-      state.selectedDate = action.payload;
+    // 🟢 Выбор первой задачи из фильтрованного списка
+    selectFirstTask: (state, action: PayloadAction<Todo[]>) => {
+      if (action.payload.length > 0) {
+        state.selected = action.payload[0];
+      } else {
+        state.selected = null;
+      }
     },
   },
 
@@ -120,7 +135,7 @@ const tasksSlice = createSlice({
         state.error = action.error.message || "Ошибка при загрузке задач";
       })
 
-      // === Добавление новой задачи ===
+      // === Добавление задачи ===
       .addCase(addNewTask.fulfilled, (state, action) => {
         state.items.push(action.payload);
       })
@@ -128,11 +143,17 @@ const tasksSlice = createSlice({
         state.error = action.payload as string;
       })
 
-      // === Удаление ===
+      // === Удаление задачи ===
       .addCase(removeTask.fulfilled, (state, action) => {
         state.items = state.items.filter((t) => t.id !== action.payload);
+
+        // если удалили выбранную → выбрать следующую
         if (state.selected?.id === action.payload) {
-          state.selected = null;
+          if (state.items.length > 0) {
+            state.selected = state.items[0];
+          } else {
+            state.selected = null;
+          }
         }
       })
 
@@ -142,6 +163,8 @@ const tasksSlice = createSlice({
         const index = state.items.findIndex((t) => t.id === updated.id);
         if (index !== -1) {
           state.items[index] = updated;
+
+          // если выбранная изменилась — обновить ссылку
           if (state.selected?.id === updated.id) {
             state.selected = updated;
           }
@@ -163,7 +186,13 @@ const tasksSlice = createSlice({
 });
 
 // === Экспорт экшенов ===
-export const { selectTask, clearError, setSelectedDate } = tasksSlice.actions;
+export const {
+  selectTask,
+  clearSelected,
+  clearError,
+  setSelectedDate,
+  selectFirstTask,
+} = tasksSlice.actions;
 
 // === Экспорт редьюсера ===
 export default tasksSlice.reducer;
