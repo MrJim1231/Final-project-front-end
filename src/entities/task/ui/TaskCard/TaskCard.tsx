@@ -302,7 +302,7 @@ export const TaskCard = ({
           date={date}
           priority={priority}
           status={status}
-          image={image}
+          image={getSafeImageSrc(image)} // ✅ безопасный src
           completedAt={completedAt}
         />
       )}

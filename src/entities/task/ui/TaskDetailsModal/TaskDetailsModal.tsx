@@ -1,5 +1,6 @@
 import "./TaskDetailsModal.css";
 import { FiX } from "react-icons/fi";
+import noImage from "../../../../shared/assets/images/no-image.jpeg";
 
 interface TaskDetailsModalProps {
   isOpen: boolean;
@@ -10,7 +11,7 @@ interface TaskDetailsModalProps {
   priority?: "Low" | "Moderate" | "High" | "Extreme";
   status?: "Not Started" | "In Progress" | "Completed";
   image?: string;
-  completedAt?: string | null; // было: string | undefined
+  completedAt?: string | null;
 }
 
 export const TaskDetailsModal = ({
@@ -25,6 +26,20 @@ export const TaskDetailsModal = ({
   completedAt,
 }: TaskDetailsModalProps) => {
   if (!isOpen) return null;
+
+  // ✅ Безопасное изображение
+  const getSafeImageSrc = (src?: string) => {
+    if (
+      !src ||
+      src.includes("wikia.nocookie.net") ||
+      src.includes("undefined") ||
+      src.includes("null") ||
+      src.trim() === ""
+    ) {
+      return noImage;
+    }
+    return src.startsWith("http") ? src : noImage;
+  };
 
   // 🎨 Цвета приоритета
   const getPriorityColor = (p?: string) => {
@@ -42,6 +57,7 @@ export const TaskDetailsModal = ({
     }
   };
 
+  // 🎨 Цвета статуса
   const getStatusColor = (s?: string) => {
     switch (s) {
       case "Completed":
@@ -65,7 +81,16 @@ export const TaskDetailsModal = ({
           <FiX size={22} />
         </button>
 
-        {image && <img src={image} alt={title} className="task-modal__image" />}
+        {/* ✅ Безопасная загрузка изображения */}
+        <img
+          src={getSafeImageSrc(image)}
+          alt={title}
+          className="task-modal__image"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            if (target.src !== noImage) target.src = noImage;
+          }}
+        />
 
         <h3 className="task-modal__title">{title}</h3>
 
