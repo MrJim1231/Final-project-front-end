@@ -130,8 +130,12 @@
   line-height: 1.45;
   margin: 0;
   max-width: 213px;
-  white-space: normal;
   word-break: break-word;
+  white-space: normal;
+
+  /* 🔹 ограничиваем высоту и скрываем лишнее */
+  max-height: calc(1.45em * 3); /* 3 строки по line-height */
+  overflow: hidden;
 }
 
 /* === Правая часть (картинка) === */

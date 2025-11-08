@@ -2,7 +2,8 @@ import "./TaskCard.css";
 import { useState, useRef, useEffect } from "react";
 import { IoEllipsisHorizontalOutline } from "react-icons/io5";
 import { patchTodo } from "../../../../shared/api/todos";
-import noImage from "../../../../shared/assets/images/no-image.jpeg"; // ✅ локальная заглушка
+import noImage from "../../../../shared/assets/images/no-image.jpeg";
+import { TaskDetailsModal } from "../TaskDetailsModal/TaskDetailsModal"; // 👈 импорт модалки
 
 interface TaskCardProps {
   id?: string;
@@ -21,7 +22,7 @@ interface TaskCardProps {
     newStatus: "Not Started" | "In Progress" | "Completed"
   ) => void;
   onVitalUpdate?: (id: string, isVital: boolean) => void;
-  showAlert?: boolean; // 👈 добавляем флаг для Dashboard
+  showAlert?: boolean; // 👈 флаг, чтобы показывать модалку
 }
 
 // === Формат времени завершения ===
@@ -52,7 +53,7 @@ export const TaskCard = ({
   onDelete,
   onStatusUpdate,
   onVitalUpdate,
-  showAlert = false, // 👈 по умолчанию alert выключен
+  showAlert = false,
 }: TaskCardProps) => {
   const [status, setStatus] = useState(initialStatus);
   const [isVital, setIsVital] = useState(vital);
@@ -62,6 +63,7 @@ export const TaskCard = ({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [completedTime, setCompletedTime] = useState(completedAt || "");
+  const [isModalOpen, setIsModalOpen] = useState(false); // 👈 состояние модалки
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   // === Автообновление типа ===
@@ -177,9 +179,8 @@ export const TaskCard = ({
     const target = e.target as HTMLElement;
     if (target.closest(".task-card__menu-wrapper")) return;
 
-    // ✅ показываем alert только если showAlert = true
     if (showAlert) {
-      alert(`📝 Task: ${title}\n\n${desc || "No description"}`);
+      setIsModalOpen(true); // 👈 открываем модалку вместо alert
     }
   };
 
@@ -196,98 +197,115 @@ export const TaskCard = ({
   ];
 
   return (
-    <div
-      className={`task-card ${isMenuOpen ? "menu-open" : ""} ${
-        type === "completed" ? "task-card--completed" : ""
-      } ${type === "vital" ? "task-card--vital" : ""}`}
-      onClick={handleCardClick}
-    >
-      {/* ⋯ Меню */}
-      <div className="task-card__menu-wrapper" ref={menuRef}>
-        <IoEllipsisHorizontalOutline
-          className="task-card__menu"
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsMenuOpen((prev) => !prev);
-          }}
-        />
-        {isMenuOpen && (
-          <div className="task-card__actions">
-            <ul>
-              {actions.map((action) => (
-                <li
-                  key={action}
-                  className={`task-card__action-item ${
-                    updating ? "disabled" : ""
-                  }`}
-                  onClick={() => !updating && handleActionClick(action)}
-                >
-                  {action}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-
-      {/* === Верхняя часть === */}
-      <div className="task-card__top">
-        <div className="task-card__left">
-          <div className="task-card__header">
-            <span
-              className="task-card__circle"
-              style={{ borderColor: getStatusColor(status) }}
-            ></span>
-            <h4 className="task-card__title">
-              {title} {isVital && <span style={{ color: "#ff6767" }}>★</span>}
-            </h4>
-          </div>
-          <p className="task-card__desc">{desc}</p>
-        </div>
-
-        <div className="task-card__right">
-          <img
-            src={getSafeImageSrc(image)}
-            alt={title}
-            className="task-card__img"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              if (target.src !== noImage) target.src = noImage;
+    <>
+      <div
+        className={`task-card ${isMenuOpen ? "menu-open" : ""} ${
+          type === "completed" ? "task-card--completed" : ""
+        } ${type === "vital" ? "task-card--vital" : ""}`}
+        onClick={handleCardClick}
+      >
+        {/* ⋯ Меню */}
+        <div className="task-card__menu-wrapper" ref={menuRef}>
+          <IoEllipsisHorizontalOutline
+            className="task-card__menu"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsMenuOpen((prev) => !prev);
             }}
           />
+          {isMenuOpen && (
+            <div className="task-card__actions">
+              <ul>
+                {actions.map((action) => (
+                  <li
+                    key={action}
+                    className={`task-card__action-item ${
+                      updating ? "disabled" : ""
+                    }`}
+                    onClick={() => !updating && handleActionClick(action)}
+                  >
+                    {action}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+
+        {/* === Верхняя часть === */}
+        <div className="task-card__top">
+          <div className="task-card__left">
+            <div className="task-card__header">
+              <span
+                className="task-card__circle"
+                style={{ borderColor: getStatusColor(status) }}
+              ></span>
+              <h4 className="task-card__title">
+                {title} {isVital && <span style={{ color: "#ff6767" }}>★</span>}
+              </h4>
+            </div>
+            <p className="task-card__desc">{desc}</p>
+          </div>
+
+          <div className="task-card__right">
+            <img
+              src={getSafeImageSrc(image)}
+              alt={title}
+              className="task-card__img"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                if (target.src !== noImage) target.src = noImage;
+              }}
+            />
+          </div>
+        </div>
+
+        {/* === Нижняя часть === */}
+        <div className="task-card__bottom">
+          {status !== "Completed" && priority && (
+            <span>
+              Priority: <span className="task-card__priority">{priority}</span>
+            </span>
+          )}
+
+          <span
+            className={`task-card__status ${
+              status === "Not Started"
+                ? "status--red"
+                : status === "In Progress"
+                ? "status--blue"
+                : "status--green"
+            }`}
+          >
+            Status: {status}
+          </span>
+
+          {status === "Completed" && completedTime && (
+            <span className="task-card__completed">
+              Completed {formatTimeAgo(completedTime)}.
+            </span>
+          )}
+
+          {status !== "Completed" && date && (
+            <span className="task-card__date">Created on: {date}</span>
+          )}
         </div>
       </div>
 
-      {/* === Нижняя часть === */}
-      <div className="task-card__bottom">
-        {status !== "Completed" && priority && (
-          <span>
-            Priority: <span className="task-card__priority">{priority}</span>
-          </span>
-        )}
-
-        <span
-          className={`task-card__status ${
-            status === "Not Started"
-              ? "status--red"
-              : status === "In Progress"
-              ? "status--blue"
-              : "status--green"
-          }`}
-        >
-          Status: {status}
-        </span>
-
-        {status === "Completed" && completedTime && (
-          <span className="task-card__completed">
-            Completed {formatTimeAgo(completedTime)}.
-          </span>
-        )}
-
-        {status !== "Completed" && date && (
-          <span className="task-card__date">Created on: {date}</span>
-        )}
-      </div>
-    </div>
+      {/* === Модалка деталей задачи === */}
+      {isModalOpen && (
+        <TaskDetailsModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          title={title}
+          desc={desc}
+          date={date}
+          priority={priority}
+          status={status}
+          image={image}
+          completedAt={completedAt}
+        />
+      )}
+    </>
   );
 };
