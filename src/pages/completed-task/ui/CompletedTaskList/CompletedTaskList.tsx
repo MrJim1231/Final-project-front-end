@@ -1,3 +1,4 @@
+// src/pages/completed-task/ui/CompletedTaskList/CompletedTaskList.tsx
 import "./CompletedTaskList.css";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,11 +7,15 @@ import {
   fetchTasks,
   removeTask,
   selectTask,
-  updateTask, // 👈 добавляем
+  updateTask,
 } from "../../../../entities/task/model/tasksSlice";
 import type { RootState, AppDispatch } from "../../../../app/providers/store";
 
-export const CompletedTaskList = () => {
+interface CompletedTaskListProps {
+  onSelectTask?: (taskId: string) => void;
+}
+
+export const CompletedTaskList = ({ onSelectTask }: CompletedTaskListProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { items, loading, selected } = useSelector(
     (state: RootState) => state.tasks
@@ -20,7 +25,6 @@ export const CompletedTaskList = () => {
     dispatch(fetchTasks());
   }, [dispatch]);
 
-  // ✅ Отображаем только завершённые задачи
   const completedTasks = items.filter((t) => t.status === "Completed");
 
   // ⚡ Автоматический выбор первой задачи
@@ -30,7 +34,7 @@ export const CompletedTaskList = () => {
     }
   }, [completedTasks, selected, dispatch]);
 
-  // ⚡ Следим, если выбранная исчезла из списка
+  // ⚡ Следим за исчезновением выбранной
   useEffect(() => {
     if (selected && !completedTasks.find((t) => t.id === selected.id)) {
       const next = completedTasks[0] || null;
@@ -38,7 +42,6 @@ export const CompletedTaskList = () => {
     }
   }, [completedTasks, selected, dispatch]);
 
-  // 🗑️ Удаление
   const handleDelete = (id: string) => {
     const idx = completedTasks.findIndex((t) => t.id === id);
     dispatch(removeTask(id));
@@ -46,14 +49,11 @@ export const CompletedTaskList = () => {
     dispatch(selectTask(next));
   };
 
-  // 🔁 Обновление статуса (например, Unfinish)
   const handleStatusUpdate = (
     id: string,
     newStatus: "Not Started" | "In Progress" | "Completed"
   ) => {
     dispatch(updateTask({ id, status: newStatus }));
-
-    // Если задача больше не Completed → убираем её из списка и выбираем новую
     if (newStatus !== "Completed") {
       const idx = completedTasks.findIndex((t) => t.id === id);
       const next = completedTasks[idx + 1] || completedTasks[idx - 1] || null;
@@ -61,11 +61,10 @@ export const CompletedTaskList = () => {
     }
   };
 
-  if (loading) {
+  if (loading)
     return (
       <p className="completed-list__loading">Loading completed tasks...</p>
     );
-  }
 
   return (
     <div className="completed-list">
@@ -80,7 +79,9 @@ export const CompletedTaskList = () => {
             className={`completed-list__item ${
               selected?.id === task.id ? "active" : ""
             }`}
-            onClick={() => dispatch(selectTask(task))}
+            onClick={() =>
+              onSelectTask ? onSelectTask(task.id) : dispatch(selectTask(task))
+            }
           >
             <TaskCard
               id={task.id}
@@ -93,7 +94,7 @@ export const CompletedTaskList = () => {
               completedAt={task.completedAt ?? "Recently completed"}
               type="completed"
               onDelete={handleDelete}
-              onStatusUpdate={handleStatusUpdate} // ✅ добавлено
+              onStatusUpdate={handleStatusUpdate}
             />
           </div>
         ))
