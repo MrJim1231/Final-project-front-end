@@ -8,6 +8,7 @@ import {
   fetchTasks,
   removeTask,
   updateTaskStatus,
+  addNewTask, // ✅ добавили thunk
 } from "../../../../entities/task/model/tasksSlice";
 import type { RootState, AppDispatch } from "../../../../app/providers/store";
 import { useDateContext } from "../../../../shared/context/DateContext";
@@ -20,14 +21,17 @@ export const TodoList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { selectedDate } = useDateContext();
 
+  // 🚀 Загружаем задачи при первом рендере
   useEffect(() => {
     dispatch(fetchTasks());
   }, [dispatch]);
 
+  // 🗑️ Удаление задачи
   const handleDeleteTask = (id: string) => {
     dispatch(removeTask(id));
   };
 
+  // 🔁 Обновление статуса задачи
   const handleStatusUpdate = (
     id: string,
     newStatus: "Not Started" | "In Progress" | "Completed"
@@ -35,12 +39,33 @@ export const TodoList = () => {
     dispatch(updateTaskStatus({ id, status: newStatus }));
   };
 
-  if (loading) return <p>Loading tasks...</p>;
+  // 🆕 Добавление новой задачи
+  const handleAddTask = (taskData: any) => {
+    const newTask = {
+      title: taskData.title,
+      description: taskData.description,
+      priority: taskData.priority || "Low",
+      status: "Not Started" as "Not Started", // ✅ фикс типизации
+      createdAt: taskData.date || new Date().toISOString(),
+      image:
+        typeof taskData.image === "string"
+          ? taskData.image
+          : taskData.image
+          ? URL.createObjectURL(taskData.image)
+          : "",
+      vital: false,
+    };
 
+    dispatch(addNewTask(newTask)); // ✅ отправляем задачу в Redux/сервер
+  };
+
+  // 📅 Фильтруем задачи по выбранной дате
   const visibleTasks = tasks.filter((t) => {
     const taskDate = new Date(t.createdAt).toISOString().split("T")[0];
     return taskDate === selectedDate && !t.vital && t.status !== "Completed";
   });
+
+  if (loading) return <p>Loading tasks...</p>;
 
   return (
     <div className="todo-list">
@@ -77,7 +102,7 @@ export const TodoList = () => {
       {isModalOpen && (
         <AddTaskModal
           onClose={() => setIsModalOpen(false)}
-          onSubmit={() => {}}
+          onSubmit={handleAddTask} // ✅ теперь передаём реальный обработчик
         />
       )}
     </div>

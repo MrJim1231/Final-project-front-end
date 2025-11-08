@@ -1,7 +1,12 @@
 // src/entities/task/model/tasksSlice.ts
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { getTodos, deleteTodo, patchTodo } from "../../../shared/api/todos";
+import {
+  getTodos,
+  createTodo,
+  deleteTodo,
+  patchTodo,
+} from "../../../shared/api/todos"; // ✅ теперь импортируем createTodo
 import type { Todo } from "../../../shared/api/todos";
 
 interface TasksState {
@@ -18,15 +23,26 @@ const initialState: TasksState = {
   error: null,
 };
 
-// === 🔹 Thunks ===
-
-// 🟢 Получить все задачи
+// === 🟢 Получить все задачи ===
 export const fetchTasks = createAsyncThunk("tasks/fetchAll", async () => {
   const data = await getTodos();
   return data;
 });
 
-// 🔴 Удалить задачу
+// === 🟣 Добавить новую задачу ===
+export const addNewTask = createAsyncThunk(
+  "tasks/addNew",
+  async (newTask: Omit<Todo, "id">, { rejectWithValue }) => {
+    try {
+      const created = await createTodo(newTask);
+      return created;
+    } catch (err: any) {
+      return rejectWithValue(err.message || "Ошибка при добавлении задачи");
+    }
+  }
+);
+
+// === 🔴 Удалить задачу ===
 export const removeTask = createAsyncThunk(
   "tasks/remove",
   async (id: string, { rejectWithValue }) => {
@@ -39,7 +55,7 @@ export const removeTask = createAsyncThunk(
   }
 );
 
-// 🟡 Обновить статус задачи
+// === 🟡 Обновить статус задачи ===
 export const updateTaskStatus = createAsyncThunk(
   "tasks/updateStatus",
   async (
@@ -61,7 +77,7 @@ export const updateTaskStatus = createAsyncThunk(
   }
 );
 
-// 🔵 Универсальное обновление задачи (status, vital, completedAt, priority, description и т.д.)
+// === 🔵 Универсальное обновление ===
 export const updateTask = createAsyncThunk(
   "tasks/update",
   async (update: Partial<Todo> & { id: string }, { rejectWithValue }) => {
@@ -74,7 +90,6 @@ export const updateTask = createAsyncThunk(
   }
 );
 
-// === 🔹 Slice ===
 const tasksSlice = createSlice({
   name: "tasks",
   initialState,
@@ -102,15 +117,20 @@ const tasksSlice = createSlice({
         state.error = action.error.message || "Ошибка при загрузке задач";
       })
 
+      // === Добавление новой задачи ===
+      .addCase(addNewTask.fulfilled, (state, action) => {
+        state.items.push(action.payload); // ✅ добавляем сразу в список
+      })
+      .addCase(addNewTask.rejected, (state, action) => {
+        state.error = action.payload as string;
+      })
+
       // === Удаление ===
       .addCase(removeTask.fulfilled, (state, action) => {
         state.items = state.items.filter((t) => t.id !== action.payload);
         if (state.selected?.id === action.payload) {
           state.selected = null;
         }
-      })
-      .addCase(removeTask.rejected, (state, action) => {
-        state.error = action.payload as string;
       })
 
       // === Обновление статуса ===
@@ -135,9 +155,6 @@ const tasksSlice = createSlice({
             state.selected = updated;
           }
         }
-      })
-      .addCase(updateTask.rejected, (state, action) => {
-        state.error = action.payload as string;
       });
   },
 });
