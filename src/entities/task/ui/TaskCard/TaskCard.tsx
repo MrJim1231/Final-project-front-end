@@ -3,17 +3,17 @@ import { useState, useRef, useEffect } from "react";
 import { IoEllipsisHorizontalOutline } from "react-icons/io5";
 import { patchTodo } from "../../../../shared/api/todos";
 import noImage from "../../../../shared/assets/images/no-image.jpeg";
-import { TaskDetailsModal } from "../TaskDetailsModal/TaskDetailsModal"; // 👈 импорт модалки
+import { TaskDetailsModal } from "../TaskDetailsModal/TaskDetailsModal";
 
 interface TaskCardProps {
   id?: string;
   title: string;
-  desc: string;
+  description: string; // ✅ заменено
   date?: string;
   status: "Not Started" | "In Progress" | "Completed";
   priority?: "Low" | "Moderate" | "High" | "Extreme";
   image?: string;
-  completedAt?: string;
+  completedAt?: string | null; // ✅ добавили null
   type?: "default" | "completed" | "vital";
   vital?: boolean;
   onDelete?: (id: string) => void;
@@ -22,10 +22,9 @@ interface TaskCardProps {
     newStatus: "Not Started" | "In Progress" | "Completed"
   ) => void;
   onVitalUpdate?: (id: string, isVital: boolean) => void;
-  showAlert?: boolean; // 👈 флаг, чтобы показывать модалку
+  showAlert?: boolean;
 }
 
-// === Формат времени завершения ===
 const formatTimeAgo = (dateString?: string) => {
   if (!dateString) return "";
   const date = new Date(dateString);
@@ -42,7 +41,7 @@ const formatTimeAgo = (dateString?: string) => {
 export const TaskCard = ({
   id,
   title,
-  desc,
+  description, // ✅ новое имя
   date,
   status: initialStatus,
   priority,
@@ -63,17 +62,15 @@ export const TaskCard = ({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [completedTime, setCompletedTime] = useState(completedAt || "");
-  const [isModalOpen, setIsModalOpen] = useState(false); // 👈 состояние модалки
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
-  // === Автообновление типа ===
   useEffect(() => {
     if (isVital) setType("vital");
     else if (status === "Completed") setType("completed");
     else setType("default");
   }, [status, isVital]);
 
-  // === Цвет кружка ===
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Not Started":
@@ -87,7 +84,6 @@ export const TaskCard = ({
     }
   };
 
-  // === Закрытие меню при клике вне ===
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -98,7 +94,6 @@ export const TaskCard = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // === Проверяем корректность ссылки ===
   const getSafeImageSrc = (src?: string) => {
     if (!src) return noImage;
     if (
@@ -111,7 +106,6 @@ export const TaskCard = ({
     return src.startsWith("http") ? src : noImage;
   };
 
-  // === Обработка действий ===
   const handleActionClick = async (action: string) => {
     if (!id) return;
     const closeMenu = () => setIsMenuOpen(false);
@@ -174,17 +168,15 @@ export const TaskCard = ({
     }
   };
 
-  // === Клик по карточке ===
   const handleCardClick = (e: React.MouseEvent) => {
     const target = e.target as HTMLElement;
     if (target.closest(".task-card__menu-wrapper")) return;
 
     if (showAlert) {
-      setIsModalOpen(true); // 👈 открываем модалку вместо alert
+      setIsModalOpen(true);
     }
   };
 
-  // === Список действий ===
   const actions = [
     isVital ? "Remove from Vital" : "Vital",
     "Edit",
@@ -244,7 +236,7 @@ export const TaskCard = ({
                 {title} {isVital && <span style={{ color: "#ff6767" }}>★</span>}
               </h4>
             </div>
-            <p className="task-card__desc">{desc}</p>
+            <p className="task-card__desc">{description}</p> {/* ✅ заменено */}
           </div>
 
           <div className="task-card__right">
@@ -298,11 +290,11 @@ export const TaskCard = ({
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           title={title}
-          desc={desc}
+          desc={description} // ✅ тоже изменено
           date={date}
           priority={priority}
           status={status}
-          image={getSafeImageSrc(image)} // ✅ безопасный src
+          image={getSafeImageSrc(image)}
           completedAt={completedAt}
         />
       )}
