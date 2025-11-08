@@ -91,6 +91,7 @@ export const TodoList = () => {
             image={task.image}
             vital={task.vital}
             showAlert={true}
+            enableDesktopModal // 👈 добавь это
           />
         ))
       ) : (

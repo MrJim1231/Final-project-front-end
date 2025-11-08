@@ -1,4 +1,3 @@
-// src/entities/task/ui/TaskCard/TaskCard.tsx
 import "./TaskCard.css";
 import { useState, useRef, useEffect } from "react";
 import { IoEllipsisHorizontalOutline } from "react-icons/io5";
@@ -20,6 +19,8 @@ interface TaskCardProps {
   type?: "default" | "completed" | "vital";
   vital?: boolean;
   showAlert?: boolean;
+  /** 👇 разрешить открытие модалки и на десктопе */
+  enableDesktopModal?: boolean;
 }
 
 const formatTimeAgo = (dateString?: string) => {
@@ -46,6 +47,7 @@ export const TaskCard = ({
   type: initialType = "default",
   vital = false,
   showAlert = false,
+  enableDesktopModal = false, // 👈 по умолчанию — выключено
 }: TaskCardProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const [status, setStatus] = useState(initialStatus);
@@ -162,8 +164,8 @@ export const TaskCard = ({
     const target = e.target as HTMLElement;
     if (target.closest(".task-card__menu-wrapper")) return;
 
-    // ✅ Только для мобильных открываем модалку
-    if (isMobile) {
+    // ✅ Модалка открывается на мобильных и/или если включено enableDesktopModal
+    if (isMobile || enableDesktopModal) {
       setIsModalOpen(true);
     }
   };
@@ -275,8 +277,8 @@ export const TaskCard = ({
         </div>
       </div>
 
-      {/* === Модалка деталей задачи — только для мобильных === */}
-      {isMobile && isModalOpen && (
+      {/* === Модалка деталей задачи — теперь и для десктопа (если разрешено) === */}
+      {(isMobile || enableDesktopModal) && isModalOpen && (
         <TaskDetailsModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
