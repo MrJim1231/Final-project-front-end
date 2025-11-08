@@ -6,8 +6,6 @@ import { AddTaskModal } from "../../../../entities/task/ui/AddTaskModal/AddTaskM
 import { useSelector, useDispatch } from "react-redux";
 import {
   fetchTasks,
-  removeTask,
-  updateTaskStatus,
   addNewTask,
 } from "../../../../entities/task/model/tasksSlice";
 import type { RootState, AppDispatch } from "../../../../app/providers/store";
@@ -25,24 +23,6 @@ export const TodoList = () => {
   useEffect(() => {
     dispatch(fetchTasks());
   }, [dispatch]);
-
-  // 🗑️ Удаление задачи
-  const handleDeleteTask = (id: string) => {
-    dispatch(removeTask(id));
-  };
-
-  // 🔁 Обновление статуса задачи
-  const handleStatusUpdate = (
-    id: string,
-    newStatus: "Not Started" | "In Progress" | "Completed"
-  ) => {
-    dispatch(updateTaskStatus({ id, status: newStatus }));
-  };
-
-  // ⭐ Обновление флага vital
-  const handleVitalUpdate = (id: string, isVital: boolean) => {
-    dispatch(updateTaskStatus({ id, vital: isVital }));
-  };
 
   // 🆕 Добавление новой задачи
   const handleAddTask = (taskData: any) => {
@@ -70,10 +50,18 @@ export const TodoList = () => {
     return taskDate === selectedDate && !t.vital && t.status !== "Completed";
   });
 
+  // 📆 Форматирование даты
+  const today = new Date(selectedDate);
+  const day = today.getDate();
+  const month = today.toLocaleString("en-US", { month: "long" });
+  const isToday =
+    new Date().toISOString().split("T")[0] === selectedDate ? "· Today" : "";
+
   if (loading) return <p>Loading tasks...</p>;
 
   return (
     <div className="todo-list">
+      {/* === Заголовок === */}
       <div className="todo-list__header">
         <div className="todo-list__title-wrapper">
           <FiClipboard className="todo-list__icon" />
@@ -84,6 +72,12 @@ export const TodoList = () => {
         </button>
       </div>
 
+      {/* === Дата (20 June · Today) === */}
+      <div className="todo-list__date">
+        {day} {month} <span className="todo-list__today">{isToday}</span>
+      </div>
+
+      {/* === Список задач === */}
       {visibleTasks.length > 0 ? (
         visibleTasks.map((task) => (
           <TaskCard
@@ -96,12 +90,6 @@ export const TodoList = () => {
             status={task.status}
             image={task.image}
             vital={task.vital}
-            onDelete={(id: string) => handleDeleteTask(id)} // ✅ типизировано
-            onStatusUpdate={(
-              id: string,
-              s: "Not Started" | "In Progress" | "Completed"
-            ) => handleStatusUpdate(id, s)} // ✅ типизировано
-            onVitalUpdate={(id: string, v: boolean) => handleVitalUpdate(id, v)} // ✅ типизировано
             showAlert={true}
           />
         ))
@@ -109,6 +97,7 @@ export const TodoList = () => {
         <p>No tasks for this date 🎯</p>
       )}
 
+      {/* === Модалка добавления === */}
       {isModalOpen && (
         <AddTaskModal
           onClose={() => setIsModalOpen(false)}
