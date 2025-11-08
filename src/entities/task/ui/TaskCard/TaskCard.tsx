@@ -6,7 +6,7 @@ import noImage from "../../../../shared/assets/images/no-image.jpeg";
 import { TaskDetailsModal } from "../TaskDetailsModal/TaskDetailsModal";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../../../../app/providers/store";
-import { removeTask, updateTaskStatus } from "../../model/tasksSlice"; // ✅ теперь используем Redux-thunk
+import { removeTask, updateTaskStatus } from "../../model/tasksSlice";
 
 interface TaskCardProps {
   id?: string;
@@ -19,14 +19,6 @@ interface TaskCardProps {
   completedAt?: string | null;
   type?: "default" | "completed" | "vital";
   vital?: boolean;
-
-  // 👇 добавляем коллбеки обратно
-  onDelete?: (id: string) => void;
-  onStatusUpdate?: (
-    id: string,
-    newStatus: "Not Started" | "In Progress" | "Completed"
-  ) => void;
-  onVitalUpdate?: (id: string, isVital: boolean) => void;
   showAlert?: boolean;
 }
 
@@ -35,7 +27,6 @@ const formatTimeAgo = (dateString?: string) => {
   const date = new Date(dateString);
   const now = new Date();
   const diff = Math.floor((now.getTime() - date.getTime()) / 1000);
-
   if (diff < 60) return "just now";
   if (diff < 3600) return `${Math.floor(diff / 60)} min ago`;
   if (diff < 86400) return `${Math.floor(diff / 3600)} hours ago`;
@@ -66,7 +57,15 @@ export const TaskCard = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [completedTime, setCompletedTime] = useState(completedAt || "");
   const [updating, setUpdating] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const menuRef = useRef<HTMLDivElement | null>(null);
+
+  // === Следим за шириной экрана ===
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // === Автоопределение типа карточки ===
   useEffect(() => {
@@ -101,13 +100,7 @@ export const TaskCard = ({
 
   const getSafeImageSrc = (src?: string) => {
     if (!src) return noImage;
-    if (
-      src.includes("wikia.nocookie.net") ||
-      src.includes("undefined") ||
-      src.includes("null")
-    ) {
-      return noImage;
-    }
+    if (src.includes("undefined") || src.includes("null")) return noImage;
     return src.startsWith("http") ? src : noImage;
   };
 
@@ -118,19 +111,16 @@ export const TaskCard = ({
 
     try {
       setUpdating(true);
-
       if (action === "Delete") {
         dispatch(removeTask(id));
         return closeMenu();
       }
-
       if (action === "Vital" || action === "Remove from Vital") {
         const newVital = !isVital;
         setIsVital(newVital);
         dispatch(updateTaskStatus({ id, vital: newVital }));
         return closeMenu();
       }
-
       if (action === "Finish") {
         const now = new Date().toISOString();
         setStatus("Completed");
@@ -140,7 +130,6 @@ export const TaskCard = ({
         );
         return closeMenu();
       }
-
       if (action === "Unfinish") {
         setStatus("In Progress");
         setCompletedTime("");
@@ -149,13 +138,11 @@ export const TaskCard = ({
         );
         return closeMenu();
       }
-
       if (action === "Mark In Progress") {
         setStatus("In Progress");
         dispatch(updateTaskStatus({ id, status: "In Progress" }));
         return closeMenu();
       }
-
       if (action === "Unmark In Progress") {
         setStatus("Not Started");
         dispatch(updateTaskStatus({ id, status: "Not Started" }));
@@ -174,12 +161,13 @@ export const TaskCard = ({
   const handleCardClick = (e: React.MouseEvent) => {
     const target = e.target as HTMLElement;
     if (target.closest(".task-card__menu-wrapper")) return;
-    if (showAlert) {
+
+    // ✅ Только для мобильных открываем модалку
+    if (isMobile) {
       setIsModalOpen(true);
     }
   };
 
-  // === Опции меню ===
   const actions = [
     isVital ? "Remove from Vital" : "Vital",
     "Edit",
@@ -287,8 +275,8 @@ export const TaskCard = ({
         </div>
       </div>
 
-      {/* === Модалка деталей задачи === */}
-      {isModalOpen && (
+      {/* === Модалка деталей задачи — только для мобильных === */}
+      {isMobile && isModalOpen && (
         <TaskDetailsModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
