@@ -6,9 +6,10 @@ import {
   createTodo,
   deleteTodo,
   patchTodo,
-} from "../../../shared/api/todos"; // ✅ теперь импортируем createTodo
+} from "../../../shared/api/todos";
 import type { Todo } from "../../../shared/api/todos";
 
+// === Тип состояния ===
 interface TasksState {
   items: Todo[];
   loading: boolean;
@@ -55,29 +56,24 @@ export const removeTask = createAsyncThunk(
   }
 );
 
-// === 🟡 Обновить статус задачи ===
+// === 🟡 Универсальное обновление задачи (status, vital, completedAt и др.) ===
 export const updateTaskStatus = createAsyncThunk(
   "tasks/updateStatus",
   async (
-    {
-      id,
-      status,
-    }: {
-      id: string;
-      status: "Not Started" | "In Progress" | "Completed";
-    },
+    update: { id: string } & Partial<Todo>, // ✅ теперь можно передавать любые поля
     { rejectWithValue }
   ) => {
     try {
-      const updated = await patchTodo(id, { status });
+      const { id, ...data } = update;
+      const updated = await patchTodo(id, data);
       return updated;
     } catch (err: any) {
-      return rejectWithValue(err.message || "Ошибка при обновлении статуса");
+      return rejectWithValue(err.message || "Ошибка при обновлении задачи");
     }
   }
 );
 
-// === 🔵 Универсальное обновление ===
+// === 🔵 Универсальное обновление (оставляем для совместимости) ===
 export const updateTask = createAsyncThunk(
   "tasks/update",
   async (update: Partial<Todo> & { id: string }, { rejectWithValue }) => {
@@ -119,7 +115,7 @@ const tasksSlice = createSlice({
 
       // === Добавление новой задачи ===
       .addCase(addNewTask.fulfilled, (state, action) => {
-        state.items.push(action.payload); // ✅ добавляем сразу в список
+        state.items.push(action.payload);
       })
       .addCase(addNewTask.rejected, (state, action) => {
         state.error = action.payload as string;
@@ -133,7 +129,7 @@ const tasksSlice = createSlice({
         }
       })
 
-      // === Обновление статуса ===
+      // === Обновление статуса / vital / completedAt и т.д. ===
       .addCase(updateTaskStatus.fulfilled, (state, action) => {
         const updated = action.payload;
         const index = state.items.findIndex((t) => t.id === updated.id);
@@ -145,7 +141,7 @@ const tasksSlice = createSlice({
         }
       })
 
-      // === Универсальное обновление ===
+      // === Универсальное обновление (старый вариант) ===
       .addCase(updateTask.fulfilled, (state, action) => {
         const updated = action.payload;
         const index = state.items.findIndex((t) => t.id === updated.id);

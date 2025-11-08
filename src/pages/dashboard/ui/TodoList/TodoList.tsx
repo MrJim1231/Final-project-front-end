@@ -8,7 +8,7 @@ import {
   fetchTasks,
   removeTask,
   updateTaskStatus,
-  addNewTask, // ✅ добавили thunk
+  addNewTask,
 } from "../../../../entities/task/model/tasksSlice";
 import type { RootState, AppDispatch } from "../../../../app/providers/store";
 import { useDateContext } from "../../../../shared/context/DateContext";
@@ -39,13 +39,18 @@ export const TodoList = () => {
     dispatch(updateTaskStatus({ id, status: newStatus }));
   };
 
+  // ⭐ Обновление флага vital
+  const handleVitalUpdate = (id: string, isVital: boolean) => {
+    dispatch(updateTaskStatus({ id, vital: isVital }));
+  };
+
   // 🆕 Добавление новой задачи
   const handleAddTask = (taskData: any) => {
     const newTask = {
       title: taskData.title,
       description: taskData.description,
       priority: taskData.priority || "Low",
-      status: "Not Started" as "Not Started", // ✅ фикс типизации
+      status: "Not Started" as "Not Started",
       createdAt: taskData.date || new Date().toISOString(),
       image:
         typeof taskData.image === "string"
@@ -56,7 +61,7 @@ export const TodoList = () => {
       vital: false,
     };
 
-    dispatch(addNewTask(newTask)); // ✅ отправляем задачу в Redux/сервер
+    dispatch(addNewTask(newTask));
   };
 
   // 📅 Фильтруем задачи по выбранной дате
@@ -85,15 +90,19 @@ export const TodoList = () => {
             key={task.id}
             id={task.id}
             title={task.title}
-            description={task.description} // ✅ правильное имя пропа
+            description={task.description}
             date={new Date(task.createdAt).toLocaleDateString()}
             priority={task.priority}
             status={task.status}
             image={task.image}
             vital={task.vital}
-            onDelete={() => handleDeleteTask(task.id)}
-            onStatusUpdate={(id, s) => handleStatusUpdate(id, s)}
-            showAlert={true} // 👈 только здесь включаем alert
+            onDelete={(id: string) => handleDeleteTask(id)} // ✅ типизировано
+            onStatusUpdate={(
+              id: string,
+              s: "Not Started" | "In Progress" | "Completed"
+            ) => handleStatusUpdate(id, s)} // ✅ типизировано
+            onVitalUpdate={(id: string, v: boolean) => handleVitalUpdate(id, v)} // ✅ типизировано
+            showAlert={true}
           />
         ))
       ) : (
@@ -103,7 +112,7 @@ export const TodoList = () => {
       {isModalOpen && (
         <AddTaskModal
           onClose={() => setIsModalOpen(false)}
-          onSubmit={handleAddTask} // ✅ теперь передаём реальный обработчик
+          onSubmit={handleAddTask}
         />
       )}
     </div>

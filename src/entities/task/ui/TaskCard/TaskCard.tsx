@@ -1,21 +1,26 @@
+// src/entities/task/ui/TaskCard/TaskCard.tsx
 import "./TaskCard.css";
 import { useState, useRef, useEffect } from "react";
 import { IoEllipsisHorizontalOutline } from "react-icons/io5";
-import { patchTodo } from "../../../../shared/api/todos";
 import noImage from "../../../../shared/assets/images/no-image.jpeg";
 import { TaskDetailsModal } from "../TaskDetailsModal/TaskDetailsModal";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "../../../../app/providers/store";
+import { removeTask, updateTaskStatus } from "../../model/tasksSlice"; // ✅ теперь используем Redux-thunk
 
 interface TaskCardProps {
   id?: string;
   title: string;
-  description: string; // ✅ заменено
+  description: string;
   date?: string;
   status: "Not Started" | "In Progress" | "Completed";
   priority?: "Low" | "Moderate" | "High" | "Extreme";
   image?: string;
-  completedAt?: string | null; // ✅ добавили null
+  completedAt?: string | null;
   type?: "default" | "completed" | "vital";
   vital?: boolean;
+
+  // 👇 добавляем коллбеки обратно
   onDelete?: (id: string) => void;
   onStatusUpdate?: (
     id: string,
@@ -41,7 +46,7 @@ const formatTimeAgo = (dateString?: string) => {
 export const TaskCard = ({
   id,
   title,
-  description, // ✅ новое имя
+  description,
   date,
   status: initialStatus,
   priority,
@@ -49,22 +54,21 @@ export const TaskCard = ({
   completedAt,
   type: initialType = "default",
   vital = false,
-  onDelete,
-  onStatusUpdate,
-  onVitalUpdate,
   showAlert = false,
 }: TaskCardProps) => {
+  const dispatch = useDispatch<AppDispatch>();
   const [status, setStatus] = useState(initialStatus);
   const [isVital, setIsVital] = useState(vital);
   const [type, setType] = useState<"default" | "completed" | "vital">(
     initialType
   );
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [updating, setUpdating] = useState(false);
-  const [completedTime, setCompletedTime] = useState(completedAt || "");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [completedTime, setCompletedTime] = useState(completedAt || "");
+  const [updating, setUpdating] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
+  // === Автоопределение типа карточки ===
   useEffect(() => {
     if (isVital) setType("vital");
     else if (status === "Completed") setType("completed");
@@ -84,6 +88,7 @@ export const TaskCard = ({
     }
   };
 
+  // === Закрытие меню при клике вне ===
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -106,6 +111,7 @@ export const TaskCard = ({
     return src.startsWith("http") ? src : noImage;
   };
 
+  // === Действия из меню ===
   const handleActionClick = async (action: string) => {
     if (!id) return;
     const closeMenu = () => setIsMenuOpen(false);
@@ -113,50 +119,46 @@ export const TaskCard = ({
     try {
       setUpdating(true);
 
-      if (action === "Delete" && onDelete) {
-        onDelete(id);
+      if (action === "Delete") {
+        dispatch(removeTask(id));
         return closeMenu();
       }
 
       if (action === "Vital" || action === "Remove from Vital") {
         const newVital = !isVital;
-        const updated = await patchTodo(id, { vital: newVital });
-        setIsVital(updated.vital ?? newVital);
-        onVitalUpdate?.(id, updated.vital ?? newVital);
+        setIsVital(newVital);
+        dispatch(updateTaskStatus({ id, vital: newVital }));
         return closeMenu();
       }
 
       if (action === "Finish") {
         const now = new Date().toISOString();
-        const updated = await patchTodo(id, {
-          status: "Completed",
-          completedAt: now,
-        });
-        setStatus(updated.status);
+        setStatus("Completed");
         setCompletedTime(now);
-        onStatusUpdate?.(id, updated.status);
+        dispatch(
+          updateTaskStatus({ id, status: "Completed", completedAt: now })
+        );
         return closeMenu();
       }
 
       if (action === "Unfinish") {
-        const updated = await patchTodo(id, { status: "In Progress" });
-        setStatus(updated.status);
+        setStatus("In Progress");
         setCompletedTime("");
-        onStatusUpdate?.(id, updated.status);
+        dispatch(
+          updateTaskStatus({ id, status: "In Progress", completedAt: null })
+        );
         return closeMenu();
       }
 
       if (action === "Mark In Progress") {
-        const updated = await patchTodo(id, { status: "In Progress" });
-        setStatus(updated.status);
-        onStatusUpdate?.(id, updated.status);
+        setStatus("In Progress");
+        dispatch(updateTaskStatus({ id, status: "In Progress" }));
         return closeMenu();
       }
 
       if (action === "Unmark In Progress") {
-        const updated = await patchTodo(id, { status: "Not Started" });
-        setStatus(updated.status);
-        onStatusUpdate?.(id, updated.status);
+        setStatus("Not Started");
+        dispatch(updateTaskStatus({ id, status: "Not Started" }));
         return closeMenu();
       }
     } catch (error) {
@@ -168,15 +170,16 @@ export const TaskCard = ({
     }
   };
 
+  // === Клик по карточке ===
   const handleCardClick = (e: React.MouseEvent) => {
     const target = e.target as HTMLElement;
     if (target.closest(".task-card__menu-wrapper")) return;
-
     if (showAlert) {
       setIsModalOpen(true);
     }
   };
 
+  // === Опции меню ===
   const actions = [
     isVital ? "Remove from Vital" : "Vital",
     "Edit",
@@ -236,7 +239,7 @@ export const TaskCard = ({
                 {title} {isVital && <span style={{ color: "#ff6767" }}>★</span>}
               </h4>
             </div>
-            <p className="task-card__desc">{description}</p> {/* ✅ заменено */}
+            <p className="task-card__desc">{description}</p>
           </div>
 
           <div className="task-card__right">
@@ -290,7 +293,7 @@ export const TaskCard = ({
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           title={title}
-          desc={description} // ✅ тоже изменено
+          desc={description}
           date={date}
           priority={priority}
           status={status}
