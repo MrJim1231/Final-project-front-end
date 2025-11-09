@@ -9,6 +9,7 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  animation: fadeInList 0.4s ease; /* ✅ плавное появление блока */
 }
 
 /* === Заголовок блока === */
@@ -72,10 +73,54 @@
 .todo-list__tasks {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px; /* ✅ чуть больше для читаемости */
   flex: 1;
   overflow-y: auto;
   padding-right: 4px;
+  animation: fadeInList 0.4s ease; /* ✅ плавное появление карточек */
+}
+
+/* === Анимация карточек === */
+.task-card {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeInCard 0.35s ease forwards;
+}
+
+.task-card:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.task-card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.task-card:nth-child(3) {
+  animation-delay: 0.15s;
+}
+.task-card:nth-child(4) {
+  animation-delay: 0.2s;
+}
+
+/* === Ключевые кадры === */
+@keyframes fadeInList {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInCard {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* === Плавная прокрутка === */

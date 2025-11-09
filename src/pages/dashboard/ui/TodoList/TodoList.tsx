@@ -50,7 +50,7 @@ export const TodoList = () => {
     return taskDate === selectedDate && !t.vital && t.status !== "Completed";
   });
 
-  // 📆 Форматирование даты (например, "8 November · Today")
+  // 📆 Форматирование даты (например, "9 November · Today")
   const current = new Date(selectedDate);
   const day = current.getDate();
   const month = current.toLocaleString("en-US", { month: "long" });
@@ -79,23 +79,27 @@ export const TodoList = () => {
 
       {/* === Список задач === */}
       {visibleTasks.length > 0 ? (
-        visibleTasks.map((task) => (
-          <TaskCard
-            key={task.id}
-            id={task.id}
-            title={task.title}
-            description={task.description}
-            date={new Date(task.createdAt).toLocaleDateString()}
-            priority={task.priority}
-            status={task.status}
-            image={task.image}
-            vital={task.vital}
-            showAlert={true}
-            enableDesktopModal // ✅ теперь модалка и на десктопе
-          />
-        ))
+        <div className="todo-list__tasks">
+          {" "}
+          {/* ✅ Контейнер с gap и анимацией */}
+          {visibleTasks.map((task) => (
+            <TaskCard
+              key={task.id}
+              id={task.id}
+              title={task.title}
+              description={task.description}
+              date={new Date(task.createdAt).toLocaleDateString()}
+              priority={task.priority}
+              status={task.status}
+              image={task.image}
+              vital={task.vital}
+              showAlert={true}
+              enableDesktopModal
+            />
+          ))}
+        </div>
       ) : (
-        <p>No tasks for this date 🎯</p>
+        <p className="todo-list__empty">No tasks for this date 🎯</p>
       )}
 
       {/* === Модалка добавления задачи === */}
