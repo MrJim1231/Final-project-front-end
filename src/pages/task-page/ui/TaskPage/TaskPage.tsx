@@ -9,6 +9,7 @@ import {
   removeTask,
   selectTask,
   selectFirstTask,
+  clearSelected, // ✅ добавлено
 } from "../../../../entities/task/model/tasksSlice";
 import type { RootState, AppDispatch } from "../../../../app/providers/store";
 
@@ -40,6 +41,11 @@ export const TaskPage = ({ type }: TaskPageProps) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // 🧹 Сбрасываем выбранную задачу при смене типа страницы
+  useEffect(() => {
+    dispatch(clearSelected());
+  }, [type, dispatch]);
+
   // 🧮 Фильтрация по типу страницы
   const filteredTasks = useMemo(() => {
     return tasks.filter((t) => {
@@ -59,12 +65,12 @@ export const TaskPage = ({ type }: TaskPageProps) => {
     });
   }, [tasks, selectedDate, type]);
 
-  // 🧠 Автоселект первой задачи
+  // 🧠 Автоселект первой задачи при загрузке или фильтрации
   useEffect(() => {
-    if (!selected && filteredTasks.length > 0) {
+    if (filteredTasks.length > 0) {
       dispatch(selectFirstTask(filteredTasks));
     }
-  }, [filteredTasks, selected, dispatch]);
+  }, [filteredTasks, dispatch]);
 
   // 🗑️ Удалить задачу
   const handleDelete = (id: string) => {
@@ -82,7 +88,7 @@ export const TaskPage = ({ type }: TaskPageProps) => {
 
   // === Разметка ===
   return (
-    <section className="task-page">
+    <section className={`task-page task-page--${type}`}>
       <div className="task-page__content">
         {/* === Левая колонка === */}
         <div className="task-page__left">
@@ -110,7 +116,6 @@ export const TaskPage = ({ type }: TaskPageProps) => {
                     status={task.status}
                     image={task.image}
                     vital={task.vital}
-                    // 👇 исправлено — подставляем корректный тип для TaskCard
                     type={type === "my" ? "default" : type}
                     completedAt={task.completedAt ?? undefined}
                   />
@@ -125,7 +130,7 @@ export const TaskPage = ({ type }: TaskPageProps) => {
         {/* === Правая колонка (десктоп) === */}
         {!isMobile && (
           <div className="task-page__right">
-            {selected ? (
+            {selected && filteredTasks.some((t) => t.id === selected.id) ? (
               <TaskDetails
                 image={selected.image}
                 title={selected.title}
