@@ -1,0 +1,56 @@
+.completed-page {
+  background-color: #f5f8ff;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.completed-page__content {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 1rem;
+  align-items: stretch;
+  box-sizing: border-box;
+}
+
+.completed-page__left {
+  display: flex;
+  flex-direction: column;
+}
+
+.completed-page__right {
+  display: flex;
+  justify-content: center;
+  /* align-items: center; */
+}
+
+.completed-page__info {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(161, 163, 171, 0.25);
+  padding: 32px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  text-align: center;
+}
+
+.completed-page__title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #00c851;
+  margin-bottom: 8px;
+}
+
+.completed-page__subtitle {
+  font-size: 14px;
+  color: #777;
+}
+
+/* 📱 Адаптация */
+@media (max-width: 1200px) {
+  .completed-page__content {
+    grid-template-columns: 1fr;
+  }
+
+  .completed-page__right {
+    margin-top: 20px;
+  }
+}

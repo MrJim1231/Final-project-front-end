@@ -1,62 +1,72 @@
 [
   {
-    "createdAt": "2025-11-07",
+    "createdAt": "2025-11-09",
     "id": "1",
     "title": "Buy a new computer",
-    "description": "Go to the shop and buy the computer ",
-    "priority": "Low",
+    "description": "Go to the shop and buy the computer",
+    "priority": "High",
     "status": "Not Started",
-    "vital": false,
-    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwJjYfRA_NagsFx3Sm7TZcXCVXhmLjHvv2-g&s"
+    "image": "https://hyperditek.com.ua/image/cache/assembly/224-350x350.jpg",
+    "vital": false
   },
   {
-    "createdAt": "2025-11-07",
+    "createdAt": "2025-11-09",
     "id": "2",
-    "title": "Fix my phone ",
-    "description": "Take my phone to servise ",
+    "title": "Fix my phone",
+    "description": "Take my phone to the service center for repair",
     "priority": "Moderate",
-    "status": "Not Started",
-    "vital": false,
-    "image": "https://upload.wikimedia.org/wikipedia/commons/4/43/%D0%AF%D0%BD%D0%B4%D0%B5%D0%BA%D1%81.%D1%82%D0%B5%D0%BB%D0%B5%D1%84%D0%BE%D0%BD.jpg"
+    "status": "In Progress",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/4/43/%D0%AF%D0%BD%D0%B4%D0%B5%D0%BA%D1%81.%D1%82%D0%B5%D0%BB%D0%B5%D1%84%D0%BE%D0%BD.jpg",
+    "vital": false
   },
   {
-    "createdAt": "2025-11-07",
+    "createdAt": "2025-11-09",
     "id": "3",
-    "title": "Sign up for the gym",
-    "description": "buy a gym membership",
+    "title": "Join a gym",
+    "description": "Register for gym membership and start training",
     "priority": "Extreme",
     "status": "Not Started",
-    "vital": false,
-    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR9Gd--u__MJr7P91G0IiMuf_nZwvqMsSGAyw&s"
+    "image": "https://r2.sportlife.ua/083_A0425_Edit_kopiya_e380e4f541.jpg",
+    "vital": true
   },
   {
-    "createdAt": "2025-11-07",
+    "createdAt": "2025-11-09",
     "id": "4",
-    "title": "congratulate mom on her birthday",
-    "description": "buy flowers",
+    "title": "Finish front-end project",
+    "description": "Complete layout and integrate logic in the app",
     "priority": "Extreme",
-    "status": "Not Started",
-    "vital": false,
-    "image": "https://donnarosa.by/upload/iblock/b16/processed-_1_.jpeg"
+    "status": "In Progress",
+    "image": "https://www.buyrentkenya.com/discover/wp-content/uploads/2022/06/brk-blog-4reasons-why.png",
+    "vital": true
   },
   {
-    "createdAt": "2025-11-07",
+    "createdAt": "2025-11-09",
     "id": "5",
-    "title": "finish the front-end project",
-    "description": "finish the layout and logic",
-    "priority": "Extreme",
-    "status": "Not Started",
-    "vital": false,
-    "image": "https://s.dou.ua/storage-files/how-to-front-end.jpg"
-  },
-  {
-    "createdAt": "2025-11-07",
-    "id": "6",
-    "title": "buy a jacket",
-    "description": "go to the shop",
+    "title": "Plan a trip",
+    "description": "Search for flights and book accommodation for vacation",
     "priority": "Moderate",
     "status": "Not Started",
-    "vital": false,
-    "image": "https://cdn.27.ua/799/97/e7/6920167_2.jpeg"
+    "image": "https://thetravelyogi.com/wp-content/uploads/2021/06/health-benefits-traveling-travel-yogi-1024x683.png",
+    "vital": false
+  },
+  {
+    "createdAt": "2025-11-09",
+    "id": "6",
+    "title": "Create travel presentation",
+    "description": "Prepare slides for next week's meeting about travel plans",
+    "priority": "Low",
+    "status": "Completed",
+    "image": "https://frontenacarchbiosphere.ca/wp-content/uploads/2023/02/full-shot-travel-concept-with-landmarks-1024x576.jpg",
+    "vital": false
+  },
+  {
+    "createdAt": "2025-11-09",
+    "id": "7",
+    "title": "Improve workplace mood",
+    "description": "Organize team activities to boost morale at work",
+    "priority": "Moderate",
+    "status": "Not Started",
+    "image": "https://www.ipsos.com/sites/default/files/ct/news_and_polls/2021-07/man-at-work-unhappy.jpg",
+    "vital": false
   }
 ]

@@ -1,0 +1,164 @@
+/* === 🌟 Страница "My Tasks" === */
+.my-task-page {
+  background-color: #f5f8ff;
+  min-height: 100vh;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  padding-bottom: 30px;
+}
+
+/* === Контент: 2 колонки === */
+.my-task-page__content {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 1rem;
+  align-items: stretch;
+  box-sizing: border-box;
+}
+
+/* === Левая колонка (список задач) === */
+.my-task-page__left {
+  display: flex;
+  flex-direction: column;
+}
+
+/* === Правая колонка (детали задачи) === */
+.my-task-page__right {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+
+/* === Информационные блоки === */
+.my-task-page__title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #e03e3e;
+  margin-bottom: 8px;
+}
+
+.my-task-page__subtitle {
+  font-size: 14px;
+  color: #777;
+}
+
+/* === 📱 Адаптация === */
+@media (max-width: 1200px) {
+  .my-task-page__content {
+    grid-template-columns: 1fr;
+  }
+
+  .my-task-page__right {
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .my-task-page__content {
+    padding: 16px;
+    gap: 1rem;
+  }
+
+  .my-task-page__title {
+    font-size: 16px;
+  }
+
+  .my-task-page__subtitle {
+    font-size: 13px;
+  }
+}
+
+/* === 📋 Список задач === */
+.my-task-list {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(161, 163, 171, 0.25);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* === Заголовок секции === */
+.my-task-list__header {
+  margin-bottom: 1rem;
+}
+
+/* === Текст заголовка === */
+.my-task-list__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 4px;
+}
+
+/* 🔴 Красная полоска под заголовком */
+.my-task-list__title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 32px;
+  height: 2px;
+  background-color: #ff6767;
+  border-radius: 2px;
+}
+
+/* === Дата (например, 8 November · Today) === */
+.my-task-list__date {
+  font-size: 13px;
+  color: #444;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.my-task-list__today {
+  color: #999;
+}
+
+/* === Элементы списка задач === */
+.my-task-list__item {
+  border-radius: 12px;
+  transition: background 0.2s ease;
+  cursor: pointer;
+  padding: 10px 12px;
+}
+
+/* .my-task-list__item:hover {
+  background-color: rgba(255, 103, 103, 0.05);
+} */
+
+/* .my-task-list__item.active {
+  background-color: rgba(255, 103, 103, 0.08);
+} */
+
+/* === Пустой список или загрузка === */
+.my-task-list__empty,
+.my-task-list__loading {
+  color: #777;
+  font-size: 14px;
+  text-align: center;
+  padding: 1rem;
+}
+
+/* === Мобильная адаптация === */
+@media (max-width: 768px) {
+  .my-task-list {
+    padding: 20px;
+  }
+
+  .my-task-list__title {
+    font-size: 15px;
+  }
+
+  .my-task-list__date {
+    font-size: 12px;
+  }
+}
