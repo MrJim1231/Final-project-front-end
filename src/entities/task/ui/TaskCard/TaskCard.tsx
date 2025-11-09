@@ -113,6 +113,7 @@ export const TaskCard = ({
 
     try {
       setUpdating(true);
+
       switch (action) {
         case "Delete":
           dispatch(removeTask(id));
@@ -130,8 +131,14 @@ export const TaskCard = ({
           const now = new Date().toISOString();
           setStatus("Completed");
           setCompletedTime(now);
+          setIsVital(false); // ✅ Убираем из списка Vital
           dispatch(
-            updateTaskStatus({ id, status: "Completed", completedAt: now })
+            updateTaskStatus({
+              id,
+              status: "Completed",
+              completedAt: now,
+              vital: false, // ✅ фикс: сразу обновляем vital = false
+            })
           );
           break;
         }
@@ -276,7 +283,7 @@ export const TaskCard = ({
         </div>
       </div>
 
-      {/* === Модалка деталей задачи (всегда смонтирована) === */}
+      {/* === Модалка деталей задачи === */}
       <TaskDetailsModal
         isOpen={isModalOpen && (isMobile || enableDesktopModal)}
         onClose={() => setIsModalOpen(false)}
