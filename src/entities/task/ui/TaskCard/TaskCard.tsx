@@ -19,7 +19,6 @@ interface TaskCardProps {
   type?: "default" | "completed" | "vital";
   vital?: boolean;
   showAlert?: boolean;
-  /** 👇 разрешить открытие модалки и на десктопе */
   enableDesktopModal?: boolean;
 }
 
@@ -47,9 +46,10 @@ export const TaskCard = ({
   type: initialType = "default",
   vital = false,
   showAlert = false,
-  enableDesktopModal = false, // 👈 по умолчанию — выключено
+  enableDesktopModal = false,
 }: TaskCardProps) => {
   const dispatch = useDispatch<AppDispatch>();
+
   const [status, setStatus] = useState(initialStatus);
   const [isVital, setIsVital] = useState(vital);
   const [type, setType] = useState<"default" | "completed" | "vital">(
@@ -62,14 +62,14 @@ export const TaskCard = ({
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
-  // === Следим за шириной экрана ===
+  // === Обновление ширины экрана ===
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // === Автоопределение типа карточки ===
+  // === Определяем тип карточки ===
   useEffect(() => {
     if (isVital) setType("vital");
     else if (status === "Completed") setType("completed");
@@ -89,7 +89,7 @@ export const TaskCard = ({
     }
   };
 
-  // === Закрытие меню при клике вне ===
+  // === Закрываем меню по клику вне ===
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -106,49 +106,53 @@ export const TaskCard = ({
     return src.startsWith("http") ? src : noImage;
   };
 
-  // === Действия из меню ===
+  // === Меню действий ===
   const handleActionClick = async (action: string) => {
     if (!id) return;
     const closeMenu = () => setIsMenuOpen(false);
 
     try {
       setUpdating(true);
-      if (action === "Delete") {
-        dispatch(removeTask(id));
-        return closeMenu();
-      }
-      if (action === "Vital" || action === "Remove from Vital") {
-        const newVital = !isVital;
-        setIsVital(newVital);
-        dispatch(updateTaskStatus({ id, vital: newVital }));
-        return closeMenu();
-      }
-      if (action === "Finish") {
-        const now = new Date().toISOString();
-        setStatus("Completed");
-        setCompletedTime(now);
-        dispatch(
-          updateTaskStatus({ id, status: "Completed", completedAt: now })
-        );
-        return closeMenu();
-      }
-      if (action === "Unfinish") {
-        setStatus("In Progress");
-        setCompletedTime("");
-        dispatch(
-          updateTaskStatus({ id, status: "In Progress", completedAt: null })
-        );
-        return closeMenu();
-      }
-      if (action === "Mark In Progress") {
-        setStatus("In Progress");
-        dispatch(updateTaskStatus({ id, status: "In Progress" }));
-        return closeMenu();
-      }
-      if (action === "Unmark In Progress") {
-        setStatus("Not Started");
-        dispatch(updateTaskStatus({ id, status: "Not Started" }));
-        return closeMenu();
+      switch (action) {
+        case "Delete":
+          dispatch(removeTask(id));
+          break;
+
+        case "Vital":
+        case "Remove from Vital": {
+          const newVital = !isVital;
+          setIsVital(newVital);
+          dispatch(updateTaskStatus({ id, vital: newVital }));
+          break;
+        }
+
+        case "Finish": {
+          const now = new Date().toISOString();
+          setStatus("Completed");
+          setCompletedTime(now);
+          dispatch(
+            updateTaskStatus({ id, status: "Completed", completedAt: now })
+          );
+          break;
+        }
+
+        case "Unfinish":
+          setStatus("In Progress");
+          setCompletedTime("");
+          dispatch(
+            updateTaskStatus({ id, status: "In Progress", completedAt: null })
+          );
+          break;
+
+        case "Mark In Progress":
+          setStatus("In Progress");
+          dispatch(updateTaskStatus({ id, status: "In Progress" }));
+          break;
+
+        case "Unmark In Progress":
+          setStatus("Not Started");
+          dispatch(updateTaskStatus({ id, status: "Not Started" }));
+          break;
       }
     } catch (error) {
       console.error("Ошибка при выполнении действия:", error);
@@ -159,15 +163,10 @@ export const TaskCard = ({
     }
   };
 
-  // === Клик по карточке ===
+  // === Клик по карточке (открыть модалку) ===
   const handleCardClick = (e: React.MouseEvent) => {
-    const target = e.target as HTMLElement;
-    if (target.closest(".task-card__menu-wrapper")) return;
-
-    // ✅ Модалка открывается на мобильных и/или если включено enableDesktopModal
-    if (isMobile || enableDesktopModal) {
-      setIsModalOpen(true);
-    }
+    if ((e.target as HTMLElement).closest(".task-card__menu-wrapper")) return;
+    if (isMobile || enableDesktopModal) setIsModalOpen(true);
   };
 
   const actions = [
@@ -277,20 +276,18 @@ export const TaskCard = ({
         </div>
       </div>
 
-      {/* === Модалка деталей задачи — теперь и для десктопа (если разрешено) === */}
-      {(isMobile || enableDesktopModal) && isModalOpen && (
-        <TaskDetailsModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          title={title}
-          desc={description}
-          date={date}
-          priority={priority}
-          status={status}
-          image={getSafeImageSrc(image)}
-          completedAt={completedAt}
-        />
-      )}
+      {/* === Модалка деталей задачи (всегда смонтирована) === */}
+      <TaskDetailsModal
+        isOpen={isModalOpen && (isMobile || enableDesktopModal)}
+        onClose={() => setIsModalOpen(false)}
+        title={title}
+        desc={description}
+        date={date}
+        priority={priority}
+        status={status}
+        image={getSafeImageSrc(image)}
+        completedAt={completedAt}
+      />
     </>
   );
 };

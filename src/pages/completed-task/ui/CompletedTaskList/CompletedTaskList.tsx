@@ -1,5 +1,5 @@
 import "./CompletedTaskList.css";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { TaskCard } from "../../../../entities/task/ui/TaskCard";
 import {
@@ -18,20 +18,20 @@ export const CompletedTaskList = () => {
     selectedDate,
   } = useSelector((state: RootState) => state.tasks);
 
-  // 🚀 Подгружаем задачи при монтировании
+  // 🚀 Загружаем задачи при монтировании
   useEffect(() => {
     if (tasks.length === 0) {
       dispatch(fetchTasks());
     }
-  }, [dispatch]);
-
-  if (loading) return <p>Loading completed tasks...</p>;
+  }, [dispatch, tasks.length]);
 
   // ✅ Фильтруем завершённые задачи за выбранную дату
-  const completedTasks = tasks.filter((t) => {
-    const taskDate = new Date(t.createdAt).toISOString().split("T")[0];
-    return taskDate === selectedDate && t.status === "Completed";
-  });
+  const completedTasks = useMemo(() => {
+    return tasks.filter((t) => {
+      const taskDate = new Date(t.createdAt).toISOString().split("T")[0];
+      return taskDate === selectedDate && t.status === "Completed";
+    });
+  }, [tasks, selectedDate]);
 
   // 🧠 Автоселект первой задачи
   useEffect(() => {
@@ -40,26 +40,29 @@ export const CompletedTaskList = () => {
     }
   }, [completedTasks, selected, dispatch]);
 
-  // 📆 Форматирование даты
+  // 📆 Формат даты
   const current = new Date(selectedDate);
   const day = current.getDate();
   const month = current.toLocaleString("en-US", { month: "long" });
   const isToday =
     new Date().toISOString().split("T")[0] === selectedDate ? "· Today" : "";
 
+  // ⚠️ Возврат только после хуков
+  if (loading) {
+    return <p>Loading completed tasks...</p>;
+  }
+
+  // === Контент ===
   return (
     <div className="completed-list">
-      {/* === Заголовок === */}
       <div className="completed-list__header">
         <h3 className="completed-list__title">Completed Tasks</h3>
       </div>
 
-      {/* === Дата === */}
       <div className="completed-list__date">
         {day} {month} <span className="completed-list__today">{isToday}</span>
       </div>
 
-      {/* === Список задач === */}
       {completedTasks.length > 0 ? (
         completedTasks.map((task) => (
           <div
@@ -79,7 +82,6 @@ export const CompletedTaskList = () => {
               image={task.image}
               type="completed"
               completedAt={task.completedAt ?? undefined}
-              // enableDesktopModal
             />
           </div>
         ))
