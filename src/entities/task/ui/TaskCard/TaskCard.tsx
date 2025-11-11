@@ -1,11 +1,11 @@
 import "./TaskCard.css";
 import { useState, useRef, useEffect } from "react";
 import { IoEllipsisHorizontalOutline } from "react-icons/io5";
-import noImage from "../../../../shared/assets/images/no-image.jpeg";
-import { TaskDetailsModal } from "../TaskDetailsModal/TaskDetailsModal";
+import noImage from "@/shared/assets/images/no-image.jpeg";
+import { TaskDetailsModal } from "@/entities/task/ui/TaskDetailsModal/TaskDetailsModal";
 import { useDispatch } from "react-redux";
-import type { AppDispatch } from "../../../../app/providers/store";
-import { removeTask, updateTaskStatus } from "../../model/tasksSlice";
+import type { AppDispatch } from "@/app/providers/store";
+import { removeTask, updateTaskStatus } from "@/entities/task/model/tasksSlice";
 
 interface TaskCardProps {
   id?: string;
