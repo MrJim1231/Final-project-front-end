@@ -10,7 +10,7 @@
 /* === Контент: 2 колонки === */
 .task-page__content {
   display: grid;
-  grid-template-columns: 0.8fr 1.2fr;
+  grid-template-columns: 1fr 1fr;
   gap: 1rem;
   align-items: stretch;
   box-sizing: border-box;
