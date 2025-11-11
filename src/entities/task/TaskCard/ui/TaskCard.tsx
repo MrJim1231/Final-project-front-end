@@ -7,6 +7,10 @@ import { getSafeImageSrc } from "@/entities/task/TaskCard/lib/getSafeImageSrc";
 import { getStatusColor } from "@/entities/task/TaskCard/lib/getStatusColor";
 import { TaskCardMenu } from "./TaskCardMenu";
 import { TaskCardDetails } from "./TaskCardDetails";
+import { EditTaskModal } from "@/entities/task/ui/EditTaskModal/EditTaskModal"; // ✅ добавлено
+import { useDispatch } from "react-redux";
+import { updateTaskStatus } from "@/entities/task/model/tasksSlice";
+import type { AppDispatch } from "@/app/providers/store";
 
 interface TaskCardProps {
   id?: string;
@@ -19,8 +23,6 @@ interface TaskCardProps {
   completedAt?: string | null;
   vital?: boolean;
   enableDesktopModal?: boolean;
-
-  // 🔽 добавляем недостающие поля, чтобы не было ошибок
   type?: "default" | "completed" | "vital";
   showAlert?: boolean;
 }
@@ -36,9 +38,10 @@ export const TaskCard = ({
   completedAt,
   vital = false,
   enableDesktopModal = false,
-  type = "default", // ✅ по умолчанию
-  showAlert = false, // ✅ по умолчанию
+  type = "default",
+  showAlert = false,
 }: TaskCardProps) => {
+  const dispatch = useDispatch<AppDispatch>();
   const {
     deleteTask,
     toggleVital,
@@ -52,6 +55,7 @@ export const TaskCard = ({
   const [isVital, setIsVital] = useState(vital);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false); // ✅ добавлено
   const [completedTime, setCompletedTime] = useState(completedAt || "");
   const [updating, setUpdating] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -79,6 +83,7 @@ export const TaskCard = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // === Основные действия ===
   const handleActionClick = async (action: string) => {
     if (!id) return;
     setUpdating(true);
@@ -111,11 +116,16 @@ export const TaskCard = ({
         unmarkInProgress(id);
         setStatus("Not Started");
         break;
+      case "Edit": // ✅ добавлено
+        setIsEditOpen(true);
+        break;
     }
+
     setUpdating(false);
     setIsMenuOpen(false);
   };
 
+  // === Список доступных действий ===
   const actions = [
     isVital ? "Remove from Vital" : "Vital",
     "Edit",
@@ -126,6 +136,22 @@ export const TaskCard = ({
       ? ["Unmark In Progress", "Finish"]
       : ["Unfinish", "Mark In Progress"]),
   ];
+
+  // === Обновление после редактирования ===
+  const handleEditSubmit = (updated: any) => {
+    if (!id) return;
+
+    dispatch(
+      updateTaskStatus({
+        id,
+        title: updated.title,
+        description: updated.description,
+        priority: updated.priority,
+        image: updated.imageUrl,
+        date: updated.date,
+      })
+    );
+  };
 
   const handleCardClick = (e: React.MouseEvent) => {
     if ((e.target as HTMLElement).closest(".task-card__menu-wrapper")) return;
@@ -188,6 +214,7 @@ export const TaskCard = ({
         />
       </div>
 
+      {/* 🔹 Детальная модалка */}
       <TaskDetailsModal
         isOpen={isModalOpen && (isMobile || enableDesktopModal)}
         onClose={() => setIsModalOpen(false)}
@@ -200,8 +227,21 @@ export const TaskCard = ({
         completedAt={completedAt}
       />
 
-      {/* 🔔 опциональный alert (если ты когда-то хочешь подсказки при действии) */}
-      {/* {showAlert && <div className="task-card__alert">Action completed ✅</div>} */}
+      {/* ✏️ Модалка редактирования */}
+      {isEditOpen && (
+        <EditTaskModal
+          onClose={() => setIsEditOpen(false)}
+          onSubmit={handleEditSubmit}
+          initialData={{
+            id,
+            title,
+            date,
+            priority,
+            description,
+            image,
+          }}
+        />
+      )}
     </>
   );
 };

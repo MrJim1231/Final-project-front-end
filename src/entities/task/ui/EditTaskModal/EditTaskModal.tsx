@@ -1,122 +1,141 @@
-import "./EditTaskModal.css";
-import { useState } from "react";
-import { FiX } from "react-icons/fi";
-import type { Todo } from "../../../../shared/api/todos";
+import React, { useState, useEffect } from "react";
+import "./EditTaskModal.css"; // ✅ можно использовать те же стили
 
 interface EditTaskModalProps {
-  task: Todo;
   onClose: () => void;
-  onSubmit: (updatedTask: Partial<Todo>) => void;
+  onSubmit: (updatedTask: any) => void;
+  initialData: {
+    id?: string;
+    title: string;
+    date?: string;
+    priority?: string;
+    description?: string;
+    image?: string;
+  };
 }
 
-export const EditTaskModal = ({
-  task,
+export const EditTaskModal: React.FC<EditTaskModalProps> = ({
   onClose,
   onSubmit,
-}: EditTaskModalProps) => {
+  initialData,
+}) => {
   const [form, setForm] = useState({
-    title: task.title,
-    description: task.description || "",
-    priority: task.priority || "Moderate",
-    status: task.status,
+    title: "",
+    date: "",
+    priority: "",
+    description: "",
+    imageUrl: "",
   });
 
+  useEffect(() => {
+    setForm({
+      title: initialData.title || "",
+      date: initialData.date || "",
+      priority: initialData.priority || "",
+      description: initialData.description || "",
+      imageUrl: initialData.image || "",
+    });
+  }, [initialData]);
+
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(form);
+    onClose();
   };
 
   return (
-    <div className="edit-modal__overlay">
-      <div className="edit-modal">
-        {/* === Заголовок === */}
-        <div className="edit-modal__header">
-          <h3 className="edit-modal__title">Edit Task</h3>
-          <button className="edit-modal__close" onClick={onClose}>
-            <FiX />
+    <div className="modal-overlay">
+      <div className="addtask-modal">
+        <div className="addtask-modal__header">
+          <h3 className="addtask-modal__title">Edit Task</h3>
+          <button className="addtask-modal__close" onClick={onClose}>
+            Go Back
           </button>
         </div>
 
-        {/* === Форма === */}
-        <form className="edit-modal__form" onSubmit={handleSubmit}>
-          <label className="edit-modal__label">
-            Title
-            <input
-              type="text"
-              name="title"
-              value={form.title}
-              onChange={handleChange}
-              className="edit-modal__input"
-              required
-            />
-          </label>
+        <div className="addtask-modal__content">
+          <form className="addtask-modal__form" onSubmit={handleSubmit}>
+            <label>
+              Title
+              <input
+                type="text"
+                name="title"
+                value={form.title}
+                onChange={handleChange}
+                required
+              />
+            </label>
 
-          <label className="edit-modal__label">
-            Description
-            <textarea
-              name="description"
-              value={form.description}
-              onChange={handleChange}
-              className="edit-modal__textarea"
-              rows={3}
-            />
-          </label>
+            <label>
+              Date
+              <input
+                type="date"
+                name="date"
+                value={form.date}
+                onChange={handleChange}
+              />
+            </label>
 
-          <label className="edit-modal__label">
-            Priority
-            <select
-              name="priority"
-              value={form.priority}
-              onChange={handleChange}
-              className="edit-modal__select"
-            >
-              <option value="Low">Low</option>
-              <option value="Moderate">Moderate</option>
-              <option value="High">High</option>
-              <option value="Extreme">Extreme</option>
-            </select>
-          </label>
+            <div className="addtask-modal__priority">
+              <span>Priority</span>
 
-          <label className="edit-modal__label">
-            Status
-            <select
-              name="status"
-              value={form.status}
-              onChange={handleChange}
-              className="edit-modal__select"
-            >
-              <option value="Not Started">Not Started</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Completed">Completed</option>
-            </select>
-          </label>
+              {["Extreme", "Moderate", "Low"].map((level) => (
+                <label className="priority-item" key={level}>
+                  <input
+                    type="radio"
+                    name="priority"
+                    value={level}
+                    checked={form.priority === level}
+                    onChange={handleChange}
+                  />
+                  <span
+                    className={`custom-box ${
+                      level === "Extreme"
+                        ? "red"
+                        : level === "Moderate"
+                        ? "blue"
+                        : "green"
+                    }`}
+                  ></span>
+                  {level}
+                </label>
+              ))}
+            </div>
 
-          {/* === Кнопки === */}
-          <div className="edit-modal__actions">
-            <button
-              type="button"
-              className="edit-modal__btn edit-modal__btn--cancel"
-              onClick={onClose}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="edit-modal__btn edit-modal__btn--save"
-            >
-              Save Changes
-            </button>
-          </div>
-        </form>
+            <label>
+              Task Description
+              <textarea
+                name="description"
+                value={form.description}
+                onChange={handleChange}
+                placeholder="Edit your task..."
+              />
+            </label>
+
+            <label>
+              Image URL
+              <input
+                type="text"
+                name="imageUrl"
+                value={form.imageUrl}
+                onChange={handleChange}
+                placeholder="https://example.com/image.jpg"
+              />
+            </label>
+
+            <div className="addtask-modal__actions">
+              <button type="submit" className="addtask-modal__btn">
+                Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

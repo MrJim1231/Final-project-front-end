@@ -11,6 +11,7 @@ export interface Todo {
   image?: string;
   vital?: boolean;
   completedAt?: string | null;
+  date?: string; // ✅ добавь вот это (для пользовательской даты)
 }
 
 const ENDPOINT = "todos";
