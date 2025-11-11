@@ -1,6 +1,6 @@
 import "./TodoList.css";
 import { FiClipboard, FiPlus } from "react-icons/fi";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { TaskCard } from "../../entities/task/TaskCard";
 import { AddTaskModal } from "../../entities/task/ui/AddTaskModal/AddTaskModal";
 import { useSelector, useDispatch } from "react-redux";
@@ -14,6 +14,7 @@ export const TodoList = () => {
     loading,
     selectedDate,
   } = useSelector((state: RootState) => state.tasks);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // 🚀 Загружаем задачи при первом рендере
@@ -21,14 +22,15 @@ export const TodoList = () => {
     dispatch(fetchTasks());
   }, [dispatch]);
 
-  // 🆕 Добавление новой задачи
+  // 🆕 Добавление новой задачи (с точным временем)
   const handleAddTask = (taskData: any) => {
     const newTask = {
       title: taskData.title,
       description: taskData.description,
       priority: taskData.priority || "Low",
       status: "Not Started" as const,
-      createdAt: taskData.date || new Date().toISOString(),
+      // ✅ Сохраняем точное время в ISO (чтобы сортировать корректно)
+      createdAt: new Date().toISOString(),
       image:
         typeof taskData.image === "string"
           ? taskData.image
@@ -41,13 +43,21 @@ export const TodoList = () => {
     dispatch(addNewTask(newTask));
   };
 
-  // 📅 Фильтруем задачи по выбранной дате
-  const visibleTasks = tasks
-    .filter((t) => {
-      const taskDate = new Date(t.createdAt).toISOString().split("T")[0];
-      return taskDate === selectedDate && !t.vital && t.status !== "Completed";
-    })
-    .slice(0, 3); // 👈 Показываем только первые 3 задачи
+  // 📅 Фильтруем и сортируем задачи (новые — сверху, только 3)
+  const visibleTasks = useMemo(() => {
+    return tasks
+      .filter((t) => {
+        const taskDate = new Date(t.createdAt).toISOString().split("T")[0];
+        return (
+          taskDate === selectedDate && !t.vital && t.status !== "Completed"
+        );
+      })
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      ) // 🔹 последние сверху
+      .slice(0, 3); // 🔹 только три карточки
+  }, [tasks, selectedDate]);
 
   // 📆 Форматирование даты (например, "9 November · Today")
   const current = new Date(selectedDate);
