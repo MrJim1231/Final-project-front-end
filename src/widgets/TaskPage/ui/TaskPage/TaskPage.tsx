@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState, useMemo } from "react";
 import { TaskDetails } from "../../../../entities/task/ui/TaskDetails/TaskDetails";
 import { TaskDetailsModal } from "../../../../entities/task/ui/TaskDetailsModal/TaskDetailsModal";
-import { TaskCard } from "../../../../entities/task/ui/TaskCard";
+import { TaskCard } from "../../../../entities/task/TaskCard";
 import {
   fetchTasks,
   removeTask,

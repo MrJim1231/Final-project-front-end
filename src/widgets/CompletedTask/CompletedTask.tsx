@@ -3,7 +3,7 @@ import "./CompletedTask.css";
 import { useEffect, useMemo } from "react";
 import { FiCheckSquare } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
-import { TaskCard } from "../../entities/task/ui/TaskCard/TaskCard";
+import { TaskCard } from "../../entities/task/TaskCard/ui/TaskCard";
 import { fetchTasks } from "../../entities/task/model/tasksSlice";
 import type { RootState, AppDispatch } from "../../app/providers/store";
 

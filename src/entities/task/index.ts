@@ -1,7 +1,7 @@
 // src/entities/task/index.ts
 
 // === UI ===
-export { TaskCard } from "./ui/TaskCard/TaskCard";
+export { TaskCard } from "./TaskCard/ui/TaskCard";
 export { TaskDetailsModal } from "./ui/TaskDetailsModal/TaskDetailsModal";
 
 // === MODEL ===
