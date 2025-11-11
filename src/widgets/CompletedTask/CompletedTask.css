@@ -37,10 +37,39 @@
   color: #f24e1e;
 }
 
+/* === Список карточек === */
+.completed-task__list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px; /* ✅ добавлен промежуток между карточками */
+}
+
+/* === Карточка задачи === */
+.completed-task .task-card {
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(161, 163, 171, 0.15);
+  transition: all 0.2s ease;
+}
+
+.completed-task .task-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* === Пустое состояние === */
+.completed-task__empty,
+.completed-task__loading {
+  color: #777;
+  font-size: 14px;
+  text-align: center;
+  padding: 1rem;
+}
+
 /* 📲 Маленькие экраны (до 480px) */
 @media (max-width: 480px) {
   .completed-task {
-    min-width: unset; /* убираем фиксированную ширину */
+    min-width: unset;
     min-height: unset;
     width: 100%;
     height: auto;
@@ -49,7 +78,6 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   }
 
-  /* Заголовок секции */
   .completed-task__header {
     flex-direction: column;
     align-items: flex-start;
@@ -65,11 +93,13 @@
     font-size: 14px;
   }
 
-  /* Карточки внутри completed-task */
+  .completed-task__list {
+    gap: 10px; /* ✅ чуть меньше на мобилках */
+  }
+
   .task-card {
     padding: 12px;
     border-radius: 10px;
-    margin-bottom: 10px;
   }
 
   .task-card__title {
@@ -89,12 +119,10 @@
     font-size: 11px;
   }
 
-  /* Кнопки и иконки внутри карточек */
   .task-card__menu {
     font-size: 14px;
   }
 
-  /* Текст “No completed tasks…” */
   .completed-task__empty,
   .completed-task__loading {
     font-size: 12px;
