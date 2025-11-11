@@ -41,11 +41,13 @@ export const TodoList = () => {
     dispatch(addNewTask(newTask));
   };
 
-  // 📅 Фильтруем задачи по выбранной дате из Redux
-  const visibleTasks = tasks.filter((t) => {
-    const taskDate = new Date(t.createdAt).toISOString().split("T")[0];
-    return taskDate === selectedDate && !t.vital && t.status !== "Completed";
-  });
+  // 📅 Фильтруем задачи по выбранной дате
+  const visibleTasks = tasks
+    .filter((t) => {
+      const taskDate = new Date(t.createdAt).toISOString().split("T")[0];
+      return taskDate === selectedDate && !t.vital && t.status !== "Completed";
+    })
+    .slice(0, 3); // 👈 Показываем только первые 3 задачи
 
   // 📆 Форматирование даты (например, "9 November · Today")
   const current = new Date(selectedDate);
@@ -77,8 +79,6 @@ export const TodoList = () => {
       {/* === Список задач === */}
       {visibleTasks.length > 0 ? (
         <div className="todo-list__tasks">
-          {" "}
-          {/* ✅ Контейнер с gap и анимацией */}
           {visibleTasks.map((task) => (
             <TaskCard
               key={task.id}

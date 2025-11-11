@@ -18,9 +18,9 @@ export const CompletedTask = () => {
     }
   }, [dispatch, items.length]);
 
-  // ✅ Получаем завершённые задачи из Redux
+  // ✅ Получаем завершённые задачи и ограничиваем до 2
   const completedTasks = useMemo(
-    () => items.filter((t) => t.status === "Completed"),
+    () => items.filter((t) => t.status === "Completed").slice(0, 2),
     [items]
   );
 
@@ -42,22 +42,24 @@ export const CompletedTask = () => {
 
       {/* === Список карточек === */}
       {completedTasks.length > 0 ? (
-        completedTasks.map((task) => (
-          <TaskCard
-            key={task.id}
-            id={task.id}
-            title={task.title}
-            description={task.description}
-            date={new Date(task.createdAt).toLocaleDateString()}
-            priority={task.priority}
-            status={task.status}
-            image={task.image}
-            completedAt={task.completedAt || "Recently completed"}
-            type="completed"
-            showAlert
-            enableDesktopModal // 👈 теперь работает и на десктопе
-          />
-        ))
+        <div className="completed-task__list">
+          {completedTasks.map((task) => (
+            <TaskCard
+              key={task.id}
+              id={task.id}
+              title={task.title}
+              description={task.description}
+              date={new Date(task.createdAt).toLocaleDateString()}
+              priority={task.priority}
+              status={task.status}
+              image={task.image}
+              completedAt={task.completedAt || "Recently completed"}
+              type="completed"
+              showAlert
+              enableDesktopModal
+            />
+          ))}
+        </div>
       ) : (
         <p className="completed-task__empty">
           ✅ No completed tasks yet — finish some from your To-Do list!
