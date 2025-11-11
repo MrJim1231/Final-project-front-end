@@ -2,8 +2,8 @@ import "./TaskStatus.css";
 import { FiClipboard } from "react-icons/fi";
 import { useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchTasks } from "../../../../entities/task/model/tasksSlice";
-import type { RootState, AppDispatch } from "../../../../app/providers/store";
+import { fetchTasks } from "../../entities/task/model/tasksSlice";
+import type { RootState, AppDispatch } from "../../app/providers/store";
 
 export const TaskStatus = () => {
   const dispatch = useDispatch<AppDispatch>();

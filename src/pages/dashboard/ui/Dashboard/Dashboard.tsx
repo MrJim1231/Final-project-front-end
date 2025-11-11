@@ -1,8 +1,8 @@
 import "./Dashboard.css";
-import { DashboardHeader } from "../DashboardHeader/DashboardHeader";
-import { TodoList } from "../TodoList/TodoList";
-import { TaskStatus } from "../TaskStatus/TaskStatus";
-import { CompletedTask } from "../CompletedTask/CompletedTask"; // 👈 новый импорт
+import { DashboardHeader } from "../../../../widgets/DashboardHeader/DashboardHeader";
+import { TodoList } from "../../../../widgets/TodoList";
+import { TaskStatus } from "../../../../widgets/TaskStatus";
+import { CompletedTask } from "../../../../widgets/CompletedTask"; // 👈 новый импорт
 
 export const Dashboard = () => {
   return (

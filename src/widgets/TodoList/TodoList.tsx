@@ -1,14 +1,11 @@
 import "./TodoList.css";
 import { FiClipboard, FiPlus } from "react-icons/fi";
 import { useEffect, useState } from "react";
-import { TaskCard } from "../../../../entities/task/ui/TaskCard";
-import { AddTaskModal } from "../../../../entities/task/ui/AddTaskModal/AddTaskModal";
+import { TaskCard } from "../../entities/task/ui/TaskCard";
+import { AddTaskModal } from "../../entities/task/ui/AddTaskModal/AddTaskModal";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  fetchTasks,
-  addNewTask,
-} from "../../../../entities/task/model/tasksSlice";
-import type { RootState, AppDispatch } from "../../../../app/providers/store";
+import { fetchTasks, addNewTask } from "../../entities/task/model/tasksSlice";
+import type { RootState, AppDispatch } from "../../app/providers/store";
 
 export const TodoList = () => {
   const dispatch = useDispatch<AppDispatch>();
