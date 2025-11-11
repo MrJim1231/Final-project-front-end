@@ -201,7 +201,7 @@ export const TaskCard = ({
       />
 
       {/* 🔔 опциональный alert (если ты когда-то хочешь подсказки при действии) */}
-      {showAlert && <div className="task-card__alert">Action completed ✅</div>}
+      {/* {showAlert && <div className="task-card__alert">Action completed ✅</div>} */}
     </>
   );
 };
