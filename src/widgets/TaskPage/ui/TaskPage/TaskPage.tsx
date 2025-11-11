@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState, useMemo } from "react";
 import { TaskDetails } from "@/entities/task/ui/TaskDetails/TaskDetails";
 import { TaskDetailsModal } from "@/entities/task/ui/TaskDetailsModal/TaskDetailsModal";
+import { EditTaskModal } from "@/entities/task/ui/EditTaskModal/EditTaskModal"; // ✅ импорт модалки редактирования
 import { TaskCard } from "@/entities/task/TaskCard";
 import {
   fetchTasks,
@@ -10,6 +11,7 @@ import {
   selectTask,
   selectFirstTask,
   clearSelected,
+  updateTaskStatus, // ✅ добавлено для обновления
 } from "@/entities/task/model/tasksSlice";
 import { Pagination } from "@/entities/task/ui/Pagination/Pagination";
 import { setPage, setTotalPages } from "@/entities/task/model/paginationSlice";
@@ -28,12 +30,12 @@ export const TaskPage = ({ type }: TaskPageProps) => {
     loading,
   } = useSelector((state: RootState) => state.tasks);
 
-  // 📄 пагинация из Redux
   const { page, limit, totalPages } = useSelector(
     (state: RootState) => state.pagination[type]
   );
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false); // ✅ состояние для модалки редактирования
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   // 🚀 Загружаем задачи при первом запуске
@@ -97,6 +99,24 @@ export const TaskPage = ({ type }: TaskPageProps) => {
     dispatch(removeTask(id));
   };
 
+  // 📝 Сохранение отредактированных данных
+  const handleEditSubmit = (updated: any) => {
+    if (!selected) return;
+
+    dispatch(
+      updateTaskStatus({
+        id: selected.id,
+        title: updated.title,
+        description: updated.description,
+        priority: updated.priority,
+        image: updated.imageUrl,
+        date: updated.date,
+      })
+    );
+
+    setIsEditOpen(false);
+  };
+
   // 📆 Заголовки
   const titles: Record<TaskPageProps["type"], string> = {
     my: "My Tasks",
@@ -104,14 +124,12 @@ export const TaskPage = ({ type }: TaskPageProps) => {
     completed: "Completed Tasks",
   };
 
-  // 🎨 Цвет для типа страницы
   const typeColors: Record<TaskPageProps["type"], string> = {
-    my: "#377dff", // синий
-    vital: "#ff4b4b", // красный
-    completed: "#00c851", // зелёный
+    my: "#377dff",
+    vital: "#ff4b4b",
+    completed: "#00c851",
   };
 
-  // 📅 Формат даты
   const current = new Date(selectedDate);
   const day = current.getDate();
   const month = current.toLocaleString("en-US", { month: "long" });
@@ -120,7 +138,6 @@ export const TaskPage = ({ type }: TaskPageProps) => {
 
   if (loading) return <p>Loading {titles[type].toLowerCase()}...</p>;
 
-  // === Разметка ===
   return (
     <section className={`task-page task-page--${type}`}>
       <div className="task-page__content">
@@ -195,7 +212,7 @@ export const TaskPage = ({ type }: TaskPageProps) => {
                 description={selected.description}
                 completedAt={selected.completedAt ?? undefined}
                 onDelete={() => handleDelete(selected.id)}
-                onEdit={() => alert("Редактировать задачу")}
+                onEdit={() => setIsEditOpen(true)} // ✅ открывает модалку редактирования
               />
             ) : (
               <div className="task-page__info">
@@ -222,6 +239,22 @@ export const TaskPage = ({ type }: TaskPageProps) => {
           status={selected.status}
           image={selected.image}
           completedAt={selected.completedAt ?? undefined}
+        />
+      )}
+
+      {/* === Модалка редактирования === */}
+      {isEditOpen && selected && (
+        <EditTaskModal
+          onClose={() => setIsEditOpen(false)}
+          onSubmit={handleEditSubmit}
+          initialData={{
+            id: selected.id,
+            title: selected.title,
+            date: selected.date || selected.createdAt,
+            priority: selected.priority,
+            description: selected.description,
+            image: selected.image,
+          }}
         />
       )}
     </section>
