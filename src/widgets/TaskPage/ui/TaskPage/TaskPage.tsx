@@ -104,6 +104,20 @@ export const TaskPage = ({ type }: TaskPageProps) => {
     completed: "Completed Tasks",
   };
 
+  // 🎨 Цвет для типа страницы
+  const typeColors: Record<TaskPageProps["type"], string> = {
+    my: "#377dff", // синий
+    vital: "#ff4b4b", // красный
+    completed: "#00c851", // зелёный
+  };
+
+  // 📅 Формат даты
+  const current = new Date(selectedDate);
+  const day = current.getDate();
+  const month = current.toLocaleString("en-US", { month: "long" });
+  const isToday =
+    new Date().toISOString().split("T")[0] === selectedDate ? "· Today" : "";
+
   if (loading) return <p>Loading {titles[type].toLowerCase()}...</p>;
 
   // === Разметка ===
@@ -114,7 +128,19 @@ export const TaskPage = ({ type }: TaskPageProps) => {
         <div className="task-page__left">
           <div className="task-list">
             <div className="task-list__header">
-              <h3 className="task-list__title">{titles[type]}</h3>
+              <div className="task-list__title-wrapper">
+                <h3
+                  className="task-list__title"
+                  style={{ color: typeColors[type] }}
+                >
+                  {titles[type]}
+                </h3>
+
+                <div className="task-list__date">
+                  {day} {month}{" "}
+                  <span className="task-list__today">{isToday}</span>
+                </div>
+              </div>
             </div>
 
             {/* === Список задач === */}

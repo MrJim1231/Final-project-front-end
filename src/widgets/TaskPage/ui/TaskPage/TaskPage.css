@@ -96,6 +96,13 @@
   margin-bottom: 1rem;
 }
 
+/* === Обёртка заголовка и даты === */
+.task-list__title-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 /* === Текст заголовка === */
 .task-list__title {
   font-size: 16px;
@@ -114,32 +121,43 @@
   bottom: 0;
   width: 32px;
   height: 2px;
-  background-color: #ff6767; /* красный по умолчанию (My) */
+  background-color: #377dff; /* 🔵 по умолчанию (My) */
   border-radius: 2px;
 }
 
-/* 🟢 Зелёная линия для Completed */
+/* ❤️ Красная линия для Vital */
+.task-page--vital .task-list__title::after {
+  background-color: #ff4b4b;
+}
+
+/* 💚 Зелёная линия для Completed */
 .task-page--completed .task-list__title::after {
   background-color: #00c851;
 }
 
-/* 🔵 Голубая линия для Vital */
-.task-page--vital .task-list__title::after {
-  background-color: #007bff;
-}
-
-/* === Дата (например, 9 November · Today) === */
+/* === Дата (например, 11 November · Today) === */
 .task-list__date {
   font-size: 13px;
-  color: #444;
-  margin-bottom: 12px;
   display: flex;
   align-items: center;
   gap: 6px;
+  margin-top: 2px;
+  color: #555;
 }
 
 .task-list__today {
-  color: #999;
+  font-weight: 500;
+  color: #377dff; /* 🔵 по умолчанию для My */
+}
+
+/* ❤️ Для Vital */
+.task-page--vital .task-list__today {
+  color: #ff4b4b;
+}
+
+/* 💚 Для Completed */
+.task-page--completed .task-list__today {
+  color: #00c851;
 }
 
 /* === Элементы списка === */
@@ -151,11 +169,27 @@
 }
 
 .task-list__item:hover {
-  background-color: rgba(255, 103, 103, 0.05);
+  background-color: rgba(55, 125, 255, 0.05);
+}
+
+.task-page--vital .task-list__item:hover {
+  background-color: rgba(255, 75, 75, 0.05);
+}
+
+.task-page--completed .task-list__item:hover {
+  background-color: rgba(0, 200, 81, 0.05);
 }
 
 .task-list__item.active {
-  background-color: rgba(255, 103, 103, 0.08);
+  background-color: rgba(55, 125, 255, 0.08);
+}
+
+.task-page--vital .task-list__item.active {
+  background-color: rgba(255, 75, 75, 0.08);
+}
+
+.task-page--completed .task-list__item.active {
+  background-color: rgba(0, 200, 81, 0.08);
 }
 
 /* === Состояния списка === */
