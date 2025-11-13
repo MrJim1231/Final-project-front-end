@@ -46,19 +46,19 @@ export const TaskPage = ({ type }: TaskPageProps) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // ===== Resize handler =====
+  // Resize
   useEffect(() => {
     const fn = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener("resize", fn);
     return () => window.removeEventListener("resize", fn);
   }, []);
 
-  // ===== Load tasks on first render =====
+  // Load tasks
   useEffect(() => {
     if (tasks.length === 0) dispatch(fetchTasks());
   }, [tasks.length, dispatch]);
 
-  // ===== CUSTOM HOOKS =====
+  // FILTER / FALLBACK / PAGINATION
   const filteredTasks = useFilteredTasks(
     tasks,
     selectedDate,
@@ -79,9 +79,7 @@ export const TaskPage = ({ type }: TaskPageProps) => {
 
   const selectTask = useTaskSelection(paginatedTasks);
 
-  // ======================================================
-  // 🔥 АВТО-ВЫБОР ПЕРВОЙ ДОСТУПНОЙ КАРТОЧКИ
-  // ======================================================
+  // AUTO SELECT CARD
   useEffect(() => {
     if (!selected) {
       if (paginatedTasks.length > 0) {
@@ -92,15 +90,33 @@ export const TaskPage = ({ type }: TaskPageProps) => {
     }
   }, [paginatedTasks, fallback, selected, selectTask]);
 
-  // ===== SUBMIT EDITED TASK =====
   const handleEditSubmit = (updated: any) => {
     if (!selected) return;
-
     dispatch(updateTaskStatus({ id: selected.id, ...updated }));
     setIsEditOpen(false);
   };
 
   if (loading) return <p>Loading...</p>;
+
+  // ===== Вычисляем дату хедера =====
+  const day = new Date(selectedDate).getDate();
+  const month = new Date(selectedDate).toLocaleString("en-US", {
+    month: "long",
+  });
+  const isToday =
+    new Date().toISOString().split("T")[0] === selectedDate ? "· Today" : "";
+
+  const titles = {
+    my: "My Tasks",
+    vital: "Vital Tasks",
+    completed: "Completed Tasks",
+  };
+
+  const colors = {
+    my: "#377dff",
+    vital: "#ff4b4b",
+    completed: "#00c851",
+  };
 
   return (
     <section className={`task-page task-page--${type}`}>
@@ -108,7 +124,24 @@ export const TaskPage = ({ type }: TaskPageProps) => {
         {/* ================= LEFT ================= */}
         <div className="task-page__left">
           <div className="task-list">
-            {/* === MAIN LIST === */}
+            {/* ===================== HEADER ===================== */}
+            <div className="task-list__header">
+              <div className="task-list__title-wrapper">
+                <h3
+                  className="task-list__title"
+                  style={{ color: colors[type] }}
+                >
+                  {titles[type]}
+                </h3>
+
+                <div className="task-list__date">
+                  {day} {month}
+                  <span className="task-list__today">{isToday}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* ============ MAIN LIST ============ */}
             {paginatedTasks.length > 0 ? (
               paginatedTasks.map((task) => (
                 <div
@@ -122,12 +155,20 @@ export const TaskPage = ({ type }: TaskPageProps) => {
                 </div>
               ))
             ) : (
-              <p>No tasks found</p>
+              <p>No {titles[type].toLowerCase()} found.</p>
             )}
 
-            {/* === FALLBACK LIST === */}
+            {/* ===================== FALLBACK DATE ===================== */}
             {fallback && (
               <div className="task-list__fallback">
+                {/* 👇 ДОБАВЛЕНА ДАТА КАК В СТАРОЙ ВЕРСИИ */}
+                <div className="task-list__fallback-date-title">
+                  {new Date(fallback.date).getDate()}{" "}
+                  {new Date(fallback.date).toLocaleString("en-US", {
+                    month: "long",
+                  })}
+                </div>
+
                 {fallback.tasks.map((task) => (
                   <div
                     key={task.id}
@@ -140,7 +181,7 @@ export const TaskPage = ({ type }: TaskPageProps) => {
               </div>
             )}
 
-            {/* === PAGINATION === */}
+            {/* PAGINATION */}
             <Pagination
               currentPage={page}
               totalPages={totalPages}
@@ -153,42 +194,14 @@ export const TaskPage = ({ type }: TaskPageProps) => {
         {!isMobile && selected && (
           <div className="task-page__right">
             <TaskDetails
-              image={selected.image}
-              title={selected.title}
-              priority={selected.priority}
-              status={selected.status}
-              description={selected.description}
-              completedAt={selected.completedAt ?? undefined}
+              {...selected}
+              date={new Date(selected.createdAt).toLocaleDateString()}
               onEdit={() => setIsEditOpen(true)}
               onDelete={() => dispatch(removeTask(selected.id))}
-              date={
-                selected.createdAt
-                  ? new Date(selected.createdAt).toLocaleDateString()
-                  : ""
-              }
             />
           </div>
         )}
       </div>
-
-      {/* ================= MOBILE DETAILS MODAL ================= */}
-      {isMobile && selected && isModalOpen && (
-        <TaskDetailsModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          title={selected.title}
-          desc={selected.description}
-          date={
-            selected.createdAt
-              ? new Date(selected.createdAt).toLocaleDateString()
-              : ""
-          }
-          priority={selected.priority}
-          status={selected.status}
-          image={selected.image}
-          completedAt={selected.completedAt ?? undefined}
-        />
-      )}
 
       {/* ================= EDIT MODAL ================= */}
       {isEditOpen && selected && (

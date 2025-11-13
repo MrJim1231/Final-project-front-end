@@ -129,7 +129,7 @@
   background-color: #00c851;
 }
 
-/* === Дата === */
+/* === Дата выбранной даты === */
 .task-list__date {
   font-size: 13px;
   display: flex;
@@ -184,7 +184,7 @@
   background-color: rgba(0, 200, 81, 0.08);
 }
 
-/* === Состояния === */
+/* === Пустой список / загрузка === */
 .task-list__empty,
 .task-list__loading {
   color: #777;
@@ -207,11 +207,11 @@
 }
 
 /* ============================================================
-   🌟 FALLBACK — задачи предыдущей даты, если на выбранную нет
+   🌟 FALLBACK — задачи предыдущей даты (как в ToDoList)
    ============================================================ */
 
 .task-list__fallback {
-  margin-top: 14px;
+  margin-top: 20px;
   padding-top: 18px;
   border-top: 1px solid rgba(161, 163, 171, 0.25);
   display: flex;
@@ -219,12 +219,25 @@
   gap: 14px;
 }
 
-.task-list__fallback-date {
-  font-size: 14px;
+/* === Дата fallback блока === */
+.task-list__fallback-date-title {
+  font-size: 15px;
   font-weight: 600;
-  color: #555;
-  padding-left: 2px;
-  margin-bottom: 4px;
+  color: #444;
+  margin-bottom: 8px;
+}
+
+/* == разные цвета для каждого типа */
+.task-page--my .task-list__fallback-date-title {
+  color: #377dff;
+}
+
+.task-page--vital .task-list__fallback-date-title {
+  color: #ff4b4b;
+}
+
+.task-page--completed .task-list__fallback-date-title {
+  color: #00c851;
 }
 
 .task-list__fallback .task-list__item {
@@ -251,7 +264,8 @@
     margin-top: 12px;
     padding-top: 14px;
   }
-  .task-list__fallback-date {
-    font-size: 13px;
+
+  .task-list__fallback-date-title {
+    font-size: 14px;
   }
 }
