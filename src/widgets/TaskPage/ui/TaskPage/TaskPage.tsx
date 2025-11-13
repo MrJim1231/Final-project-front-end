@@ -65,12 +65,29 @@ export const TaskPage = ({ type }: TaskPageProps) => {
   };
 
   // 🧮 Фильтрация задач (дата + тип страницы + 💬 поиск)
+  // 🧮 Фильтрация задач: если поиск включён → игнорируем дату
   const filteredTasks = useMemo(() => {
     return tasks.filter((t) => {
+      const matchesSearch = matchSearch(t);
+
+      // 🔍 Если есть поисковый запрос → ищем по ВСЕМ датам
+      if (searchQuery.trim()) {
+        switch (type) {
+          case "my":
+            return matchesSearch && !t.vital && t.status !== "Completed";
+          case "vital":
+            return matchesSearch && t.vital === true;
+          case "completed":
+            return matchesSearch && t.status === "Completed";
+          default:
+            return matchesSearch;
+        }
+      }
+
+      // 📅 Если поиска нет → обычная фильтрация по выбранной дате
       const taskDate = new Date(t.createdAt).toISOString().split("T")[0];
       if (taskDate !== selectedDate) return false;
-
-      if (!matchSearch(t)) return false; // 🔍 SEARCH
+      if (!matchesSearch) return false;
 
       switch (type) {
         case "my":
