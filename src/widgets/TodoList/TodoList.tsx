@@ -22,14 +22,13 @@ export const TodoList = () => {
     dispatch(fetchTasks());
   }, [dispatch]);
 
-  // 🆕 Добавление новой задачи (с точным временем)
+  // 🆕 Добавление новой задачи
   const handleAddTask = (taskData: any) => {
     const newTask = {
       title: taskData.title,
       description: taskData.description,
       priority: taskData.priority || "Low",
       status: "Not Started" as const,
-      // ✅ Сохраняем точное время в ISO (чтобы сортировать корректно)
       createdAt: new Date().toISOString(),
       image:
         typeof taskData.image === "string"
@@ -43,7 +42,7 @@ export const TodoList = () => {
     dispatch(addNewTask(newTask));
   };
 
-  // 📅 Фильтруем и сортируем задачи (новые — сверху, только 3)
+  // 📅 Задачи выбранной даты
   const visibleTasks = useMemo(() => {
     return tasks
       .filter((t) => {
@@ -55,11 +54,45 @@ export const TodoList = () => {
       .sort(
         (a, b) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      ) // 🔹 последние сверху
-      .slice(0, 3); // 🔹 только три карточки
+      )
+      .slice(0, 3);
   }, [tasks, selectedDate]);
 
-  // 📆 Форматирование даты (например, "9 November · Today")
+  // 🔥 Fallback: задачи последней даты, если на текущую нет
+  const fallback = useMemo(() => {
+    if (visibleTasks.length > 0) return null;
+
+    const getDate = (t: any) =>
+      new Date(t.createdAt).toISOString().split("T")[0];
+
+    const allDates = [...new Set(tasks.map((t) => getDate(t)))].sort();
+
+    if (allDates.length === 0) return null;
+
+    const latest = allDates[allDates.length - 1];
+
+    // Если последняя дата совпадает с текущей — fallback не нужен
+    if (latest === selectedDate) return null;
+
+    const latestTasks = tasks
+      .filter(
+        (t) => getDate(t) === latest && !t.vital && t.status !== "Completed"
+      )
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )
+      .slice(0, 3);
+
+    if (latestTasks.length === 0) return null;
+
+    return {
+      date: latest,
+      tasks: latestTasks,
+    };
+  }, [tasks, selectedDate, visibleTasks]);
+
+  // 📆 Форматирование даты для главного блока
   const current = new Date(selectedDate);
   const day = current.getDate();
   const month = current.toLocaleString("en-US", { month: "long" });
@@ -86,7 +119,7 @@ export const TodoList = () => {
         {day} {month} <span className="todo-list__today">{isToday}</span>
       </div>
 
-      {/* === Список задач === */}
+      {/* === Список задач выбранной даты === */}
       {visibleTasks.length > 0 ? (
         <div className="todo-list__tasks">
           {visibleTasks.map((task) => (
@@ -107,6 +140,36 @@ export const TodoList = () => {
         </div>
       ) : (
         <p className="todo-list__empty">No tasks for this date 🎯</p>
+      )}
+
+      {/* === Fallback задачи последней даты === */}
+      {fallback && (
+        <div className="todo-list__fallback">
+          <div className="todo-list__fallback-date">
+            {new Date(fallback.date).getDate()}{" "}
+            {new Date(fallback.date).toLocaleString("en-US", {
+              month: "long",
+            })}
+          </div>
+
+          <div className="todo-list__tasks">
+            {fallback.tasks.map((task) => (
+              <TaskCard
+                key={task.id}
+                id={task.id}
+                title={task.title}
+                description={task.description}
+                date={new Date(task.createdAt).toLocaleDateString()}
+                priority={task.priority}
+                status={task.status}
+                image={task.image}
+                vital={task.vital}
+                showAlert={true}
+                enableDesktopModal
+              />
+            ))}
+          </div>
+        </div>
       )}
 
       {/* === Модалка добавления задачи === */}
