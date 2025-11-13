@@ -312,9 +312,10 @@ export const TaskPage = ({ type }: TaskPageProps) => {
         </div>
 
         {/* === PRAвая панель === */}
+        {/* === PRAвая панель === */}
         {!isMobile && (
           <div className="task-page__right">
-            {selected && paginatedTasks.some((t) => t.id === selected.id) ? (
+            {selected ? (
               <TaskDetails
                 image={selected.image}
                 title={selected.title}
