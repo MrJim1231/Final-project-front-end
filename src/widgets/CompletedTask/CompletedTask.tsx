@@ -18,11 +18,31 @@ export const CompletedTask = () => {
     }
   }, [dispatch, items.length]);
 
-  // ✅ Получаем завершённые задачи и ограничиваем до 2
-  const completedTasks = useMemo(
-    () => items.filter((t) => t.status === "Completed").slice(0, 2),
-    [items]
-  );
+  // === 🔥 Формируем последние 2 завершённых задачи + дату ===
+  const completed = useMemo(() => {
+    const filtered = items.filter((t) => t.status === "Completed");
+
+    if (filtered.length === 0) return null;
+
+    // сортируем по completedAt / createdAt
+    const sorted = filtered.sort(
+      (a, b) =>
+        new Date(b.completedAt || b.createdAt).getTime() -
+        new Date(a.completedAt || a.createdAt).getTime()
+    );
+
+    const firstTwo = sorted.slice(0, 2);
+
+    // дата последних выполненных
+    const date = new Date(firstTwo[0].completedAt || firstTwo[0].createdAt)
+      .toISOString()
+      .split("T")[0];
+
+    return {
+      date,
+      tasks: firstTwo,
+    };
+  }, [items]);
 
   if (loading) {
     return (
@@ -40,30 +60,41 @@ export const CompletedTask = () => {
         </div>
       </div>
 
-      {/* === Список карточек === */}
-      {completedTasks.length > 0 ? (
-        <div className="completed-task__list">
-          {completedTasks.map((task) => (
-            <TaskCard
-              key={task.id}
-              id={task.id}
-              title={task.title}
-              description={task.description}
-              date={new Date(task.createdAt).toLocaleDateString()}
-              priority={task.priority}
-              status={task.status}
-              image={task.image}
-              completedAt={task.completedAt || "Recently completed"}
-              type="completed"
-              showAlert
-              enableDesktopModal
-            />
-          ))}
-        </div>
-      ) : (
+      {/* === Если задач нет === */}
+      {!completed ? (
         <p className="completed-task__empty">
           ✅ No completed tasks yet — finish some from your To-Do list!
         </p>
+      ) : (
+        <>
+          {/* === Дата последнего завершения === */}
+          <div className="completed-task__date">
+            {new Date(completed.date).getDate()}{" "}
+            {new Date(completed.date).toLocaleString("en-US", {
+              month: "long",
+            })}
+          </div>
+
+          {/* === Список карточек === */}
+          <div className="completed-task__list">
+            {completed.tasks.map((task) => (
+              <TaskCard
+                key={task.id}
+                id={task.id}
+                title={task.title}
+                description={task.description}
+                date={new Date(task.createdAt).toLocaleDateString()}
+                priority={task.priority}
+                status={task.status}
+                image={task.image}
+                completedAt={task.completedAt || "Recently completed"}
+                type="completed"
+                showAlert
+                enableDesktopModal
+              />
+            ))}
+          </div>
+        </>
       )}
     </div>
   );
