@@ -56,7 +56,6 @@
   .task-page__content {
     grid-template-columns: 1fr;
   }
-
   .task-page__right {
     margin-top: 20px;
   }
@@ -67,11 +66,9 @@
     padding: 16px;
     gap: 1rem;
   }
-
   .task-page__title {
     font-size: 16px;
   }
-
   .task-page__subtitle {
     font-size: 13px;
   }
@@ -103,7 +100,6 @@
   gap: 4px;
 }
 
-/* === Текст заголовка === */
 .task-list__title {
   font-size: 16px;
   font-weight: 600;
@@ -113,7 +109,7 @@
   padding-bottom: 4px;
 }
 
-/* === Подчёркивание заголовка с цветом по типу === */
+/* === Подчёркивание заголовка === */
 .task-list__title::after {
   content: "";
   position: absolute;
@@ -121,21 +117,19 @@
   bottom: 0;
   width: 32px;
   height: 2px;
-  background-color: #377dff; /* 🔵 по умолчанию (My) */
+  background-color: #377dff;
   border-radius: 2px;
 }
 
-/* ❤️ Красная линия для Vital */
 .task-page--vital .task-list__title::after {
   background-color: #ff4b4b;
 }
 
-/* 💚 Зелёная линия для Completed */
 .task-page--completed .task-list__title::after {
   background-color: #00c851;
 }
 
-/* === Дата (например, 11 November · Today) === */
+/* === Дата === */
 .task-list__date {
   font-size: 13px;
   display: flex;
@@ -147,15 +141,13 @@
 
 .task-list__today {
   font-weight: 500;
-  color: #377dff; /* 🔵 по умолчанию для My */
+  color: #377dff;
 }
 
-/* ❤️ Для Vital */
 .task-page--vital .task-list__today {
   color: #ff4b4b;
 }
 
-/* 💚 Для Completed */
 .task-page--completed .task-list__today {
   color: #00c851;
 }
@@ -192,7 +184,7 @@
   background-color: rgba(0, 200, 81, 0.08);
 }
 
-/* === Состояния списка === */
+/* === Состояния === */
 .task-list__empty,
 .task-list__loading {
   color: #777;
@@ -206,12 +198,60 @@
   .task-list {
     padding: 20px;
   }
-
   .task-list__title {
     font-size: 15px;
   }
-
   .task-list__date {
     font-size: 12px;
+  }
+}
+
+/* ============================================================
+   🌟 FALLBACK — задачи предыдущей даты, если на выбранную нет
+   ============================================================ */
+
+.task-list__fallback {
+  margin-top: 14px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(161, 163, 171, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.task-list__fallback-date {
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+  padding-left: 2px;
+  margin-bottom: 4px;
+}
+
+.task-list__fallback .task-list__item {
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.task-list__fallback .task-list__item:hover {
+  background-color: rgba(55, 125, 255, 0.05);
+}
+
+.task-page--vital .task-list__fallback .task-list__item:hover {
+  background-color: rgba(255, 75, 75, 0.07);
+}
+
+.task-page--completed .task-list__fallback .task-list__item:hover {
+  background-color: rgba(0, 200, 81, 0.07);
+}
+
+@media (max-width: 768px) {
+  .task-list__fallback {
+    margin-top: 12px;
+    padding-top: 14px;
+  }
+  .task-list__fallback-date {
+    font-size: 13px;
   }
 }

@@ -1,3 +1,5 @@
+// == FALLBACK ДОБАВЛЕНО В ЭТОЙ ВЕРСИИ ==
+
 import "./TaskPage.css";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState, useMemo } from "react";
@@ -29,7 +31,7 @@ export const TaskPage = ({ type }: TaskPageProps) => {
     selected,
     selectedDate,
     loading,
-    searchQuery, // 🔍 ДОБАВЛЕНО
+    searchQuery,
   } = useSelector((state: RootState) => state.tasks);
 
   const { page, limit, totalPages } = useSelector(
@@ -64,13 +66,14 @@ export const TaskPage = ({ type }: TaskPageProps) => {
     );
   };
 
-  // 🧮 Фильтрация задач (дата + тип страницы + 💬 поиск)
-  // 🧮 Фильтрация задач: если поиск включён → игнорируем дату
+  // =============================
+  // 📌 OSNOVNAYA FILTRACIYA TASKOV
+  // =============================
   const filteredTasks = useMemo(() => {
     return tasks.filter((t) => {
       const matchesSearch = matchSearch(t);
 
-      // 🔍 Если есть поисковый запрос → ищем по ВСЕМ датам
+      // 🔍 Поиск работает по всем датам
       if (searchQuery.trim()) {
         switch (type) {
           case "my":
@@ -84,7 +87,7 @@ export const TaskPage = ({ type }: TaskPageProps) => {
         }
       }
 
-      // 📅 Если поиска нет → обычная фильтрация по выбранной дате
+      // 📅 Без поиска — фильтрация по дате
       const taskDate = new Date(t.createdAt).toISOString().split("T")[0];
       if (taskDate !== selectedDate) return false;
       if (!matchesSearch) return false;
@@ -102,7 +105,61 @@ export const TaskPage = ({ type }: TaskPageProps) => {
     });
   }, [tasks, selectedDate, type, searchQuery]);
 
-  // 📄 Пагинация
+  // =============================
+  // 🔥 FALLBACK — задачи предыдущей даты (КАК В TODOLIST)
+  // =============================
+  const fallback = useMemo(() => {
+    // Если список не пустой — fallback не нужен
+    if (filteredTasks.length > 0) return null;
+
+    // Поиск → fallback не нужен
+    if (searchQuery.trim()) return null;
+
+    const getDate = (t: any) =>
+      new Date(t.createdAt).toISOString().split("T")[0];
+
+    // Фильтр по типу страницы
+    const filteredByType = tasks.filter((t) => {
+      switch (type) {
+        case "my":
+          return !t.vital && t.status !== "Completed";
+        case "vital":
+          return t.vital === true;
+        case "completed":
+          return t.status === "Completed";
+        default:
+          return true;
+      }
+    });
+
+    if (filteredByType.length === 0) return null;
+
+    // Сортировка по дате
+    const sorted = [...filteredByType].sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+
+    const lastDate = getDate(sorted[0]);
+
+    // Если последняя дата совпадает — fallback не нужен
+    if (lastDate === selectedDate) return null;
+
+    const lastDateTasks = sorted
+      .filter((t) => getDate(t) === lastDate)
+      .slice(0, limit);
+
+    if (lastDateTasks.length === 0) return null;
+
+    return {
+      date: lastDate,
+      tasks: lastDateTasks,
+    };
+  }, [tasks, filteredTasks, selectedDate, searchQuery, type, limit]);
+
+  // =============================
+  // ПАГИНАЦИЯ
+  // =============================
   useEffect(() => {
     const pages = Math.ceil(filteredTasks.length / limit) || 1;
     dispatch(setTotalPages({ type, totalPages: pages }));
@@ -182,7 +239,7 @@ export const TaskPage = ({ type }: TaskPageProps) => {
               </div>
             </div>
 
-            {/* === СПИСОК ЗАДАЧ === */}
+            {/* === ОСНОВНОЙ СПИСОК ЗАДАЧ === */}
             {paginatedTasks.length > 0 ? (
               paginatedTasks.map((task) => (
                 <div
@@ -210,6 +267,39 @@ export const TaskPage = ({ type }: TaskPageProps) => {
               <p>No {titles[type].toLowerCase()} found.</p>
             )}
 
+            {/* === FALLBACK ДАТА + ЗАДАЧИ === */}
+            {fallback && (
+              <div className="task-list__fallback">
+                <div className="task-list__fallback-date">
+                  {new Date(fallback.date).getDate()}{" "}
+                  {new Date(fallback.date).toLocaleString("en-US", {
+                    month: "long",
+                  })}
+                </div>
+
+                {fallback.tasks.map((task) => (
+                  <div
+                    key={task.id}
+                    className="task-list__item"
+                    onClick={() => dispatch(selectTask(task))}
+                  >
+                    <TaskCard
+                      id={task.id}
+                      title={task.title}
+                      description={task.description}
+                      date={new Date(task.createdAt).toLocaleDateString()}
+                      priority={task.priority}
+                      status={task.status}
+                      image={task.image}
+                      vital={task.vital}
+                      type={type === "my" ? "default" : type}
+                      completedAt={task.completedAt ?? undefined}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+
             {/* === ПАГИНАЦИЯ === */}
             <Pagination
               currentPage={page}
@@ -221,7 +311,7 @@ export const TaskPage = ({ type }: TaskPageProps) => {
           </div>
         </div>
 
-        {/* === ПРАВАЯ КОЛОНКА === */}
+        {/* === PRAвая панель === */}
         {!isMobile && (
           <div className="task-page__right">
             {selected && paginatedTasks.some((t) => t.id === selected.id) ? (
@@ -240,7 +330,7 @@ export const TaskPage = ({ type }: TaskPageProps) => {
               <div className="task-page__info">
                 <h2 className="task-page__title">{titles[type]} Overview</h2>
                 <p className="task-page__subtitle">
-                  Select a task from the list to view details and manage its
+                  Select a task from the list to view details and manage
                   progress.
                 </p>
               </div>
