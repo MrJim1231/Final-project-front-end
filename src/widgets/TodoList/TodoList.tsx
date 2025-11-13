@@ -9,10 +9,12 @@ import type { RootState, AppDispatch } from "../../app/providers/store";
 
 export const TodoList = () => {
   const dispatch = useDispatch<AppDispatch>();
+
   const {
     items: tasks,
     loading,
     selectedDate,
+    searchQuery, // 🆕 SEARCH — достаём из redux
   } = useSelector((state: RootState) => state.tasks);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -42,57 +44,80 @@ export const TodoList = () => {
     dispatch(addNewTask(newTask));
   };
 
-  // 📅 Задачи выбранной даты
+  // ============================
+  // 🔍 Функция проверки поиска
+  // ============================
+  const matchSearch = (t: any) => {
+    if (!searchQuery.trim()) return true; // если поиска нет — возвращаем всё
+
+    const q = searchQuery.toLowerCase();
+
+    return (
+      t.title.toLowerCase().includes(q) ||
+      t.description.toLowerCase().includes(q)
+    );
+  };
+
+  // ========================================
+  // 📅 Задачи выбранной даты + поиск
+  // ========================================
   const visibleTasks = useMemo(() => {
     return tasks
       .filter((t) => {
         const taskDate = new Date(t.createdAt).toISOString().split("T")[0];
-        return (
-          taskDate === selectedDate && !t.vital && t.status !== "Completed"
-        );
+        const matchesDate =
+          taskDate === selectedDate && !t.vital && t.status !== "Completed";
+
+        return matchesDate && matchSearch(t); // 🆕 SEARCH
       })
       .sort(
         (a, b) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       )
       .slice(0, 3);
-  }, [tasks, selectedDate]);
+  }, [tasks, selectedDate, searchQuery]);
 
-  // 🔥 Fallback: задачи последней даты, если на текущую нет
+  // ========================================
+  // 🔥 Fallback: задачи последней даты + поиск
+  // ========================================
   const fallback = useMemo(() => {
     if (visibleTasks.length > 0) return null;
 
     const getDate = (t: any) =>
       new Date(t.createdAt).toISOString().split("T")[0];
 
-    const allDates = [...new Set(tasks.map((t) => getDate(t)))].sort();
+    // выбираем только задачи, подходящие под поиск
+    const filtered = tasks.filter(
+      (t) => !t.vital && t.status !== "Completed" && matchSearch(t) // 🆕 SEARCH
+    );
 
-    if (allDates.length === 0) return null;
+    if (filtered.length === 0) return null;
 
-    const latest = allDates[allDates.length - 1];
+    // сортируем по дате (последние сверху)
+    const sorted = filtered.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
 
-    // Если последняя дата совпадает с текущей — fallback не нужен
-    if (latest === selectedDate) return null;
+    const lastDate = getDate(sorted[0]);
 
-    const latestTasks = tasks
-      .filter(
-        (t) => getDate(t) === latest && !t.vital && t.status !== "Completed"
-      )
-      .sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      )
+    // задачи этой последней даты
+    const lastDateTasks = sorted
+      .filter((t) => getDate(t) === lastDate)
       .slice(0, 3);
 
-    if (latestTasks.length === 0) return null;
+    if (lastDateTasks.length === 0) return null;
+
+    // если последняя дата совпадает с текущей — fallback не нужен
+    if (lastDate === selectedDate) return null;
 
     return {
-      date: latest,
-      tasks: latestTasks,
+      date: lastDate,
+      tasks: lastDateTasks,
     };
-  }, [tasks, selectedDate, visibleTasks]);
+  }, [tasks, selectedDate, visibleTasks, searchQuery]);
 
-  // 📆 Форматирование даты для главного блока
+  // 📆 Форматирование даты
   const current = new Date(selectedDate);
   const day = current.getDate();
   const month = current.toLocaleString("en-US", { month: "long" });
@@ -119,7 +144,7 @@ export const TodoList = () => {
         {day} {month} <span className="todo-list__today">{isToday}</span>
       </div>
 
-      {/* === Список задач выбранной даты === */}
+      {/* === Список задач === */}
       {visibleTasks.length > 0 ? (
         <div className="todo-list__tasks">
           {visibleTasks.map((task) => (
@@ -133,7 +158,7 @@ export const TodoList = () => {
               status={task.status}
               image={task.image}
               vital={task.vital}
-              showAlert={true}
+              showAlert
               enableDesktopModal
             />
           ))}
@@ -142,7 +167,7 @@ export const TodoList = () => {
         <p className="todo-list__empty">No tasks for this date 🎯</p>
       )}
 
-      {/* === Fallback задачи последней даты === */}
+      {/* === Fallback задачи === */}
       {fallback && (
         <div className="todo-list__fallback">
           <div className="todo-list__fallback-date">
@@ -164,7 +189,7 @@ export const TodoList = () => {
                 status={task.status}
                 image={task.image}
                 vital={task.vital}
-                showAlert={true}
+                showAlert
                 enableDesktopModal
               />
             ))}
@@ -172,7 +197,7 @@ export const TodoList = () => {
         </div>
       )}
 
-      {/* === Модалка добавления задачи === */}
+      {/* === Модалка === */}
       {isModalOpen && (
         <AddTaskModal
           onClose={() => setIsModalOpen(false)}

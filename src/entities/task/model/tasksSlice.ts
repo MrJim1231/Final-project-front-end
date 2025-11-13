@@ -10,6 +10,7 @@ interface TasksState {
   selected: Todo | null;
   error: string | null;
   selectedDate: string;
+  searchQuery: string; // 🆕 добавили поле поиска
 }
 
 const initialState: TasksState = {
@@ -18,6 +19,7 @@ const initialState: TasksState = {
   selected: null,
   error: null,
   selectedDate: new Date().toISOString().split("T")[0],
+  searchQuery: "", // 🆕 начальное значение
 };
 
 // === 🟢 Получить все задачи ===
@@ -57,7 +59,7 @@ export const removeTask = createAsyncThunk(
   }
 );
 
-// === 🟡 Обновить задачу (частично) ===
+// === 🟡 Обновить задачу ===
 export const updateTaskStatus = createAsyncThunk(
   "tasks/updateStatus",
   async (update: { id: string } & Partial<Todo>, { rejectWithValue }) => {
@@ -84,6 +86,12 @@ const tasksSlice = createSlice({
     setSelectedDate: (state, action: PayloadAction<string>) => {
       state.selectedDate = action.payload;
     },
+
+    // 🆕 === Поиск ===
+    setSearchQuery: (state, action: PayloadAction<string>) => {
+      state.searchQuery = action.payload;
+    },
+
     clearError: (state) => {
       state.error = null;
     },
@@ -91,6 +99,7 @@ const tasksSlice = createSlice({
       state.selected = action.payload[0] ?? null;
     },
   },
+
   extraReducers: (builder) => {
     builder
       // === Получение ===
@@ -148,6 +157,7 @@ export const {
   clearError,
   setSelectedDate,
   selectFirstTask,
+  setSearchQuery, // 🆕 экспорт
 } = tasksSlice.actions;
 
 export default tasksSlice.reducer;

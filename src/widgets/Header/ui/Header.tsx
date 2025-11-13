@@ -2,7 +2,10 @@ import "./Header.css";
 import { useEffect, useState, useRef } from "react";
 import { FiSearch, FiBell, FiCalendar, FiMenu } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
-import { setSelectedDate } from "../../../entities/task/model/tasksSlice";
+import {
+  setSelectedDate,
+  setSearchQuery,
+} from "../../../entities/task/model/tasksSlice";
 import type { RootState, AppDispatch } from "../../../app/providers/store";
 
 interface HeaderProps {
@@ -85,6 +88,7 @@ export const Header = ({ onToggleSidebar }: HeaderProps) => {
             type="text"
             className="dashboard__header-input"
             placeholder="Search your task here..."
+            onChange={(e) => dispatch(setSearchQuery(e.target.value))}
           />
           <button className="dashboard__header-button">
             <FiSearch />
