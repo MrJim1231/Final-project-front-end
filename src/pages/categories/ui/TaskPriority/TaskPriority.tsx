@@ -7,7 +7,7 @@ export const TaskPriority = () => {
   const [priorities, setPriorities] = useState(["Extreme", "Moderate", "Low"]);
 
   const [showModal, setShowModal] = useState(false);
-  const [editIndex, setEditIndex] = useState<number | null>(null); // 🆕 отслеживаем редактирование
+  const [editIndex, setEditIndex] = useState<number | null>(null);
 
   // === Добавление нового приоритета ===
   const handleAddPriority = (value: string) => {
@@ -17,7 +17,7 @@ export const TaskPriority = () => {
     setShowModal(false);
   };
 
-  // === Редактирование приоритета ===
+  // === Редактирование ===
   const handleEditPriority = (value: string) => {
     if (editIndex !== null && value.trim()) {
       setPriorities((prev) =>
@@ -33,7 +33,6 @@ export const TaskPriority = () => {
     setPriorities((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // === Открыть модалку для редактирования ===
   const openEditModal = (index: number) => {
     setEditIndex(index);
     setShowModal(true);
@@ -41,7 +40,7 @@ export const TaskPriority = () => {
 
   return (
     <div className="priority-block">
-      {/* === Заголовок блока === */}
+      {/* === Header === */}
       <div className="priority-block__header">
         <h3 className="priority-block__title">Task Priority</h3>
         <button
@@ -56,7 +55,7 @@ export const TaskPriority = () => {
         </button>
       </div>
 
-      {/* === Контейнер таблицы === */}
+      {/* === Table === */}
       <div className="priority-table">
         <table className="priority-table__inner">
           <thead className="priority-table__head">
@@ -72,18 +71,29 @@ export const TaskPriority = () => {
               </th>
             </tr>
           </thead>
+
           <tbody className="priority-table__body">
             {priorities.map((priority, i) => (
               <tr key={i} className="priority-table__row">
-                <td className="priority-table__cell">{i + 1}</td>
-                <td className="priority-table__cell">{priority}</td>
-                <td className="priority-table__cell priority-table__actions">
+                <td className="priority-table__cell" data-label="SN">
+                  {i + 1}
+                </td>
+
+                <td className="priority-table__cell" data-label="Task Priority">
+                  {priority}
+                </td>
+
+                <td
+                  className="priority-table__cell priority-table__actions"
+                  data-label="Action"
+                >
                   <button
                     className="priority-btn priority-btn--edit"
-                    onClick={() => openEditModal(i)} // 👈 открыть модалку редактирования
+                    onClick={() => openEditModal(i)}
                   >
                     <FiEdit2 /> Edit
                   </button>
+
                   <button
                     className="priority-btn priority-btn--delete"
                     onClick={() => handleDelete(i)}
@@ -97,7 +107,7 @@ export const TaskPriority = () => {
         </table>
       </div>
 
-      {/* === Модалка === */}
+      {/* === Modal === */}
       {showModal && (
         <AddModal
           title={

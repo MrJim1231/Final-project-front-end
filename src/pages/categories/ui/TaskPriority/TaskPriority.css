@@ -140,3 +140,101 @@
 .priority-btn:hover {
   opacity: 0.85;
 }
+
+/* === 📱 Адаптив для мобильных === */
+@media (max-width: 768px) {
+  .priority-block {
+    padding: 16px 14px;
+    border-radius: 10px;
+  }
+
+  .priority-block__header {
+    margin-bottom: 10px;
+  }
+
+  .priority-block__title {
+    font-size: 14px;
+  }
+
+  .priority-block__add {
+    font-size: 11px;
+  }
+
+  .priority-block__add-icon {
+    font-size: 12px;
+  }
+
+  /* === Таблица превращается в карточки === */
+  .priority-table {
+    border: none;
+    background: transparent;
+  }
+
+  .priority-table__inner thead {
+    display: none; /* скрываем шапку */
+  }
+
+  .priority-table__row {
+    display: block;
+    background: #fff;
+    border: 1px solid rgba(161, 163, 171, 0.25);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+  }
+
+  .priority-table__cell {
+    display: flex;
+    justify-content: space-between;
+    border: none;
+    padding: 8px 0;
+    font-size: 13px;
+  }
+
+  /* Название поля слева */
+  .priority-table__cell::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #444;
+    margin-right: 10px;
+  }
+
+  /* Блок кнопок */
+  .priority-table__actions {
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
+
+  .priority-btn {
+    font-size: 13px;
+    padding: 5px 8px;
+    border-radius: 5px;
+  }
+}
+
+/* === Очень маленькие экраны (iPhone SE / 360px) === */
+@media (max-width: 420px) {
+  .priority-block {
+    padding: 14px 12px;
+  }
+
+  .priority-block__title {
+    font-size: 13px;
+  }
+
+  .priority-table__row {
+    padding: 10px 12px;
+  }
+
+  .priority-table__cell {
+    justify-content: center;
+    font-size: 12px;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .priority-btn {
+    font-size: 12px;
+    padding: 4px 6px;
+  }
+}

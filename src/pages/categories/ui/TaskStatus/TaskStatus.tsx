@@ -9,6 +9,7 @@ export const TaskStatus = () => {
     "In Progress",
     "Not Started",
   ]);
+
   const [showModal, setShowModal] = useState(false);
   const [editIndex, setEditIndex] = useState<number | null>(null);
 
@@ -36,7 +37,7 @@ export const TaskStatus = () => {
     setStatuses((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // === Открытие модалки на редактирование ===
+  // === Открытие модалки ===
   const openEditModal = (index: number) => {
     setEditIndex(index);
     setShowModal(true);
@@ -44,7 +45,7 @@ export const TaskStatus = () => {
 
   return (
     <div className="status-block">
-      {/* === Заголовок блока === */}
+      {/* === Заголовок === */}
       <div className="status-block__header">
         <h3 className="status-block__title">Task Status</h3>
         <button
@@ -59,7 +60,7 @@ export const TaskStatus = () => {
         </button>
       </div>
 
-      {/* === Контейнер таблицы === */}
+      {/* === Таблица === */}
       <div className="status-table">
         <table className="status-table__inner">
           <thead className="status-table__head">
@@ -73,18 +74,29 @@ export const TaskStatus = () => {
               </th>
             </tr>
           </thead>
+
           <tbody className="status-table__body">
             {statuses.map((status, i) => (
               <tr key={i} className="status-table__row">
-                <td className="status-table__cell">{i + 1}</td>
-                <td className="status-table__cell">{status}</td>
-                <td className="status-table__cell status-table__actions">
+                <td className="status-table__cell" data-label="SN">
+                  {i + 1}
+                </td>
+
+                <td className="status-table__cell" data-label="Task Status">
+                  {status}
+                </td>
+
+                <td
+                  className="status-table__cell status-table__actions"
+                  data-label="Action"
+                >
                   <button
                     className="status-btn status-btn--edit"
-                    onClick={() => openEditModal(i)} // 👈 открыть модалку редактирования
+                    onClick={() => openEditModal(i)}
                   >
                     <FiEdit2 /> Edit
                   </button>
+
                   <button
                     className="status-btn status-btn--delete"
                     onClick={() => handleDeleteStatus(i)}

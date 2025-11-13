@@ -141,3 +141,97 @@
 .status-btn:hover {
   opacity: 0.85;
 }
+
+/* === 📱 Адаптив для мобильных (до 768px) === */
+@media (max-width: 768px) {
+  .status-block {
+    padding: 16px 14px;
+    border-radius: 10px;
+  }
+
+  .status-block__title {
+    font-size: 14px;
+  }
+
+  .status-block__add {
+    font-size: 11px;
+  }
+
+  .status-block__add-icon {
+    font-size: 12px;
+  }
+
+  /* === Таблица превращается в карточки === */
+  .status-table {
+    border: none;
+    background: transparent;
+  }
+
+  .status-table__inner thead {
+    display: none; /* скрываем шапку */
+  }
+
+  .status-table__row {
+    display: block;
+    background: #fff;
+    border: 1px solid rgba(161, 163, 171, 0.25);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+  }
+
+  .status-table__cell {
+    display: flex;
+    justify-content: space-between;
+    border: none;
+    padding: 8px 0;
+    font-size: 13px;
+  }
+
+  /* Показываем название поля слева */
+  .status-table__cell::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #444;
+    margin-right: 10px;
+  }
+
+  /* Блок кнопок */
+  .status-table__actions {
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
+
+  .status-btn {
+    font-size: 13px;
+    padding: 5px 8px;
+    border-radius: 5px;
+  }
+}
+
+/* === 📱 Очень маленькие экраны (до 420px) === */
+@media (max-width: 420px) {
+  .status-block {
+    padding: 14px 12px;
+  }
+
+  .status-block__title {
+    font-size: 13px;
+  }
+
+  .status-table__row {
+    padding: 10px 12px;
+  }
+
+  .status-table__cell {
+    justify-content: center;
+    font-size: 12px;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .status-btn {
+    font-size: 12px;
+    padding: 4px 6px;
+  }
+}
