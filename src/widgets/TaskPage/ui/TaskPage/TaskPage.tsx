@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState, useMemo } from "react";
 import { TaskDetails } from "@/entities/task/ui/TaskDetails/TaskDetails";
 import { TaskDetailsModal } from "@/entities/task/ui/TaskDetailsModal/TaskDetailsModal";
-import { EditTaskModal } from "@/entities/task/ui/EditTaskModal/EditTaskModal"; // ✅ импорт модалки редактирования
+import { EditTaskModal } from "@/entities/task/ui/EditTaskModal/EditTaskModal";
 import { TaskCard } from "@/entities/task/TaskCard";
 import {
   fetchTasks,
@@ -11,7 +11,7 @@ import {
   selectTask,
   selectFirstTask,
   clearSelected,
-  updateTaskStatus, // ✅ добавлено для обновления
+  updateTaskStatus,
 } from "@/entities/task/model/tasksSlice";
 import { Pagination } from "@/entities/task/ui/Pagination/Pagination";
 import { setPage, setTotalPages } from "@/entities/task/model/paginationSlice";
@@ -23,11 +23,13 @@ interface TaskPageProps {
 
 export const TaskPage = ({ type }: TaskPageProps) => {
   const dispatch = useDispatch<AppDispatch>();
+
   const {
     items: tasks,
     selected,
     selectedDate,
     loading,
+    searchQuery, // 🔍 ДОБАВЛЕНО
   } = useSelector((state: RootState) => state.tasks);
 
   const { page, limit, totalPages } = useSelector(
@@ -35,31 +37,40 @@ export const TaskPage = ({ type }: TaskPageProps) => {
   );
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isEditOpen, setIsEditOpen] = useState(false); // ✅ состояние для модалки редактирования
+  const [isEditOpen, setIsEditOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-  // 🚀 Загружаем задачи при первом запуске
   useEffect(() => {
     if (tasks.length === 0) dispatch(fetchTasks());
   }, [dispatch, tasks.length]);
 
-  // 📱 Следим за изменением ширины экрана
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // 🧹 Сбрасываем выбранную задачу при смене типа страницы
   useEffect(() => {
     dispatch(clearSelected());
   }, [type, dispatch]);
 
-  // 🧮 Фильтрация задач по типу страницы
+  // 🔍 Проверка поиска
+  const matchSearch = (t: any) => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      t.title.toLowerCase().includes(q) ||
+      t.description.toLowerCase().includes(q)
+    );
+  };
+
+  // 🧮 Фильтрация задач (дата + тип страницы + 💬 поиск)
   const filteredTasks = useMemo(() => {
     return tasks.filter((t) => {
       const taskDate = new Date(t.createdAt).toISOString().split("T")[0];
       if (taskDate !== selectedDate) return false;
+
+      if (!matchSearch(t)) return false; // 🔍 SEARCH
 
       switch (type) {
         case "my":
@@ -72,34 +83,30 @@ export const TaskPage = ({ type }: TaskPageProps) => {
           return true;
       }
     });
-  }, [tasks, selectedDate, type]);
+  }, [tasks, selectedDate, type, searchQuery]);
 
-  // 📊 Считаем общее число страниц
+  // 📄 Пагинация
   useEffect(() => {
     const pages = Math.ceil(filteredTasks.length / limit) || 1;
     dispatch(setTotalPages({ type, totalPages: pages }));
   }, [filteredTasks, limit, type, dispatch]);
 
-  // ✂️ Берем только задачи для текущей страницы
   const paginatedTasks = useMemo(() => {
     const start = (page - 1) * limit;
     const end = start + limit;
     return filteredTasks.slice(start, end);
   }, [filteredTasks, page, limit]);
 
-  // 🧠 Автоматически выбираем первую задачу при загрузке
   useEffect(() => {
     if (paginatedTasks.length > 0) {
       dispatch(selectFirstTask(paginatedTasks));
     }
   }, [paginatedTasks, dispatch]);
 
-  // 🗑️ Удаление задачи
   const handleDelete = (id: string) => {
     dispatch(removeTask(id));
   };
 
-  // 📝 Сохранение отредактированных данных
   const handleEditSubmit = (updated: any) => {
     if (!selected) return;
 
@@ -117,7 +124,6 @@ export const TaskPage = ({ type }: TaskPageProps) => {
     setIsEditOpen(false);
   };
 
-  // 📆 Заголовки
   const titles: Record<TaskPageProps["type"], string> = {
     my: "My Tasks",
     vital: "Vital Tasks",
@@ -141,7 +147,6 @@ export const TaskPage = ({ type }: TaskPageProps) => {
   return (
     <section className={`task-page task-page--${type}`}>
       <div className="task-page__content">
-        {/* === Левая колонка === */}
         <div className="task-page__left">
           <div className="task-list">
             <div className="task-list__header">
@@ -160,7 +165,7 @@ export const TaskPage = ({ type }: TaskPageProps) => {
               </div>
             </div>
 
-            {/* === Список задач === */}
+            {/* === СПИСОК ЗАДАЧ === */}
             {paginatedTasks.length > 0 ? (
               paginatedTasks.map((task) => (
                 <div
@@ -188,7 +193,7 @@ export const TaskPage = ({ type }: TaskPageProps) => {
               <p>No {titles[type].toLowerCase()} found.</p>
             )}
 
-            {/* === Пагинация === */}
+            {/* === ПАГИНАЦИЯ === */}
             <Pagination
               currentPage={page}
               totalPages={totalPages}
@@ -199,7 +204,7 @@ export const TaskPage = ({ type }: TaskPageProps) => {
           </div>
         </div>
 
-        {/* === Правая колонка (десктоп) === */}
+        {/* === ПРАВАЯ КОЛОНКА === */}
         {!isMobile && (
           <div className="task-page__right">
             {selected && paginatedTasks.some((t) => t.id === selected.id) ? (
@@ -212,7 +217,7 @@ export const TaskPage = ({ type }: TaskPageProps) => {
                 description={selected.description}
                 completedAt={selected.completedAt ?? undefined}
                 onDelete={() => handleDelete(selected.id)}
-                onEdit={() => setIsEditOpen(true)} // ✅ открывает модалку редактирования
+                onEdit={() => setIsEditOpen(true)}
               />
             ) : (
               <div className="task-page__info">
@@ -227,7 +232,7 @@ export const TaskPage = ({ type }: TaskPageProps) => {
         )}
       </div>
 
-      {/* === Модалка для мобильных === */}
+      {/* === MOBILE DETAILS MODAL === */}
       {isMobile && selected && isModalOpen && (
         <TaskDetailsModal
           isOpen={isModalOpen}
@@ -242,7 +247,7 @@ export const TaskPage = ({ type }: TaskPageProps) => {
         />
       )}
 
-      {/* === Модалка редактирования === */}
+      {/* === EDIT MODAL === */}
       {isEditOpen && selected && (
         <EditTaskModal
           onClose={() => setIsEditOpen(false)}
