@@ -1,19 +1,32 @@
 import "./ChangePassword.css";
 import userAvatar from "../../../../shared/assets/images/avatar.png";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { apiUsers } from "@/shared/api/apiUsers"; // ✅ правильный импорт
+import { useState, useEffect } from "react";
+import { apiUsers } from "@/shared/api/apiUsers";
 
 export const ChangePassword = () => {
   const navigate = useNavigate();
+  const USER_ID = "1";
 
   const [current, setCurrent] = useState("");
   const [newPass, setNewPass] = useState("");
   const [confirm, setConfirm] = useState("");
 
+  const [realPassword, setRealPassword] = useState("");
+
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // === Load user from MockAPI ===
+  useEffect(() => {
+    const loadUser = async () => {
+      const { data } = await apiUsers.get(`/users/${USER_ID}`);
+      setRealPassword(data.password || "");
+    };
+
+    loadUser();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,24 +49,27 @@ export const ChangePassword = () => {
       return;
     }
 
+    // === Check old password ===
+    if (current !== realPassword) {
+      setError("Поточний пароль невірний.");
+      return;
+    }
+
     try {
       setLoading(true);
 
-      // ❗ Отправляем запрос на MockAPI (users)
-      const res = await apiUsers.post("/user/change-password", {
-        oldPassword: current,
-        newPassword: newPass,
+      // === Update password ===
+      await apiUsers.put(`/users/${USER_ID}`, {
+        password: newPass,
       });
 
-      setSuccess(res.data?.message || "Пароль успішно змінено!");
+      setSuccess("Пароль успішно оновлено!");
       setCurrent("");
       setNewPass("");
       setConfirm("");
+      setRealPassword(newPass);
     } catch (err: any) {
-      setError(
-        err.response?.data?.message ||
-          "Помилка сервера. Перевірте дані та спробуйте знову."
-      );
+      setError("Помилка сервера. Спробуйте пізніше.");
     } finally {
       setLoading(false);
     }
@@ -77,6 +93,12 @@ export const ChangePassword = () => {
         </div>
 
         <form className="settings__form" onSubmit={handleSubmit}>
+          <input
+            type="text"
+            autoComplete="username"
+            style={{ display: "none" }}
+          />
+
           {error && <p className="settings__error">{error}</p>}
           {success && <p className="settings__success">{success}</p>}
 
@@ -86,7 +108,9 @@ export const ChangePassword = () => {
               type="password"
               className="settings__input"
               value={current}
+              autoComplete="current-password"
               onChange={(e) => setCurrent(e.target.value)}
+              placeholder="Подскаска сейчас пароль 1234567"
             />
           </label>
 
@@ -96,6 +120,7 @@ export const ChangePassword = () => {
               type="password"
               className="settings__input"
               value={newPass}
+              autoComplete="new-password"
               onChange={(e) => setNewPass(e.target.value)}
             />
           </label>
@@ -106,6 +131,7 @@ export const ChangePassword = () => {
               type="password"
               className="settings__input"
               value={confirm}
+              autoComplete="new-password"
               onChange={(e) => setConfirm(e.target.value)}
             />
           </label>
@@ -113,8 +139,8 @@ export const ChangePassword = () => {
           <div className="settings__actions">
             <button
               type="submit"
-              disabled={loading}
               className="settings__btn settings__btn--update"
+              disabled={loading}
             >
               {loading ? "Updating..." : "Update Password"}
             </button>
