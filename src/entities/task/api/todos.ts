@@ -1,4 +1,3 @@
-// src/entities/task/api/todos.ts
 import { apiTasks } from "@/shared/api/apiTasks";
 
 export interface Todo {
@@ -6,8 +5,11 @@ export interface Todo {
   title: string;
   description: string;
   createdAt: string;
-  priority: "Low" | "Moderate" | "Extreme";
-  status: "Not Started" | "In Progress" | "Completed";
+
+  // 🔥 теперь динамические статусы и приоритеты
+  priority: string;
+  status: string;
+
   image?: string;
   vital?: boolean;
   completedAt?: string | null;
