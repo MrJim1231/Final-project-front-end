@@ -20,10 +20,14 @@ export const TaskStatus = () => {
   const [showModal, setShowModal] = useState(false);
   const [editItem, setEditItem] = useState<StatusItem | null>(null);
 
-  // === Получаем статусы ===
+  // === Загружаем статусы ===
   const loadStatuses = async () => {
-    const data = await getTaskStatus();
-    setStatuses(data);
+    try {
+      const data = await getTaskStatus(); // теперь это массив
+      setStatuses(data);
+    } catch (err) {
+      console.error("Failed to load statuses:", err);
+    }
   };
 
   useEffect(() => {
@@ -32,25 +36,37 @@ export const TaskStatus = () => {
 
   // === Добавление ===
   const handleAddStatus = async (value: string) => {
-    await createTaskStatus({ title: value });
-    await loadStatuses();
-    setShowModal(false);
+    try {
+      await createTaskStatus({ title: value });
+      await loadStatuses();
+      setShowModal(false);
+    } catch (err) {
+      console.error("Error creating status:", err);
+    }
   };
 
   // === Редактирование ===
   const handleEditStatus = async (value: string) => {
     if (!editItem) return;
 
-    await updateTaskStatus(editItem.id, { title: value });
-    await loadStatuses();
-    setEditItem(null);
-    setShowModal(false);
+    try {
+      await updateTaskStatus(editItem.id, { title: value });
+      await loadStatuses();
+      setEditItem(null);
+      setShowModal(false);
+    } catch (err) {
+      console.error("Error updating status:", err);
+    }
   };
 
   // === Удаление ===
   const handleDelete = async (id: string) => {
-    await deleteTaskStatus(id);
-    await loadStatuses();
+    try {
+      await deleteTaskStatus(id);
+      await loadStatuses();
+    } catch (err) {
+      console.error("Error deleting status:", err);
+    }
   };
 
   return (
