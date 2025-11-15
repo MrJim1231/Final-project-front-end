@@ -9,6 +9,7 @@ interface AddModalProps {
   onSubmit: (value: string) => void;
   confirmText?: string;
   cancelText?: string;
+  initialValue?: string; // ⭐ добавили сюда
 }
 
 export const AddModal: React.FC<AddModalProps> = ({
@@ -19,8 +20,9 @@ export const AddModal: React.FC<AddModalProps> = ({
   onSubmit,
   confirmText = "Create",
   cancelText = "Cancel",
+  initialValue = "", // ⭐ значение по умолчанию
 }) => {
-  const [value, setValue] = React.useState("");
+  const [value, setValue] = React.useState(initialValue); // ⭐ теперь заполняется авто
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,19 +33,18 @@ export const AddModal: React.FC<AddModalProps> = ({
     <div className="modal-overlay">
       <div className="modal">
         <div className="modal__header">
-          <h3 className="modal__title">{title}</h3>{" "}
-          {/* ✅ динамический заголовок */}
+          <h3 className="modal__title">{title}</h3>
           <button className="modal__close" onClick={onClose}>
             Go Back
           </button>
         </div>
 
         <div className="modal__content">
-          {/* ✅ вывод подзаголовка, если есть */}
           {subtitle && <p className="modal__subtitle">{subtitle}</p>}
 
           <form onSubmit={handleSubmit} className="modal__form">
             {inputLabel && <label className="modal__label">{inputLabel}</label>}
+
             <input
               type="text"
               value={value}
@@ -51,10 +52,12 @@ export const AddModal: React.FC<AddModalProps> = ({
               className="modal__input"
               required
             />
+
             <div className="modal__actions">
               <button type="submit" className="modal__btn modal__btn--confirm">
                 {confirmText}
               </button>
+
               <button
                 type="button"
                 className="modal__btn modal__btn--cancel"

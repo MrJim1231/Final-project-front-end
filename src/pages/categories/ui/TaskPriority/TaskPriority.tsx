@@ -1,102 +1,99 @@
 import "./TaskPriority.css";
 import { FiEdit2, FiTrash2, FiPlus } from "react-icons/fi";
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { AddModal } from "../AddModal/AddModal";
 
+import {
+  getTaskPriority,
+  createTaskPriority,
+  updateTaskPriority,
+  deleteTaskPriority,
+} from "@/entities/task/api/priorityApi";
+
+interface PriorityItem {
+  id: string;
+  title: string;
+}
+
 export const TaskPriority = () => {
-  const [priorities, setPriorities] = useState(["Extreme", "Moderate", "Low"]);
-
+  const [priorities, setPriorities] = useState<PriorityItem[]>([]);
   const [showModal, setShowModal] = useState(false);
-  const [editIndex, setEditIndex] = useState<number | null>(null);
+  const [editItem, setEditItem] = useState<PriorityItem | null>(null);
 
-  // === Добавление нового приоритета ===
-  const handleAddPriority = (value: string) => {
-    if (value.trim()) {
-      setPriorities((prev) => [...prev, value.trim()]);
-    }
+  const loadPriorities = async () => {
+    const { data } = await getTaskPriority();
+    setPriorities(data);
+  };
+
+  useEffect(() => {
+    loadPriorities();
+  }, []);
+
+  const handleAdd = async (value: string) => {
+    await createTaskPriority({ title: value });
+    await loadPriorities();
     setShowModal(false);
   };
 
-  // === Редактирование ===
-  const handleEditPriority = (value: string) => {
-    if (editIndex !== null && value.trim()) {
-      setPriorities((prev) =>
-        prev.map((item, i) => (i === editIndex ? value.trim() : item))
-      );
-    }
-    setEditIndex(null);
+  const handleEdit = async (value: string) => {
+    if (!editItem) return;
+    await updateTaskPriority(editItem.id, { title: value });
+    await loadPriorities();
+    setEditItem(null);
     setShowModal(false);
   };
 
-  // === Удаление ===
-  const handleDelete = (index: number) => {
-    setPriorities((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const openEditModal = (index: number) => {
-    setEditIndex(index);
-    setShowModal(true);
+  const handleDelete = async (id: string) => {
+    await deleteTaskPriority(id);
+    await loadPriorities();
   };
 
   return (
     <div className="priority-block">
-      {/* === Header === */}
       <div className="priority-block__header">
         <h3 className="priority-block__title">Task Priority</h3>
+
         <button
           className="priority-block__add"
           onClick={() => {
-            setEditIndex(null);
+            setEditItem(null);
             setShowModal(true);
           }}
         >
-          <FiPlus className="priority-block__add-icon" />
-          Add New Priority
+          <FiPlus /> Add New Priority
         </button>
       </div>
 
-      {/* === Table === */}
       <div className="priority-table">
         <table className="priority-table__inner">
-          <thead className="priority-table__head">
+          <thead>
             <tr>
-              <th className="priority-table__col priority-table__col--sn">
-                SN
-              </th>
-              <th className="priority-table__col priority-table__col--name">
-                Task Priority
-              </th>
-              <th className="priority-table__col priority-table__col--action">
-                Action
-              </th>
+              <th>SN</th>
+              <th>Task Priority</th>
+              <th>Action</th>
             </tr>
           </thead>
 
-          <tbody className="priority-table__body">
+          <tbody>
             {priorities.map((priority, i) => (
-              <tr key={i} className="priority-table__row">
-                <td className="priority-table__cell" data-label="SN">
-                  {i + 1}
-                </td>
+              <tr key={priority.id}>
+                <td>{i + 1}</td>
+                <td>{priority.title}</td>
 
-                <td className="priority-table__cell" data-label="Task Priority">
-                  {priority}
-                </td>
-
-                <td
-                  className="priority-table__cell priority-table__actions"
-                  data-label="Action"
-                >
+                <td className="priority-table__actions">
                   <button
                     className="priority-btn priority-btn--edit"
-                    onClick={() => openEditModal(i)}
+                    onClick={() => {
+                      setEditItem(priority);
+                      setShowModal(true);
+                    }}
                   >
                     <FiEdit2 /> Edit
                   </button>
 
                   <button
                     className="priority-btn priority-btn--delete"
-                    onClick={() => handleDelete(i)}
+                    onClick={() => handleDelete(priority.id)}
                   >
                     <FiTrash2 /> Delete
                   </button>
@@ -107,20 +104,18 @@ export const TaskPriority = () => {
         </table>
       </div>
 
-      {/* === Modal === */}
       {showModal && (
         <AddModal
-          title={
-            editIndex !== null ? "Edit Task Priority" : "Add Task Priority"
-          }
-          inputLabel="Task Priority Title"
-          confirmText={editIndex !== null ? "Update" : "Create"}
+          title={editItem ? "Edit Task Priority" : "Add Task Priority"}
+          inputLabel="Priority Title"
+          confirmText={editItem ? "Update" : "Create"}
           cancelText="Cancel"
+          initialValue={editItem?.title || ""}
           onClose={() => {
             setShowModal(false);
-            setEditIndex(null);
+            setEditItem(null);
           }}
-          onSubmit={editIndex !== null ? handleEditPriority : handleAddPriority}
+          onSubmit={editItem ? handleEdit : handleAdd}
         />
       )}
     </div>
