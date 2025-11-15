@@ -13,27 +13,13 @@
 .addtask-modal {
   background: #fff;
   border-radius: 10px;
-  width: 700px; /* 🔹 уменьшено с 918px */
+  width: 700px;
   max-width: 90%;
-  max-height: 90vh; /* 🔹 ограничение по высоте окна */
+  max-height: 90vh;
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
-  overflow-y: auto; /* 🔹 добавляем вертикальную прокрутку */
-  scrollbar-width: thin; /* 🔹 тонкий скролл (Firefox) */
-  scrollbar-color: #ff7a3a #f1f1f1;
-}
-
-/* === Скроллбар (для Chrome, Edge) === */
-.addtask-modal::-webkit-scrollbar {
-  width: 6px;
-}
-.addtask-modal::-webkit-scrollbar-thumb {
-  background-color: #ff7a3a;
-  border-radius: 4px;
-}
-.addtask-modal::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  overflow-y: auto;
 }
 
 /* === Заголовок === */
@@ -74,7 +60,7 @@
   text-decoration: underline;
 }
 
-/* === Рамка контента === */
+/* === Контентная рамка === */
 .addtask-modal__content {
   border: 1px solid #dcdcdc;
   margin: 16px 32px 32px 32px;
@@ -89,7 +75,7 @@
   gap: 10px;
 }
 
-/* === Поля Title и Date === */
+/* === Input Title/Date === */
 .addtask-modal__form input[type="text"],
 .addtask-modal__form input[type="date"] {
   width: 100%;
@@ -122,63 +108,55 @@
   border-color: #ff6720;
 }
 
-/* === Подписи к полям === */
+/* === Labels === */
 .addtask-modal__form label {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 8px;
   font-weight: 600;
   font-size: 14px;
   color: #333;
 }
 
-/* === Priority === */
-.addtask-modal__priority {
+/* ========================================================= */
+/* === Priority (как на скрине — точка + текст + радио) === */
+/* ========================================================= */
+
+.priority-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.priority-list {
   display: flex;
   align-items: center;
-  gap: 20px;
-  flex-wrap: wrap;
-  font-size: 13px;
-  font-weight: 500;
+  gap: 22px;
 }
 
 .priority-item {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   cursor: pointer;
-  user-select: none;
+  font-size: 14px;
+  color: #333;
 }
 
-.priority-item input {
-  display: none;
+.priority-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
 }
 
-.custom-box {
-  width: 16px;
-  height: 16px;
-  border: 2px solid #aaa;
-  border-radius: 4px;
-  display: inline-block;
-  transition: all 0.2s ease;
+.priority-text {
+  font-weight: 500;
 }
 
-.priority-item input:checked + .custom-box.red {
-  background: #ff4444;
-  border-color: #ff4444;
-}
-.priority-item input:checked + .custom-box.blue {
-  background: #007bff;
-  border-color: #007bff;
-}
-.priority-item input:checked + .custom-box.green {
-  background: #00c851;
-  border-color: #00c851;
-}
-
-.priority-item:hover .custom-box {
-  transform: scale(1.1);
-  border-color: #666;
+.priority-item input[type="radio"] {
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
 }
 
 /* === Описание и загрузка === */
@@ -204,7 +182,7 @@
   font-size: 13px;
   color: #777;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease;
 }
 
 .addtask-modal__upload-box:hover {
@@ -221,10 +199,9 @@
   cursor: pointer;
 }
 
-/* === Кнопка Done === */
+/* === Done button === */
 .addtask-modal__actions {
   display: flex;
-  justify-content: flex-start;
   margin-top: 10px;
 }
 
@@ -234,11 +211,10 @@
   background: #ff6720;
   color: #fff;
   font-weight: 600;
-  font-family: "Montserrat", sans-serif;
   padding: 10px 42px;
   font-size: 15px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease;
 }
 
 .addtask-modal__btn:hover {
@@ -249,6 +225,7 @@
   transform: scale(0.97);
 }
 
+/* === URL Input === */
 .addtask-modal__url-input {
   display: flex;
   gap: 8px;
@@ -265,10 +242,6 @@
   outline: none;
 }
 
-.addtask-modal__url-input input:focus {
-  border-color: #ff6720;
-}
-
 .addtask-modal__url-back {
   background: #ff6720;
   color: #fff;
@@ -277,18 +250,6 @@
   padding: 8px 12px;
   cursor: pointer;
   font-size: 13px;
-  transition: background 0.2s ease;
-}
-
-.addtask-modal__url-back:hover {
-  background: #ff7a3a;
-}
-
-.addtask-modal__browse {
-  color: #ff6720;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: underline;
 }
 
 /* === Адаптация === */
@@ -296,8 +257,6 @@
   .addtask-modal {
     width: 95%;
     max-height: 90vh;
-    overflow-y: auto; /* ✅ прокрутка */
-    border-radius: 8px;
   }
 
   .addtask-modal__content {
@@ -311,26 +270,65 @@
 
   .addtask-modal__btn {
     width: 100%;
-    text-align: center;
   }
 }
 
+/* === Адаптация для мобильных устройств === */
 @media (max-width: 480px) {
+  .addtask-modal {
+    width: 95%;
+    border-radius: 8px;
+  }
+
+  .addtask-modal__header {
+    padding: 20px 20px 0 20px;
+  }
+
   .addtask-modal__title {
     font-size: 14px;
   }
 
-  .addtask-modal__priority {
-    /* flex-direction: column; */
-    align-items: flex-start;
+  .addtask-modal__content {
+    margin: 10px 16px;
+    padding: 16px;
+  }
+
+  .addtask-modal__form {
+    gap: 12px;
+  }
+
+  .addtask-modal__form label {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .addtask-modal__row {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .priority-list {
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .priority-item {
+    gap: 4px;
   }
 
   .addtask-modal__upload-box {
-    padding: 20px 6px;
+    padding: 20px 10px;
+    font-size: 12px;
   }
 
   .addtask-modal__btn {
-    padding: 10px 0;
     width: 100%;
+    padding: 10px 0;
+    font-size: 14px;
+  }
+
+  .addtask-modal__url-input input {
+    font-size: 13px;
+    padding: 8px 10px;
   }
 }

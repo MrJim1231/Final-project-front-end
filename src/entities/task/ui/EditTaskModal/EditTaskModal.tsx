@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./EditTaskModal.css"; // ✅ можно использовать те же стили
+import "../AddTaskModal/AddTaskModal.css"; // Используем те же стили, НЕ меняем
 
 interface EditTaskModalProps {
   onClose: () => void;
@@ -14,6 +14,13 @@ interface EditTaskModalProps {
   };
 }
 
+// Цвета круглых точек (как в AddTaskModal)
+const priorityColors: Record<string, string> = {
+  Extreme: "#ff3b30",
+  Moderate: "#0a84ff",
+  Low: "#34c759",
+};
+
 export const EditTaskModal: React.FC<EditTaskModalProps> = ({
   onClose,
   onSubmit,
@@ -26,6 +33,8 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
     description: "",
     imageUrl: "",
   });
+
+  const [showUrlInput, setShowUrlInput] = useState(true);
 
   useEffect(() => {
     setForm({
@@ -52,6 +61,7 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
   return (
     <div className="modal-overlay">
       <div className="addtask-modal">
+        {/* HEADER */}
         <div className="addtask-modal__header">
           <h3 className="addtask-modal__title">Edit Task</h3>
           <button className="addtask-modal__close" onClick={onClose}>
@@ -59,11 +69,14 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
           </button>
         </div>
 
+        {/* CONTENT */}
         <div className="addtask-modal__content">
           <form className="addtask-modal__form" onSubmit={handleSubmit}>
-            <label>
+            {/* TITLE */}
+            <label className="form-label">
               Title
               <input
+                className="form-input"
                 type="text"
                 name="title"
                 value={form.title}
@@ -72,9 +85,11 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
               />
             </label>
 
-            <label>
+            {/* DATE */}
+            <label className="form-label">
               Date
               <input
+                className="form-input"
                 type="date"
                 name="date"
                 value={form.date}
@@ -82,35 +97,38 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
               />
             </label>
 
-            <div className="addtask-modal__priority">
-              <span>Priority</span>
+            {/* PRIORITY */}
+            <div className="priority-block">
+              <label className="form-label">Priority</label>
 
-              {["Extreme", "Moderate", "Low"].map((level) => (
-                <label className="priority-item" key={level}>
-                  <input
-                    type="radio"
-                    name="priority"
-                    value={level}
-                    checked={form.priority === level}
-                    onChange={handleChange}
-                  />
-                  <span
-                    className={`custom-box ${
-                      level === "Extreme"
-                        ? "red"
-                        : level === "Moderate"
-                        ? "blue"
-                        : "green"
-                    }`}
-                  ></span>
-                  {level}
-                </label>
-              ))}
+              <div className="priority-list">
+                {["Extreme", "Moderate", "Low"].map((level) => (
+                  <label key={level} className="priority-item">
+                    <div
+                      className="priority-dot"
+                      style={{ backgroundColor: priorityColors[level] }}
+                    />
+
+                    <span className="priority-text">{level}</span>
+
+                    <input
+                      className="priority-input"
+                      type="radio"
+                      name="priority"
+                      value={level}
+                      checked={form.priority === level}
+                      onChange={handleChange}
+                    />
+                  </label>
+                ))}
+              </div>
             </div>
 
-            <label>
+            {/* DESCRIPTION */}
+            <label className="form-label">
               Task Description
               <textarea
+                className="form-textarea"
                 name="description"
                 value={form.description}
                 onChange={handleChange}
@@ -118,17 +136,25 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
               />
             </label>
 
-            <label>
-              Image URL
-              <input
-                type="text"
-                name="imageUrl"
-                value={form.imageUrl}
-                onChange={handleChange}
-                placeholder="https://example.com/image.jpg"
-              />
-            </label>
+            {/* IMAGE URL */}
+            <div className="addtask-modal__upload">
+              <label className="form-label">Image URL</label>
 
+              <div className="addtask-modal__upload-box">
+                <div className="addtask-modal__url-input">
+                  <input
+                    className="form-input"
+                    type="text"
+                    name="imageUrl"
+                    value={form.imageUrl}
+                    onChange={handleChange}
+                    placeholder="Paste image URL here..."
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* SUBMIT */}
             <div className="addtask-modal__actions">
               <button type="submit" className="addtask-modal__btn">
                 Save Changes

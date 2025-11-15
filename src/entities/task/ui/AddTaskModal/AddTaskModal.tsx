@@ -2,12 +2,17 @@ import React, { useState, useEffect } from "react";
 import "./AddTaskModal.css";
 
 import { getTaskPriority } from "@/shared/api/priorityApi";
-import { getTaskStatus } from "@/shared/api/statusApi";
 
 interface AddTaskModalProps {
   onClose: () => void;
   onSubmit: (task: any) => void;
 }
+
+const priorityColors: Record<string, string> = {
+  Extreme: "#ff3b30",
+  Moderate: "#0a84ff",
+  Low: "#34c759",
+};
 
 export const AddTaskModal: React.FC<AddTaskModalProps> = ({
   onClose,
@@ -17,7 +22,6 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
     title: "",
     date: "",
     priority: "",
-    status: "",
     description: "",
     image: null as File | null,
     imageUrl: "",
@@ -26,14 +30,11 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
   const [priorities, setPriorities] = useState<{ id: string; title: string }[]>(
     []
   );
-  const [statuses, setStatuses] = useState<{ id: string; title: string }[]>([]);
 
   const [showUrlInput, setShowUrlInput] = useState(false);
 
-  // === Загружаем списки ===
   useEffect(() => {
     loadPriority();
-    loadStatus();
   }, []);
 
   const loadPriority = async () => {
@@ -41,15 +42,8 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
     setPriorities(data);
   };
 
-  const loadStatus = async () => {
-    const data = await getTaskStatus();
-    setStatuses(data);
-  };
-
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -65,6 +59,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
     const finalForm = {
       ...form,
       image: form.imageUrl || form.image,
+      status: "Not Started",
     };
 
     onSubmit(finalForm);
@@ -74,7 +69,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
   return (
     <div className="modal-overlay">
       <div className="addtask-modal">
-        {/* === Header === */}
+        {/* HEADER */}
         <div className="addtask-modal__header">
           <h3 className="addtask-modal__title">Add New Task</h3>
           <button className="addtask-modal__close" onClick={onClose}>
@@ -82,11 +77,14 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
           </button>
         </div>
 
+        {/* CONTENT */}
         <div className="addtask-modal__content">
           <form className="addtask-modal__form" onSubmit={handleSubmit}>
-            <label>
+            {/* TITLE */}
+            <label className="form-label">
               Title
               <input
+                className="form-input"
                 type="text"
                 name="title"
                 value={form.title}
@@ -95,9 +93,11 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
               />
             </label>
 
-            <label>
+            {/* DATE */}
+            <label className="form-label">
               Date
               <input
+                className="form-input"
                 type="date"
                 name="date"
                 value={form.date}
@@ -106,47 +106,38 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
               />
             </label>
 
-            {/* === Priority SELECT === */}
-            <label>
-              Priority
-              <select
-                name="priority"
-                value={form.priority}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Select priority…</option>
+            {/* PRIORITY */}
+            <div className="priority-block">
+              <label className="form-label">Priority</label>
+
+              <div className="priority-list">
                 {priorities.map((p) => (
-                  <option key={p.id} value={p.title}>
-                    {p.title}
-                  </option>
-                ))}
-              </select>
-            </label>
+                  <label key={p.id} className="priority-item">
+                    <div
+                      className="priority-dot"
+                      style={{ backgroundColor: priorityColors[p.title] }}
+                    />
+                    <span className="priority-text">{p.title}</span>
 
-            {/* === Status SELECT === */}
-            <label>
-              Status
-              <select
-                name="status"
-                value={form.status}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Select status…</option>
-                {statuses.map((s) => (
-                  <option key={s.id} value={s.title}>
-                    {s.title}
-                  </option>
+                    <input
+                      className="priority-input"
+                      type="radio"
+                      name="priority"
+                      value={p.title}
+                      checked={form.priority === p.title}
+                      onChange={handleChange}
+                    />
+                  </label>
                 ))}
-              </select>
-            </label>
+              </div>
+            </div>
 
-            {/* === Description & Upload === */}
+            {/* DESCRIPTION + UPLOAD */}
             <div className="addtask-modal__row">
               <div className="addtask-modal__desc">
-                <label>Task Description</label>
+                <label className="form-label">Task Description</label>
                 <textarea
+                  className="form-textarea"
                   name="description"
                   value={form.description}
                   onChange={handleChange}
@@ -155,12 +146,13 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
               </div>
 
               <div className="addtask-modal__upload">
-                <label>Upload Image</label>
+                <label className="form-label">Upload Image</label>
 
                 <div className="addtask-modal__upload-box">
                   {!showUrlInput && (
                     <>
                       <input
+                        className="upload-input"
                         type="file"
                         accept="image/*"
                         onChange={handleFileChange}
@@ -183,6 +175,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
                   {showUrlInput && (
                     <div className="addtask-modal__url-input">
                       <input
+                        className="form-input"
                         type="text"
                         name="imageUrl"
                         value={form.imageUrl}
@@ -202,6 +195,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
               </div>
             </div>
 
+            {/* SUBMIT */}
             <div className="addtask-modal__actions">
               <button type="submit" className="addtask-modal__btn">
                 Done
