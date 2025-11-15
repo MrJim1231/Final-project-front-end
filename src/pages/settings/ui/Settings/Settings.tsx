@@ -2,7 +2,7 @@ import "./Settings.css";
 import userAvatar from "../../../../shared/assets/images/avatar.png";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { api } from "../../../../shared/api/base";
+import { apiUsers } from "@/shared/api/apiUsers";
 
 export const Settings = () => {
   const navigate = useNavigate();
@@ -20,6 +20,8 @@ export const Settings = () => {
   const [loading, setLoading] = useState(false);
 
   const validateEmail = (email: string) => /\S+@\S+\.\S+/.test(email);
+
+  const USER_ID = "1"; // 👈 MockAPI требует ID обязательно
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,7 +42,8 @@ export const Settings = () => {
     try {
       setLoading(true);
 
-      await api.post("/user/update-profile", {
+      // ⭐ Правильный запрос для MockAPI
+      await apiUsers.put(`/users/${USER_ID}`, {
         firstName,
         lastName,
         email,

@@ -2,7 +2,7 @@ import "./ChangePassword.css";
 import userAvatar from "../../../../shared/assets/images/avatar.png";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { api } from "../../../../shared/api/base";
+import { apiUsers } from "@/shared/api/apiUsers"; // ✅ правильный импорт
 
 export const ChangePassword = () => {
   const navigate = useNavigate();
@@ -39,12 +39,13 @@ export const ChangePassword = () => {
     try {
       setLoading(true);
 
-      const res = await api.post("/user/change-password", {
+      // ❗ Отправляем запрос на MockAPI (users)
+      const res = await apiUsers.post("/user/change-password", {
         oldPassword: current,
         newPassword: newPass,
       });
 
-      setSuccess(res.data.message || "Пароль успішно змінено!");
+      setSuccess(res.data?.message || "Пароль успішно змінено!");
       setCurrent("");
       setNewPass("");
       setConfirm("");
