@@ -7,6 +7,7 @@ export const useFilteredTasks = (
   type: "my" | "vital" | "completed",
   searchQuery: string
 ) => {
+  // 🔍 Проверка поиска
   const matchSearch = (t: Todo) => {
     if (!searchQuery.trim()) return true;
     const q = searchQuery.toLowerCase();
@@ -20,6 +21,7 @@ export const useFilteredTasks = (
     return tasks.filter((t) => {
       const matchesSearch = matchSearch(t);
 
+      // 🔎 Если есть поиск — игнорируем дату и фильтруем сразу по категориям
       if (searchQuery.trim()) {
         switch (type) {
           case "my":
@@ -33,17 +35,23 @@ export const useFilteredTasks = (
         }
       }
 
+      // 📅 Фильтрация по дате (если поиск пустой)
       const taskDate = new Date(t.createdAt).toISOString().split("T")[0];
       if (taskDate !== selectedDate) return false;
+
       if (!matchesSearch) return false;
 
+      // 🔄 Фильтрация по типу страницы
       switch (type) {
         case "my":
           return !t.vital && t.status !== "Completed";
+
         case "vital":
           return t.vital === true;
+
         case "completed":
           return t.status === "Completed";
+
         default:
           return true;
       }

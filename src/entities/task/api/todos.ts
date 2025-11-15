@@ -6,12 +6,12 @@ export interface Todo {
   title: string;
   description: string;
   createdAt: string;
-  priority: "Low" | "Moderate" | "High" | "Extreme";
+  priority: "Low" | "Moderate" | "Extreme";
   status: "Not Started" | "In Progress" | "Completed";
   image?: string;
   vital?: boolean;
   completedAt?: string | null;
-  date?: string; // ✅ добавь вот это (для пользовательской даты)
+  date?: string;
 }
 
 const ENDPOINT = "todos";
