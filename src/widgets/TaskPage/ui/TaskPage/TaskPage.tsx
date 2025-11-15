@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 
 import { TaskCard } from "@/entities/task/TaskCard";
 import { TaskDetails } from "@/entities/task/ui/TaskDetails/TaskDetails";
-import { TaskDetailsModal } from "@/entities/task/ui/TaskDetailsModal/TaskDetailsModal";
 import { EditTaskModal } from "@/entities/task/ui/EditTaskModal/EditTaskModal";
 
 import {
@@ -45,19 +44,19 @@ export const TaskPage = ({ type }: TaskPageProps) => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [isEditOpen, setIsEditOpen] = useState(false);
 
-  // ————— Responsive —————
+  // Responsive
   useEffect(() => {
     const fn = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener("resize", fn);
     return () => window.removeEventListener("resize", fn);
   }, []);
 
-  // ————— Load tasks —————
+  // Load tasks
   useEffect(() => {
     if (tasks.length === 0) dispatch(fetchTasks());
   }, [tasks.length, dispatch]);
 
-  // ————— FILTER / FALLBACK / PAGINATION —————
+  // Filtering & pagination
   const filteredTasks = useFilteredTasks(
     tasks,
     selectedDate,
@@ -76,15 +75,12 @@ export const TaskPage = ({ type }: TaskPageProps) => {
 
   const paginatedTasks = usePaginationTasks(filteredTasks, page, limit, type);
 
-  // ———— FIX: общий список видимых задач (основные + fallback)
   const allVisibleTasks = fallback
     ? [...paginatedTasks, ...fallback.tasks]
     : paginatedTasks;
 
-  // ———— FIX: селектор задач работает по allVisibleTasks ————
   const selectTask = useTaskSelection(allVisibleTasks);
 
-  // ———— FIX: авто-выбор правильной карточки при переключениях ————
   useEffect(() => {
     if (!selected && allVisibleTasks.length > 0) {
       selectTask(allVisibleTasks[0]);
@@ -99,7 +95,7 @@ export const TaskPage = ({ type }: TaskPageProps) => {
 
   if (loading) return <p>Loading...</p>;
 
-  // ————— HEADER DATE —————
+  // Header date
   const day = new Date(selectedDate).getDate();
   const month = new Date(selectedDate).toLocaleString("en-US", {
     month: "long",
@@ -123,10 +119,10 @@ export const TaskPage = ({ type }: TaskPageProps) => {
   return (
     <section className={`task-page task-page--${type}`}>
       <div className="task-page__content">
-        {/* ============ LEFT ============ */}
+        {/* LEFT */}
         <div className="task-page__left">
           <div className="task-list">
-            {/* ———— HEADER ———— */}
+            {/* HEADER */}
             <div className="task-list__header">
               <div className="task-list__title-wrapper">
                 <h3
@@ -143,7 +139,7 @@ export const TaskPage = ({ type }: TaskPageProps) => {
               </div>
             </div>
 
-            {/* ———— MAIN LIST ———— */}
+            {/* MAIN LIST */}
             {paginatedTasks.length > 0 ? (
               paginatedTasks.map((task) => (
                 <div
@@ -153,14 +149,20 @@ export const TaskPage = ({ type }: TaskPageProps) => {
                   }`}
                   onClick={() => selectTask(task)}
                 >
-                  <TaskCard {...task} type={type === "my" ? "default" : type} />
+                  <TaskCard
+                    {...task}
+                    date={new Date(task.createdAt).toLocaleDateString()}
+                    type={type === "my" ? "default" : type}
+                    status={task.status} // ← теперь это string
+                    priority={task.priority} // ← теперь это string
+                  />
                 </div>
               ))
             ) : (
               <p>No {titles[type].toLowerCase()} found.</p>
             )}
 
-            {/* ———— FALLBACK WITH DATE ———— */}
+            {/* FALLBACK */}
             {fallback && (
               <div className="task-list__fallback">
                 <div className="task-list__fallback-date-title">
@@ -176,13 +178,18 @@ export const TaskPage = ({ type }: TaskPageProps) => {
                     className="task-list__item"
                     onClick={() => selectTask(task)}
                   >
-                    <TaskCard {...task} />
+                    <TaskCard
+                      {...task}
+                      date={new Date(task.createdAt).toLocaleDateString()}
+                      status={task.status}
+                      priority={task.priority}
+                    />
                   </div>
                 ))}
               </div>
             )}
 
-            {/* ———— PAGINATION ———— */}
+            {/* PAGINATION */}
             <Pagination
               currentPage={page}
               totalPages={totalPages}
@@ -191,7 +198,7 @@ export const TaskPage = ({ type }: TaskPageProps) => {
           </div>
         </div>
 
-        {/* ============ RIGHT PANEL ============ */}
+        {/* RIGHT PANEL */}
         {!isMobile && selected && (
           <div className="task-page__right">
             <TaskDetails
@@ -204,7 +211,7 @@ export const TaskPage = ({ type }: TaskPageProps) => {
         )}
       </div>
 
-      {/* ============ EDIT MODAL ============ */}
+      {/* EDIT MODAL */}
       {isEditOpen && selected && (
         <EditTaskModal
           initialData={selected}

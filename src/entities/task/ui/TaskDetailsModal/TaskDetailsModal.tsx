@@ -8,8 +8,8 @@ interface TaskDetailsModalProps {
   title: string;
   desc?: string;
   date?: string;
-  priority?: "Low" | "Moderate" | "High" | "Extreme";
-  status?: "Not Started" | "In Progress" | "Completed";
+  priority?: string; // ← строка
+  status?: string; // ← строка
   image?: string;
   completedAt?: string | null;
 }
@@ -27,21 +27,21 @@ export const TaskDetailsModal = ({
 }: TaskDetailsModalProps) => {
   if (!isOpen) return null;
 
-  // ✅ Безопасное изображение
+  // 🟦 Безопасная картинка
   const getSafeImageSrc = (src?: string) => {
     if (
       !src ||
-      src.includes("wikia.nocookie.net") ||
       src.includes("undefined") ||
       src.includes("null") ||
-      src.trim() === ""
+      src.trim() === "" ||
+      src.includes("wikia.nocookie.net")
     ) {
       return noImage;
     }
     return src.startsWith("http") ? src : noImage;
   };
 
-  // 🎨 Цвета приоритета
+  // 🟨 Цвет приоритета (универсально)
   const getPriorityColor = (p?: string) => {
     switch (p) {
       case "Extreme":
@@ -53,11 +53,11 @@ export const TaskDetailsModal = ({
       case "Low":
         return "#00c851";
       default:
-        return "#999";
+        return "#777"; // кастомный приоритет
     }
   };
 
-  // 🎨 Цвета статуса
+  // 🟦 Цвет статуса (универсально)
   const getStatusColor = (s?: string) => {
     switch (s) {
       case "Completed":
@@ -67,21 +67,18 @@ export const TaskDetailsModal = ({
       case "Not Started":
         return "#ff4444";
       default:
-        return "#999";
+        return "#777"; // кастомный статус
     }
   };
 
   return (
     <div className="task-modal__overlay" onClick={onClose}>
-      <div
-        className="task-modal"
-        onClick={(e) => e.stopPropagation()} // не закрывать при клике внутрь
-      >
+      <div className="task-modal" onClick={(e) => e.stopPropagation()}>
         <button className="task-modal__close" onClick={onClose}>
           <FiX size={22} />
         </button>
 
-        {/* ✅ Безопасная загрузка изображения */}
+        {/* IMAGE */}
         <img
           src={getSafeImageSrc(image)}
           alt={title}

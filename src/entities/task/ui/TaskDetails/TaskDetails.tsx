@@ -4,8 +4,8 @@ import { FiEdit2, FiTrash2 } from "react-icons/fi";
 interface TaskDetailsProps {
   image?: string;
   title: string;
-  priority: "Low" | "Moderate" | "High" | "Extreme";
-  status: "Not Started" | "In Progress" | "Completed";
+  priority: string; // ← теперь string
+  status: string; // ← теперь string
   date: string;
   description?: string;
   completedAt?: string | null;
@@ -93,7 +93,7 @@ export const TaskDetails = ({
         </div>
       )}
 
-      {/* === Низ карточки: единый стиль для всех === */}
+      {/* === Низ карточки === */}
       <div className="task-details__footer">
         {status === "Completed" && completedAt && (
           <p className="task-details__completed">

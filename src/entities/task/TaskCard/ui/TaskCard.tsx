@@ -7,18 +7,25 @@ import { getSafeImageSrc } from "@/entities/task/TaskCard/lib/getSafeImageSrc";
 import { getStatusColor } from "@/entities/task/TaskCard/lib/getStatusColor";
 import { TaskCardMenu } from "./TaskCardMenu";
 import { TaskCardDetails } from "./TaskCardDetails";
-import { EditTaskModal } from "@/entities/task/ui/EditTaskModal/EditTaskModal"; // ✅ добавлено
+import { EditTaskModal } from "@/entities/task/ui/EditTaskModal/EditTaskModal";
 import { useDispatch } from "react-redux";
 import { updateTaskStatus } from "@/entities/task/model/tasksSlice";
 import type { AppDispatch } from "@/app/providers/store";
 
+//
+//  === ВАЖНО ===
+//  интерфейс полностью переписан под string вместо union-типов
+//
 interface TaskCardProps {
   id?: string;
   title: string;
   description: string;
   date?: string;
-  status: "Not Started" | "In Progress" | "Completed";
-  priority?: "Low" | "Moderate" | "High" | "Extreme";
+
+  // 🔥 теперь это тип string, чтобы принимать любые значения с бэка
+  status: string;
+  priority?: string;
+
   image?: string;
   completedAt?: string | null;
   vital?: boolean;
@@ -42,6 +49,7 @@ export const TaskCard = ({
   showAlert = false,
 }: TaskCardProps) => {
   const dispatch = useDispatch<AppDispatch>();
+
   const {
     deleteTask,
     toggleVital,
@@ -51,17 +59,18 @@ export const TaskCard = ({
     unmarkInProgress,
   } = useTaskActions();
 
-  const [status, setStatus] = useState(initialStatus);
+  const [status, setStatus] = useState<string>(initialStatus);
   const [isVital, setIsVital] = useState(vital);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isEditOpen, setIsEditOpen] = useState(false); // ✅ добавлено
+  const [isEditOpen, setIsEditOpen] = useState(false);
   const [completedTime, setCompletedTime] = useState(completedAt || "");
   const [updating, setUpdating] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
   const menuRef = useRef<HTMLDivElement | null>(null);
 
-  // === Определяем тип карточки ===
+  // Поддержка типа карточки
   useEffect(() => {
     if (isVital) type = "vital";
     else if (status === "Completed") type = "completed";
@@ -76,14 +85,15 @@ export const TaskCard = ({
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node))
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setIsMenuOpen(false);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // === Основные действия ===
+  // === действия меню ===
   const handleActionClick = async (action: string) => {
     if (!id) return;
     setUpdating(true);
@@ -116,7 +126,7 @@ export const TaskCard = ({
         unmarkInProgress(id);
         setStatus("Not Started");
         break;
-      case "Edit": // ✅ добавлено
+      case "Edit":
         setIsEditOpen(true);
         break;
     }
@@ -125,7 +135,6 @@ export const TaskCard = ({
     setIsMenuOpen(false);
   };
 
-  // === Список доступных действий ===
   const actions = [
     isVital ? "Remove from Vital" : "Vital",
     "Edit",
@@ -137,7 +146,7 @@ export const TaskCard = ({
       : ["Unfinish", "Mark In Progress"]),
   ];
 
-  // === Обновление после редактирования ===
+  // после редактирования
   const handleEditSubmit = (updated: any) => {
     if (!id) return;
 
@@ -183,6 +192,7 @@ export const TaskCard = ({
           )}
         </div>
 
+        {/* Верхняя часть */}
         <div className="task-card__top">
           <div className="task-card__left">
             <div className="task-card__header">
@@ -206,6 +216,7 @@ export const TaskCard = ({
           </div>
         </div>
 
+        {/* Детали */}
         <TaskCardDetails
           status={status}
           priority={priority}
@@ -214,7 +225,7 @@ export const TaskCard = ({
         />
       </div>
 
-      {/* 🔹 Детальная модалка */}
+      {/* Модалка просмотра */}
       <TaskDetailsModal
         isOpen={isModalOpen && (isMobile || enableDesktopModal)}
         onClose={() => setIsModalOpen(false)}
@@ -227,7 +238,7 @@ export const TaskCard = ({
         completedAt={completedAt}
       />
 
-      {/* ✏️ Модалка редактирования */}
+      {/* Модалка редактирования */}
       {isEditOpen && (
         <EditTaskModal
           onClose={() => setIsEditOpen(false)}
