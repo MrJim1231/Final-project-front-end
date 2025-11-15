@@ -20,7 +20,7 @@ export const TaskPriority = () => {
   const [showModal, setShowModal] = useState(false);
   const [editItem, setEditItem] = useState<PriorityItem | null>(null);
 
-  // === Загружаем приоритеты ===
+  // === Получение приоритетов ===
   const loadPriorities = async () => {
     const { data } = await getTaskPriority();
     setPriorities(data);
@@ -81,11 +81,19 @@ export const TaskPriority = () => {
 
           <tbody>
             {priorities.map((priority, i) => (
-              <tr key={priority.id}>
-                <td>{i + 1}</td>
-                <td>{priority.title}</td>
+              <tr key={priority.id} className="priority-table__row">
+                <td className="priority-table__cell" data-label="SN">
+                  {i + 1}
+                </td>
 
-                <td className="priority-table__actions">
+                <td className="priority-table__cell" data-label="Task Priority">
+                  {priority.title}
+                </td>
+
+                <td
+                  className="priority-table__cell priority-table__actions"
+                  data-label="Action"
+                >
                   <button
                     className="priority-btn priority-btn--edit"
                     onClick={() => {

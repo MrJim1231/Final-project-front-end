@@ -20,9 +20,9 @@ export const TaskStatus = () => {
   const [showModal, setShowModal] = useState(false);
   const [editItem, setEditItem] = useState<StatusItem | null>(null);
 
-  // === Загружаем статусы ===
+  // === Получаем статусы ===
   const loadStatuses = async () => {
-    const data = await getTaskStatus(); // теперь data — массив
+    const data = await getTaskStatus();
     setStatuses(data);
   };
 
@@ -57,6 +57,7 @@ export const TaskStatus = () => {
     <div className="status-block">
       <div className="status-block__header">
         <h3 className="status-block__title">Task Status</h3>
+
         <button
           className="status-block__add"
           onClick={() => {
@@ -80,11 +81,19 @@ export const TaskStatus = () => {
 
           <tbody>
             {statuses.map((status, i) => (
-              <tr key={status.id}>
-                <td>{i + 1}</td>
-                <td>{status.title}</td>
+              <tr key={status.id} className="status-table__row">
+                <td className="status-table__cell" data-label="SN">
+                  {i + 1}
+                </td>
 
-                <td className="status-table__actions">
+                <td className="status-table__cell" data-label="Task Status">
+                  {status.title}
+                </td>
+
+                <td
+                  className="status-table__cell status-table__actions"
+                  data-label="Action"
+                >
                   <button
                     className="status-btn status-btn--edit"
                     onClick={() => {
