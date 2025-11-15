@@ -20,6 +20,7 @@ export const TaskPriority = () => {
   const [showModal, setShowModal] = useState(false);
   const [editItem, setEditItem] = useState<PriorityItem | null>(null);
 
+  // === Загружаем приоритеты ===
   const loadPriorities = async () => {
     const { data } = await getTaskPriority();
     setPriorities(data);
@@ -29,20 +30,24 @@ export const TaskPriority = () => {
     loadPriorities();
   }, []);
 
+  // === Добавление ===
   const handleAdd = async (value: string) => {
     await createTaskPriority({ title: value });
     await loadPriorities();
     setShowModal(false);
   };
 
+  // === Редактирование ===
   const handleEdit = async (value: string) => {
     if (!editItem) return;
+
     await updateTaskPriority(editItem.id, { title: value });
     await loadPriorities();
     setEditItem(null);
     setShowModal(false);
   };
 
+  // === Удаление ===
   const handleDelete = async (id: string) => {
     await deleteTaskPriority(id);
     await loadPriorities();

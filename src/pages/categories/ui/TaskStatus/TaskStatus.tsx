@@ -20,9 +20,9 @@ export const TaskStatus = () => {
   const [showModal, setShowModal] = useState(false);
   const [editItem, setEditItem] = useState<StatusItem | null>(null);
 
-  // === Загружаем статусы с сервера ===
+  // === Загружаем статусы ===
   const loadStatuses = async () => {
-    const { data } = await getTaskStatus();
+    const data = await getTaskStatus(); // теперь data — массив
     setStatuses(data);
   };
 
@@ -40,6 +40,7 @@ export const TaskStatus = () => {
   // === Редактирование ===
   const handleEditStatus = async (value: string) => {
     if (!editItem) return;
+
     await updateTaskStatus(editItem.id, { title: value });
     await loadStatuses();
     setEditItem(null);
@@ -56,7 +57,6 @@ export const TaskStatus = () => {
     <div className="status-block">
       <div className="status-block__header">
         <h3 className="status-block__title">Task Status</h3>
-
         <button
           className="status-block__add"
           onClick={() => {
