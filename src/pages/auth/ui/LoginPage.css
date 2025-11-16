@@ -24,7 +24,8 @@
 
   /* 🔥 фиксируем чтобы точно вошло */
   max-height: 680px;
-  height: 100%;
+  /* height: 100%; */
+  height: 550px;
 
   background: #fff;
   border-radius: 15px;
@@ -114,6 +115,9 @@
 
 /* SOCIAL */
 .login__social {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin-top: 10px;
   font-size: 14px;
 }
