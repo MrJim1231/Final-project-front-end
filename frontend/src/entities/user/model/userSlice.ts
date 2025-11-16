@@ -7,34 +7,32 @@ interface UserState {
   lastName: string | null;
   email: string | null;
   token: string | null;
-  isAuth: boolean;
+
+  isAuth: boolean; // пользователь авторизован
+  isLoaded: boolean; // данные загружены из localStorage
 }
 
-// Загружаем данные из localStorage
+// ==== Загружаем из localStorage ====
 const savedUser = localStorage.getItem("user");
 const savedToken = localStorage.getItem("token");
 
-const initialState: UserState = savedUser
-  ? {
-      ...JSON.parse(savedUser),
-      token: savedToken,
-      isAuth: true,
-    }
-  : {
-      id: null,
-      username: null,
-      firstName: null,
-      lastName: null,
-      email: null,
-      token: null,
-      isAuth: false,
-    };
+const initialState: UserState = {
+  id: savedUser ? JSON.parse(savedUser).id : null,
+  username: savedUser ? JSON.parse(savedUser).username : null,
+  firstName: savedUser ? JSON.parse(savedUser).firstName : null,
+  lastName: savedUser ? JSON.parse(savedUser).lastName : null,
+  email: savedUser ? JSON.parse(savedUser).email : null,
+  token: savedToken ? savedToken : null,
+
+  isAuth: Boolean(savedToken),
+  isLoaded: false, // ⬅ сначала false
+};
 
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    // Устанавливаем пользователя после логина
+    // === ЛОГИН / ПОЛУЧЕНИЕ ПРОФИЛЯ ===
     setUser(
       state,
       action: PayloadAction<{
@@ -52,30 +50,31 @@ const userSlice = createSlice({
         firstName: action.payload.firstName,
         lastName: action.payload.lastName,
         email: action.payload.email,
-        token: action.payload.token,
-        isAuth: true,
       };
 
       // Сохраняем в localStorage
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          id: userData.id,
-          username: userData.username,
-          firstName: userData.firstName,
-          lastName: userData.lastName,
-          email: userData.email,
-        })
-      );
-      localStorage.setItem("token", userData.token!);
+      localStorage.setItem("user", JSON.stringify(userData));
+      localStorage.setItem("token", action.payload.token);
 
-      return userData;
+      return {
+        ...state,
+        ...userData,
+        token: action.payload.token,
+        isAuth: true,
+        isLoaded: true,
+      };
     },
 
-    // Выход из системы
-    logout() {
+    // === ЗАВЕРШЕНИЕ ЗАГРУЗКИ (чтобы убрать мигание) ===
+    setLoaded(state, action: PayloadAction<boolean>) {
+      state.isLoaded = action.payload;
+    },
+
+    // === ВЫХОД ===
+    logout(state) {
       localStorage.removeItem("user");
       localStorage.removeItem("token");
+
       return {
         id: null,
         username: null,
@@ -84,10 +83,11 @@ const userSlice = createSlice({
         email: null,
         token: null,
         isAuth: false,
+        isLoaded: true, // уже загружено
       };
     },
   },
 });
 
-export const { setUser, logout } = userSlice.actions;
+export const { setUser, logout, setLoaded } = userSlice.actions;
 export default userSlice.reducer;
