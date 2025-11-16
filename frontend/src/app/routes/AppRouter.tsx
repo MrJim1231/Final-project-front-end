@@ -18,26 +18,113 @@ import { CompletedTask } from "../../pages/completed-task";
 import { RegisterPage } from "../../pages/auth/ui/RegisterPage";
 import { LoginPage } from "@/pages/auth/ui/LoginPage";
 
+// 🛡 Guards
+import { PrivateRoute } from "./PrivateRoute";
+import { AuthRedirectRoute } from "./AuthRedirectRoute";
+
 export const AppRouter = () => {
   return (
     <Routes>
-      {/* 🔐 Авторизация */}
-      <Route path="/register" element={<RegisterPage />} />
-      <Route path="/login" element={<LoginPage />} /> — добавим позже
-      {/* 🏠 Главная панель */}
-      <Route path="/" element={<Dashboard />} />
-      {/* ✅ Страницы задач */}
-      <Route path="/my-task" element={<MyTask />} />
-      <Route path="/vital-task" element={<VitalTask />} />
-      <Route path="/completed-task" element={<CompletedTask />} />
+      {/* 🔐 Auth pages (только если НЕ авторизован) */}
+      <Route
+        path="/register"
+        element={
+          <AuthRedirectRoute>
+            <RegisterPage />
+          </AuthRedirectRoute>
+        }
+      />
+
+      <Route
+        path="/login"
+        element={
+          <AuthRedirectRoute>
+            <LoginPage />
+          </AuthRedirectRoute>
+        }
+      />
+
+      {/* 🏠 Главная (только авторизованным) */}
+      <Route
+        path="/"
+        element={
+          <PrivateRoute>
+            <Dashboard />
+          </PrivateRoute>
+        }
+      />
+
+      {/* 📌 Задачи */}
+      <Route
+        path="/my-task"
+        element={
+          <PrivateRoute>
+            <MyTask />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/vital-task"
+        element={
+          <PrivateRoute>
+            <VitalTask />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/completed-task"
+        element={
+          <PrivateRoute>
+            <CompletedTask />
+          </PrivateRoute>
+        }
+      />
+
       {/* 📦 Категории */}
-      <Route path="/categories" element={<TaskCategories />} />
-      <Route path="/categories/add" element={<AddCategory />} />
-      {/* ⚙️ Настройки */}
-      <Route path="/settings" element={<Settings />} />
-      <Route path="/settings/change-password" element={<ChangePassword />} />
+      <Route
+        path="/categories"
+        element={
+          <PrivateRoute>
+            <TaskCategories />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/categories/add"
+        element={
+          <PrivateRoute>
+            <AddCategory />
+          </PrivateRoute>
+        }
+      />
+
+      {/* ⚙ Настройки */}
+      <Route
+        path="/settings"
+        element={
+          <PrivateRoute>
+            <Settings />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/settings/change-password"
+        element={
+          <PrivateRoute>
+            <ChangePassword />
+          </PrivateRoute>
+        }
+      />
+
       {/* ❓ Помощь */}
-      <Route path="/help" element={<Help />} />
+      <Route
+        path="/help"
+        element={
+          <PrivateRoute>
+            <Help />
+          </PrivateRoute>
+        }
+      />
     </Routes>
   );
 };

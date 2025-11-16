@@ -1,11 +1,12 @@
 import "./LoginPage.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 // Redux
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "@/entities/user/model/userSlice";
+import { RootState } from "@/app/providers/store";
 
 // Icons
 import { BsPersonFill, BsLockFill } from "react-icons/bs";
@@ -26,13 +27,18 @@ export const LoginPage = () => {
   });
 
   const [loading, setLoading] = useState(false);
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const { isAuth } = useSelector((state: RootState) => state.user);
+
+  // 🔥 Если пользователь уже авторизован — отправляем на главную
+  useEffect(() => {
+    if (isAuth) navigate("/");
+  }, [isAuth]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
-
     setForm((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
@@ -52,10 +58,17 @@ export const LoginPage = () => {
 
       const { token, user } = res.data;
 
-      // 🔥 Сохраняем токен
-      localStorage.setItem("token", token);
+      // ================================
+      //   📌 Remember me логика
+      // ================================
+      if (form.remember) {
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(user));
+      } else {
+        sessionStorage.setItem("token", token);
+      }
 
-      // 🔥 Сохраняем данные пользователя в Redux
+      // 🔥 Сохраняем в Redux
       dispatch(
         setUser({
           id: user.id,
@@ -67,14 +80,14 @@ export const LoginPage = () => {
         })
       );
 
-      // Очищаем форму
+      // Очистка формы
       setForm({ username: "", password: "", remember: false });
 
-      // Редирект на Dashboard
+      // Редирект
       navigate("/");
     } catch (err: any) {
       console.log(err);
-      alert(err.response?.data?.message || "Login error");
+      alert(err.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
     }
@@ -99,6 +112,7 @@ export const LoginPage = () => {
                 name="username"
                 placeholder="Enter Username"
                 value={form.username}
+                autoComplete="username"
                 onChange={handleChange}
                 className="login__input"
                 required
@@ -115,12 +129,12 @@ export const LoginPage = () => {
                 value={form.password}
                 onChange={handleChange}
                 className="login__input"
-                autoComplete="password"
+                autoComplete="current-password"
                 required
               />
             </div>
 
-            {/* Checkbox */}
+            {/* Remember me */}
             <label className="login__checkbox">
               <input
                 type="checkbox"
