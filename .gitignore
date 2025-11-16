@@ -1,24 +1,22 @@
-# Logs
-logs
-*.log
+# Node.js зависимости
+node_modules/
+
+# Файлы окружения
+.env
+.env.local
+.env.*.local
+
+# Логи
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# Сборка фронтенда (если будет)
+dist/
+build/
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# MacOS
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+
+# VS Code
+.vscode/
