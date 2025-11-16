@@ -1,14 +1,13 @@
 // src/app/App.tsx
 import { useState, useEffect } from "react";
 import { useLocation, Navigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
 import { Header } from "../widgets/Header";
 import { Sidebar } from "../widgets/Sidebar";
 import { AppRouter } from "./routes/AppRouter";
 
 import { RootState } from "./providers/store";
-import { setLoaded } from "@/entities/user/model/userSlice";
 
 import "./App.css";
 
@@ -16,42 +15,47 @@ export const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
-  const dispatch = useDispatch();
-
-  // Данные пользователя
+  // 🟦 Загружаем auth-состояние
   const { isAuth, isLoaded } = useSelector((state: RootState) => state.user);
 
-  // Проверяем auth только один раз (после загрузки localStorage)
-  useEffect(() => {
-    dispatch(setLoaded(true)); // данные загружены
-  }, []);
+  const isAuthPage =
+    location.pathname === "/login" || location.pathname === "/register";
 
-  // Пока загружается — ничего не показываем (убирает мигание)
+  // 🔹 Блокируем скролл при открытом меню (но не на auth страницах)
+  useEffect(() => {
+    if (isAuthPage) {
+      document.body.style.overflow = "auto";
+      return;
+    }
+    document.body.style.overflow = sidebarOpen ? "hidden" : "auto";
+  }, [sidebarOpen, isAuthPage]);
+
+  // ============================================
+  // 1) Показываем лоадер ПОКА НЕ ЗАГРУЖЕН REDUX
+  // ============================================
   if (!isLoaded) {
     return <div className="app__loader">Loading...</div>;
   }
 
-  // Если НЕ авторизован и не на /login или /register → отправляем на логин
-  const isAuthPage =
-    location.pathname === "/register" || location.pathname === "/login";
-
+  // ============================================
+  // 2) Если НЕ авторизован → на /login
+  // ============================================
   if (!isAuth && !isAuthPage) {
     return <Navigate to="/login" replace />;
   }
 
-  // Если auth pages — скрываем header & sidebar
+  // ============================================
+  // 3) Если авторизационные страницы — без layout
+  // ============================================
   if (isAuthPage) {
     return <AppRouter />;
   }
 
-  // === Основной layout ===
+  // ============================================
+  // 4) Основной layout (авторизован)
+  // ============================================
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
   const closeSidebar = () => setSidebarOpen(false);
-
-  useEffect(() => {
-    document.body.style.overflow =
-      sidebarOpen && !isAuthPage ? "hidden" : "auto";
-  }, [sidebarOpen, isAuthPage]);
 
   return (
     <>

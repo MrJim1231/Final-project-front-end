@@ -8,31 +8,44 @@ interface UserState {
   email: string | null;
   token: string | null;
 
-  isAuth: boolean; // пользователь авторизован
-  isLoaded: boolean; // данные загружены из localStorage
+  isAuth: boolean; // авторизован ли пользователь
+  isLoaded: boolean; // были ли загружены данные (для предотвращения миганий)
 }
 
-// ==== Загружаем из localStorage ====
-const savedUser = localStorage.getItem("user");
+// ===================
+// Загружаем пользователя из localStorage
+// ===================
+const savedUserRaw = localStorage.getItem("user");
 const savedToken = localStorage.getItem("token");
 
+let savedUser = null;
+if (savedUserRaw) {
+  try {
+    savedUser = JSON.parse(savedUserRaw);
+  } catch {}
+}
+
 const initialState: UserState = {
-  id: savedUser ? JSON.parse(savedUser).id : null,
-  username: savedUser ? JSON.parse(savedUser).username : null,
-  firstName: savedUser ? JSON.parse(savedUser).firstName : null,
-  lastName: savedUser ? JSON.parse(savedUser).lastName : null,
-  email: savedUser ? JSON.parse(savedUser).email : null,
-  token: savedToken ? savedToken : null,
+  id: savedUser?.id || null,
+  username: savedUser?.username || null,
+  firstName: savedUser?.firstName || null,
+  lastName: savedUser?.lastName || null,
+  email: savedUser?.email || null,
+
+  token: savedToken || null,
 
   isAuth: Boolean(savedToken),
-  isLoaded: false, // ⬅ сначала false
+  isLoaded: true, // 🔥 мы сразу загружены, чтобы не было мигания
 };
 
+// ===================
+// Slice
+// ===================
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    // === ЛОГИН / ПОЛУЧЕНИЕ ПРОФИЛЯ ===
+    // === УСТАНОВИТЬ ПОЛЬЗОВАТЕЛЯ ===
     setUser(
       state,
       action: PayloadAction<{
@@ -57,7 +70,6 @@ const userSlice = createSlice({
       localStorage.setItem("token", action.payload.token);
 
       return {
-        ...state,
         ...userData,
         token: action.payload.token,
         isAuth: true,
@@ -65,13 +77,13 @@ const userSlice = createSlice({
       };
     },
 
-    // === ЗАВЕРШЕНИЕ ЗАГРУЗКИ (чтобы убрать мигание) ===
+    // === УСТАНОВИТЬ ФЛАГ ЗАГРУЗКИ ===
     setLoaded(state, action: PayloadAction<boolean>) {
       state.isLoaded = action.payload;
     },
 
-    // === ВЫХОД ===
-    logout(state) {
+    // === ВЫХОД ИЗ СИСТЕМЫ ===
+    logout() {
       localStorage.removeItem("user");
       localStorage.removeItem("token");
 
