@@ -1,13 +1,19 @@
 import "./LoginPage.css";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
+// Redux
+import { useDispatch } from "react-redux";
+import { setUser } from "@/entities/user/model/userSlice";
+
+// Icons
 import { BsPersonFill, BsLockFill } from "react-icons/bs";
 
+// Images
 import backgroundPattern from "@/shared/assets/images/auth/background.png";
 import loginImage from "@/shared/assets/images/auth/login-image.png";
 
-// 🔥 Добавляем иконки
 import facebookIcon from "@/shared/assets/images/auth/facebook.png";
 import googleIcon from "@/shared/assets/images/auth/google.png";
 import xIcon from "@/shared/assets/images/auth/x-image.png";
@@ -19,6 +25,11 @@ export const LoginPage = () => {
     remember: false,
   });
 
+  const [loading, setLoading] = useState(false);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
 
@@ -28,9 +39,45 @@ export const LoginPage = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login data:", form);
+
+    try {
+      setLoading(true);
+
+      const res = await axios.post("http://localhost:5000/api/auth/login", {
+        username: form.username,
+        password: form.password,
+      });
+
+      const { token, user } = res.data;
+
+      // 🔥 Сохраняем токен
+      localStorage.setItem("token", token);
+
+      // 🔥 Сохраняем данные пользователя в Redux
+      dispatch(
+        setUser({
+          id: user.id,
+          username: user.username,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          token,
+        })
+      );
+
+      // Очищаем форму
+      setForm({ username: "", password: "", remember: false });
+
+      // Редирект на Dashboard
+      navigate("/dashboard");
+    } catch (err: any) {
+      console.log(err);
+      alert(err.response?.data?.message || "Login error");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -54,6 +101,7 @@ export const LoginPage = () => {
                 value={form.username}
                 onChange={handleChange}
                 className="login__input"
+                required
               />
             </div>
 
@@ -67,6 +115,8 @@ export const LoginPage = () => {
                 value={form.password}
                 onChange={handleChange}
                 className="login__input"
+                autoComplete="password"
+                required
               />
             </div>
 
@@ -81,11 +131,11 @@ export const LoginPage = () => {
               <span>Remember Me</span>
             </label>
 
-            <button type="submit" className="login__btn">
-              Login
+            <button type="submit" className="login__btn" disabled={loading}>
+              {loading ? "Loading..." : "Login"}
             </button>
 
-            {/* 🔥 Social Icons */}
+            {/* Social Icons */}
             <div className="login__social">
               <span>Or, Login with</span>
 
