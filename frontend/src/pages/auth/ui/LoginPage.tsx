@@ -71,7 +71,7 @@ export const LoginPage = () => {
       setForm({ username: "", password: "", remember: false });
 
       // Редирект на Dashboard
-      navigate("/dashboard");
+      navigate("/");
     } catch (err: any) {
       console.log(err);
       alert(err.response?.data?.message || "Login error");
