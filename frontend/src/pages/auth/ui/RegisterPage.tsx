@@ -69,6 +69,17 @@ export const RegisterPage = () => {
 
       alert("Registration successful!");
       console.log("Server response:", res.data);
+
+      // 🔥 ОЧИСТКА формы после успешной регистрации
+      setForm({
+        firstName: "",
+        lastName: "",
+        username: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        agree: false,
+      });
     } catch (error: any) {
       console.log(error);
       alert(error.response?.data?.message || "Registration error");
