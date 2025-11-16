@@ -16,30 +16,26 @@ import { CompletedTask } from "../../pages/completed-task";
 
 // 🔐 Auth pages
 import { RegisterPage } from "../../pages/auth/ui/RegisterPage";
+import { LoginPage } from "@/pages/auth/ui/LoginPage";
 
 export const AppRouter = () => {
   return (
     <Routes>
       {/* 🔐 Авторизация */}
       <Route path="/register" element={<RegisterPage />} />
-      {/* <Route path="/login" element={<LoginPage />} /> — добавим позже */}
-
+      <Route path="/login" element={<LoginPage />} /> — добавим позже
       {/* 🏠 Главная панель */}
       <Route path="/" element={<Dashboard />} />
-
       {/* ✅ Страницы задач */}
       <Route path="/my-task" element={<MyTask />} />
       <Route path="/vital-task" element={<VitalTask />} />
       <Route path="/completed-task" element={<CompletedTask />} />
-
       {/* 📦 Категории */}
       <Route path="/categories" element={<TaskCategories />} />
       <Route path="/categories/add" element={<AddCategory />} />
-
       {/* ⚙️ Настройки */}
       <Route path="/settings" element={<Settings />} />
       <Route path="/settings/change-password" element={<ChangePassword />} />
-
       {/* ❓ Помощь */}
       <Route path="/help" element={<Help />} />
     </Routes>

@@ -2,7 +2,7 @@ import "./RegisterPage.css";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-// ИКОНКИ — 1-в-1 как в макете!
+// ИКОНКИ — как в макете
 import {
   BsPersonPlusFill, // First Name
   BsPersonVcardFill, // Last Name
@@ -13,8 +13,8 @@ import {
 } from "react-icons/bs";
 
 // Картинки
-import backgroundPattern from "@/shared/assets/images/register/background.png";
-import personImage from "@/shared/assets/images/register/register-image.png";
+import backgroundPattern from "@/shared/assets/images/auth/background.png";
+import personImage from "@/shared/assets/images/auth/register-image.png";
 
 export const RegisterPage = () => {
   const [form, setForm] = useState({
@@ -49,26 +49,29 @@ export const RegisterPage = () => {
 
   return (
     <div
-      className="register-container"
+      className="register__container"
       style={{ backgroundImage: `url(${backgroundPattern})` }}
     >
-      <div className="register-card">
-        <div className="register-left">
+      <div className="register__card">
+        {/* LEFT SIDE */}
+        <div className="register__left">
           <img
             src={personImage}
             alt="Register Illustration"
-            className="register-img"
+            className="register__img"
           />
         </div>
 
-        <div className="register-right">
-          <h2>Sign Up</h2>
+        {/* RIGHT SIDE */}
+        <div className="register__right">
+          <h2 className="register__title">Sign Up</h2>
 
-          <form onSubmit={handleSubmit} className="register-form">
+          <form onSubmit={handleSubmit} className="register__form">
             {/* First name */}
-            <div className="input-group">
-              <BsPersonPlusFill className="input-icon" />
+            <div className="register__input-group">
+              <BsPersonPlusFill className="register__input-icon" />
               <input
+                className="register__input"
                 type="text"
                 name="firstName"
                 placeholder="Enter First Name"
@@ -78,9 +81,10 @@ export const RegisterPage = () => {
             </div>
 
             {/* Last name */}
-            <div className="input-group">
-              <BsPersonVcardFill className="input-icon" />
+            <div className="register__input-group">
+              <BsPersonVcardFill className="register__input-icon" />
               <input
+                className="register__input"
                 type="text"
                 name="lastName"
                 placeholder="Enter Last Name"
@@ -90,9 +94,10 @@ export const RegisterPage = () => {
             </div>
 
             {/* Username */}
-            <div className="input-group">
-              <BsPersonFill className="input-icon" />
+            <div className="register__input-group">
+              <BsPersonFill className="register__input-icon" />
               <input
+                className="register__input"
                 type="text"
                 name="username"
                 placeholder="Enter Username"
@@ -102,9 +107,10 @@ export const RegisterPage = () => {
             </div>
 
             {/* Email */}
-            <div className="input-group">
-              <BsEnvelopeFill className="input-icon" />
+            <div className="register__input-group">
+              <BsEnvelopeFill className="register__input-icon" />
               <input
+                className="register__input"
                 type="email"
                 name="email"
                 placeholder="Enter Email"
@@ -114,9 +120,10 @@ export const RegisterPage = () => {
             </div>
 
             {/* Password */}
-            <div className="input-group">
-              <BsLockFill className="input-icon" />
+            <div className="register__input-group">
+              <BsLockFill className="register__input-icon" />
               <input
+                className="register__input"
                 type="password"
                 name="password"
                 placeholder="Enter Password"
@@ -125,10 +132,11 @@ export const RegisterPage = () => {
               />
             </div>
 
-            {/* Confirm password */}
-            <div className="input-group">
-              <BsUnlockFill className="input-icon" />
+            {/* Confirm Password */}
+            <div className="register__input-group">
+              <BsUnlockFill className="register__input-icon" />
               <input
+                className="register__input"
                 type="password"
                 name="confirmPassword"
                 placeholder="Confirm Password"
@@ -137,7 +145,8 @@ export const RegisterPage = () => {
               />
             </div>
 
-            <label className="checkbox">
+            {/* Checkbox */}
+            <label className="register__checkbox">
               <input
                 type="checkbox"
                 name="agree"
@@ -147,11 +156,11 @@ export const RegisterPage = () => {
               <span>I agree to all terms</span>
             </label>
 
-            <button type="submit" className="register-btn">
+            <button type="submit" className="register__btn">
               Register
             </button>
 
-            <p className="register-footer">
+            <p className="register__footer">
               Already have an account? <Link to="/login">Sign In</Link>
             </p>
           </form>

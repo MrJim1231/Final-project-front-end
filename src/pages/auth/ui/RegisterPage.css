@@ -1,161 +1,156 @@
-.register-container {
+/* ================================
+   REGISTER (BEM) – FIXED PERFECT SIZE
+================================ */
+
+/* === Контейнер === */
+.register__container {
   width: 100%;
   min-height: 100vh;
 
-  /* красный фон */
   background-color: #f96f6f;
-
-  /* картинка приходит сверху из inline-styles в JSX */
   background-size: cover;
   background-repeat: no-repeat;
 
   display: flex;
   justify-content: center;
   align-items: center;
+
+  padding: 20px 0; /* 🔥 как на макете с логином */
 }
 
-.register-card {
+/* === Карточка === */
+.register__card {
   width: 85%;
   max-width: 1200px;
+
+  /* 🔥 ТОЧНОЕ значение под твой экран */
+  max-height: 680px;
+  height: 100%;
+
   background: #fff;
   border-radius: 15px;
+
   display: flex;
   padding: 40px;
   gap: 40px;
+
+  overflow: hidden; /* Убираем внешний скролл */
 }
 
-.register-left {
+/* === Левая часть === */
+.register__left {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.register-img {
+.register__img {
   width: 100%;
-  max-width: 380px;
+  max-width: 300px;
+  max-height: 600px; /* 🔥 чтобы точно не выходило */
+  object-fit: contain;
 }
 
-.register-right {
+/* === Правая часть (Форма) === */
+.register__right {
   flex: 1;
   display: flex;
   flex-direction: column;
+
+  /* 🔥 ограничиваем высоту */
+  max-height: 600px;
+  overflow-y: auto; /* если пользователь растянет шрифт — скролл только внутри формы */
+  padding-right: 10px;
 }
 
-.register-right h2 {
-  margin-bottom: 20px;
-  font-size: 28px;
+.register__title {
+  margin-bottom: 12px;
+  font-size: 26px;
   font-weight: 700;
 }
 
-.register-form {
+/* === Форма === */
+.register__form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 10px; /* приятный компактный отступ */
 }
 
-/* =============================== */
-/*   INPUT GROUP WITH ICONS        */
-/* =============================== */
-.input-group {
+/* === Input === */
+.register__input-group {
   position: relative;
   width: 100%;
 }
 
-.input-group input {
+.register__input {
   width: 100%;
-  padding: 14px 14px 14px 42px; /* место под иконку */
-  border-radius: 8px;
+  height: 42px; /* 🔥 будто по Figma */
+  padding-left: 38px;
+
+  border-radius: 6px;
   border: 1px solid #dcdcdc;
-  font-size: 15px;
-  outline: none;
-  transition: all 0.2s ease;
+  font-size: 14px;
 }
 
-.input-group input:focus {
-  border-color: #ff776b;
-  box-shadow: 0 0 0 2px rgba(255, 119, 107, 0.2);
-}
-
-/* Иконка внутри поля */
-.input-icon {
+.register__input-icon {
   position: absolute;
   top: 50%;
   left: 14px;
   transform: translateY(-50%);
   font-size: 18px;
   color: #656565;
-  pointer-events: none;
 }
 
-/* =============================== */
-/* Checkbox */
-/* =============================== */
-.checkbox {
+/* === Checkbox === */
+.register__checkbox {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 14px;
-  margin-top: 10px;
+  margin-top: 4px;
 }
 
-.checkbox input {
-  width: 16px;
-  height: 16px;
-}
+/* === Button === */
+.register__btn {
+  margin-top: 2px;
+  height: 42px;
+  width: 120px;
 
-/* =============================== */
-/* Button */
-/* =============================== */
-.register-btn {
-  padding: 12px;
-  border: none;
   background: #ff776b;
   color: #fff;
+
+  border: none;
   border-radius: 6px;
+
   cursor: pointer;
-  font-size: 16px;
-  margin-top: 5px;
-  transition: 0.2s ease;
+  font-size: 15px;
 }
 
-.register-btn:hover {
+.register__btn:hover {
   background: #ff544c;
 }
 
-/* =============================== */
-/* Footer */
-/* =============================== */
-.register-footer {
-  margin-top: 12px;
+/* === Footer === */
+.register__footer {
+  margin-top: 8px;
   font-size: 14px;
-  text-align: center;
 }
 
-.register-footer a {
-  color: #007bff;
-  text-decoration: none;
-}
-
-.register-footer a:hover {
-  text-decoration: underline;
-}
-
-/* =============================== */
-/* Адаптивность */
-/* =============================== */
+/* === Адаптив === */
 @media (max-width: 900px) {
-  .register-card {
+  .register__card {
     flex-direction: column;
-    text-align: center;
-    padding: 30px;
+    max-height: none;
+    padding: 20px;
   }
 
-  .register-left {
-    order: -1;
+  .register__img {
+    max-width: 200px;
+    max-height: 200px;
   }
 
-  .register-img {
-    max-width: 300px;
+  .register__right {
+    max-height: none;
+    overflow: visible;
   }
 }
