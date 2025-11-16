@@ -1,3 +1,4 @@
+// src/app/routes/AppRouter.tsx
 import { Routes, Route } from "react-router-dom";
 
 // 📄 Основные страницы
@@ -13,9 +14,16 @@ import { MyTask } from "../../pages/my-task";
 import { VitalTask } from "../../pages/vital-task";
 import { CompletedTask } from "../../pages/completed-task";
 
+// 🔐 Auth pages
+import { RegisterPage } from "../../pages/auth/ui/RegisterPage";
+
 export const AppRouter = () => {
   return (
     <Routes>
+      {/* 🔐 Авторизация */}
+      <Route path="/register" element={<RegisterPage />} />
+      {/* <Route path="/login" element={<LoginPage />} /> — добавим позже */}
+
       {/* 🏠 Главная панель */}
       <Route path="/" element={<Dashboard />} />
 
