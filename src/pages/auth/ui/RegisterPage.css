@@ -44,29 +44,69 @@
 
 .register-right h2 {
   margin-bottom: 20px;
+  font-size: 28px;
+  font-weight: 700;
 }
 
 .register-form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 10px;
 }
 
-.register-form input {
-  padding: 14px;
-  border-radius: 6px;
-  border: 1px solid #cfcfcf;
-  outline: none;
+/* =============================== */
+/*   INPUT GROUP WITH ICONS        */
+/* =============================== */
+.input-group {
+  position: relative;
+  width: 100%;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 14px 14px 14px 42px; /* место под иконку */
+  border-radius: 8px;
+  border: 1px solid #dcdcdc;
   font-size: 15px;
+  outline: none;
+  transition: all 0.2s ease;
 }
 
+.input-group input:focus {
+  border-color: #ff776b;
+  box-shadow: 0 0 0 2px rgba(255, 119, 107, 0.2);
+}
+
+/* Иконка внутри поля */
+.input-icon {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #656565;
+  pointer-events: none;
+}
+
+/* =============================== */
+/* Checkbox */
+/* =============================== */
 .checkbox {
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 14px;
+  margin-top: 10px;
 }
 
+.checkbox input {
+  width: 16px;
+  height: 16px;
+}
+
+/* =============================== */
+/* Button */
+/* =============================== */
 .register-btn {
   padding: 12px;
   border: none;
@@ -75,19 +115,47 @@
   border-radius: 6px;
   cursor: pointer;
   font-size: 16px;
-  transition: 0.2s;
+  margin-top: 5px;
+  transition: 0.2s ease;
 }
 
 .register-btn:hover {
   background: #ff544c;
 }
 
+/* =============================== */
+/* Footer */
+/* =============================== */
 .register-footer {
-  margin-top: 10px;
+  margin-top: 12px;
   font-size: 14px;
   text-align: center;
 }
 
 .register-footer a {
   color: #007bff;
+  text-decoration: none;
+}
+
+.register-footer a:hover {
+  text-decoration: underline;
+}
+
+/* =============================== */
+/* Адаптивность */
+/* =============================== */
+@media (max-width: 900px) {
+  .register-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 30px;
+  }
+
+  .register-left {
+    order: -1;
+  }
+
+  .register-img {
+    max-width: 300px;
+  }
 }
