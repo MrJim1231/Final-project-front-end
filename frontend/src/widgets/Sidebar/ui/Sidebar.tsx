@@ -1,4 +1,3 @@
-// src/widgets/Sidebar/ui/Sidebar.tsx
 import "./Sidebar.css";
 import avatar from "../../../shared/assets/images/avatar.png";
 import {
@@ -11,8 +10,14 @@ import {
   FiHelpCircle,
   FiLogOut,
 } from "react-icons/fi";
-import { NavLink, useLocation } from "react-router-dom";
+
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+
+// Redux
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "@/entities/user/model/userSlice";
+import { RootState } from "@/app/providers/store";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -21,8 +26,22 @@ interface SidebarProps {
 
 export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const location = useLocation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  // ✅ Автоматически закрываем сайдбар при смене маршрута (только на мобильных)
+  const user = useSelector((state: RootState) => state.user);
+
+  // 🔥 Logout Handler
+  const handleLogout = () => {
+    // удаляем токен
+    localStorage.removeItem("token");
+    // чистим Redux
+    dispatch(logout());
+    // редирект на login
+    navigate("/login");
+  };
+
+  // Автозакрытие sidebar на мобилках
   useEffect(() => {
     if (isOpen && window.innerWidth <= 992) {
       onClose();
@@ -40,10 +59,10 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             className="dashboard__sidebar-avatar"
           />
           <div className="dashboard__sidebar-user">
-            <div className="dashboard__sidebar-name">Sundar Gurung</div>
-            <div className="dashboard__sidebar-email">
-              sundargurung360@gmail.com
+            <div className="dashboard__sidebar-name">
+              {user.firstName} {user.lastName}
             </div>
+            <div className="dashboard__sidebar-email">{user.email}</div>
           </div>
         </div>
 
@@ -115,7 +134,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       </div>
 
       {/* === Кнопка выхода === */}
-      <button className="dashboard__sidebar-logout">
+      <button className="dashboard__sidebar-logout" onClick={handleLogout}>
         <FiLogOut className="dashboard__sidebar-icon" /> Logout
       </button>
     </aside>
