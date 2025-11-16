@@ -1,9 +1,14 @@
 .register-container {
   width: 100%;
   min-height: 100vh;
-  background: #f96f6f;
-  background-image: url("/pattern-bg.svg");
+
+  /* красный фон */
+  background-color: #f96f6f;
+
+  /* картинка приходит сверху из inline-styles в JSX */
   background-size: cover;
+  background-repeat: no-repeat;
+
   display: flex;
   justify-content: center;
   align-items: center;

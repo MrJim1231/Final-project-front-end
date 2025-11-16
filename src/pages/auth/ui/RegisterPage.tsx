@@ -2,6 +2,10 @@ import "./RegisterPage.css";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
+// 🔥 Импорт твоих картинок
+import backgroundPattern from "@/shared/assets/images/register/background.png";
+import personImage from "@/shared/assets/images/register/register-image.png";
+
 export const RegisterPage = () => {
   const [form, setForm] = useState({
     firstName: "",
@@ -30,17 +34,20 @@ export const RegisterPage = () => {
       return;
     }
 
-    // TODO: отправка на backend
     console.log("Register data:", form);
   };
 
   return (
-    <div className="register-container">
+    // 🔥 Inline стиль — корректно подтянет background.png из Vite
+    <div
+      className="register-container"
+      style={{ backgroundImage: `url(${backgroundPattern})` }}
+    >
       <div className="register-card">
         {/* LEFT IMAGE */}
         <div className="register-left">
           <img
-            src="/register-illustration.png"
+            src={personImage} // ← твой человек
             alt="Register Illustration"
             className="register-img"
           />
