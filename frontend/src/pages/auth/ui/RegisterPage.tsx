@@ -1,15 +1,16 @@
 import "./RegisterPage.css";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 // ИКОНКИ — как в макете
 import {
-  BsPersonPlusFill, // First Name
-  BsPersonVcardFill, // Last Name
-  BsPersonFill, // Username
-  BsEnvelopeFill, // Email
-  BsLockFill, // Password
-  BsUnlockFill, // Confirm Password
+  BsPersonPlusFill,
+  BsPersonVcardFill,
+  BsPersonFill,
+  BsEnvelopeFill,
+  BsLockFill,
+  BsUnlockFill,
 } from "react-icons/bs";
 
 // Картинки
@@ -27,16 +28,17 @@ export const RegisterPage = () => {
     agree: false,
   });
 
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
-
     setForm((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (form.password !== form.confirmPassword) {
@@ -44,7 +46,35 @@ export const RegisterPage = () => {
       return;
     }
 
-    console.log("Register data:", form);
+    if (!form.agree) {
+      alert("You must agree to the terms");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const payload = {
+        firstName: form.firstName,
+        lastName: form.lastName,
+        username: form.username,
+        email: form.email,
+        password: form.password,
+      };
+
+      const res = await axios.post(
+        "http://localhost:5000/api/auth/register",
+        payload
+      );
+
+      alert("Registration successful!");
+      console.log("Server response:", res.data);
+    } catch (error: any) {
+      console.log(error);
+      alert(error.response?.data?.message || "Registration error");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -77,6 +107,7 @@ export const RegisterPage = () => {
                 placeholder="Enter First Name"
                 value={form.firstName}
                 onChange={handleChange}
+                required
               />
             </div>
 
@@ -90,6 +121,7 @@ export const RegisterPage = () => {
                 placeholder="Enter Last Name"
                 value={form.lastName}
                 onChange={handleChange}
+                required
               />
             </div>
 
@@ -103,6 +135,7 @@ export const RegisterPage = () => {
                 placeholder="Enter Username"
                 value={form.username}
                 onChange={handleChange}
+                required
               />
             </div>
 
@@ -114,8 +147,10 @@ export const RegisterPage = () => {
                 type="email"
                 name="email"
                 placeholder="Enter Email"
+                autoComplete="email"
                 value={form.email}
                 onChange={handleChange}
+                required
               />
             </div>
 
@@ -128,7 +163,9 @@ export const RegisterPage = () => {
                 name="password"
                 placeholder="Enter Password"
                 value={form.password}
+                autoComplete="new-password"
                 onChange={handleChange}
+                required
               />
             </div>
 
@@ -141,7 +178,9 @@ export const RegisterPage = () => {
                 name="confirmPassword"
                 placeholder="Confirm Password"
                 value={form.confirmPassword}
+                autoComplete="new-password"
                 onChange={handleChange}
+                required
               />
             </div>
 
@@ -156,8 +195,8 @@ export const RegisterPage = () => {
               <span>I agree to all terms</span>
             </label>
 
-            <button type="submit" className="register__btn">
-              Register
+            <button type="submit" className="register__btn" disabled={loading}>
+              {loading ? "Loading..." : "Register"}
             </button>
 
             <p className="register__footer">
