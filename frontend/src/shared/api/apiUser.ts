@@ -1,17 +1,17 @@
-// shared/api/apiUser.ts
 import { api, setAuthToken } from "./api";
 
 export const UserAPI = {
   setToken: setAuthToken,
 
+  // Auth routes
   login: (data: { username: string; password: string }) =>
     api.post("/auth/login", data),
 
   register: (data: any) => api.post("/auth/register", data),
 
-  getProfile: () => api.get("/auth/profile"),
-
-  updateProfile: (data: any) => api.put("/auth/profile", data),
+  // Profile routes
+  getProfile: () => api.get("/profile"), // GET /api/profile
+  updateProfile: (data: any) => api.put("/profile", data), // PUT /api/profile
 
   changePassword: (params: {
     oldPassword: string;
@@ -19,7 +19,7 @@ export const UserAPI = {
     token: string;
   }) =>
     api.put(
-      "/auth/change-password",
+      "/profile/change-password", // PUT /api/profile/change-password
       { oldPassword: params.oldPassword, newPassword: params.newPassword },
       { headers: { Authorization: params.token } }
     ),

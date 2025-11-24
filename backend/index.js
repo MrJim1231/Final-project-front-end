@@ -25,13 +25,17 @@ mongoose
 // ==========================
 // Routes
 // ==========================
+const authRoutes = require("./routes/authRoutes");
+const profileRoutes = require("./routes/profileRoutes");
 
-// Auth (register, login, profile)
-app.use("/api/auth", require("./routes/authRoutes"));
+app.use("/api/auth", authRoutes);
+app.use("/api/profile", profileRoutes);
 
+// ==========================
 // Test route
+// ==========================
 app.get("/", (req, res) => {
-  res.send("Todo API is running 🚀");
+  res.send("API is running 🚀");
 });
 
 // ==========================

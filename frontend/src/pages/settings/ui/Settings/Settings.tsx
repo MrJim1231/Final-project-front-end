@@ -27,8 +27,10 @@ export const Settings = () => {
 
   // === LOAD USER INFO ON START ===
   useEffect(() => {
+    if (!token) return;
+
     const fetchUser = async () => {
-      if (!token) return;
+      setLoading(true);
       UserAPI.setToken(token);
 
       try {
@@ -41,6 +43,8 @@ export const Settings = () => {
       } catch (err) {
         console.error("Load profile error:", err);
         setError("Не вдалося завантажити дані профілю");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -74,7 +78,6 @@ export const Settings = () => {
 
     try {
       setLoading(true);
-
       const { data } = await UserAPI.updateProfile({
         firstName,
         lastName,

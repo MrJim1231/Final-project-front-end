@@ -12,10 +12,12 @@ export const ChangePassword = () => {
   const navigate = useNavigate();
   const token = useSelector((state: RootState) => state.user.token);
 
+  // === Form state ===
   const [current, setCurrent] = useState("");
   const [newPass, setNewPass] = useState("");
   const [confirm, setConfirm] = useState("");
 
+  // === Feedback state ===
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -49,7 +51,7 @@ export const ChangePassword = () => {
     try {
       setLoading(true);
 
-      // Используем централизованный API
+      // === API call ===
       await UserAPI.changePassword({
         oldPassword: current,
         newPassword: newPass,
@@ -61,6 +63,7 @@ export const ChangePassword = () => {
       setNewPass("");
       setConfirm("");
     } catch (err: any) {
+      console.error("Change password error:", err);
       setError(
         err.response?.data?.message || "Помилка сервера. Спробуйте пізніше."
       );
@@ -87,6 +90,7 @@ export const ChangePassword = () => {
         </div>
 
         <form className="settings__form" onSubmit={handleSubmit}>
+          {/* Hidden input to prevent browser autocomplete issues */}
           <input
             type="text"
             autoComplete="username"
