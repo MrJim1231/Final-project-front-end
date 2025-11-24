@@ -8,13 +8,11 @@ interface UserState {
   email: string | null;
   token: string | null;
 
-  isAuth: boolean; // авторизован ли пользователь
-  isLoaded: boolean; // были ли загружены данные (для предотвращения миганий)
+  isAuth: boolean;
+  isLoaded: boolean;
 }
 
-// ===================
-// Загружаем пользователя из localStorage
-// ===================
+// ====== INIT FROM LOCALSTORAGE ======
 const savedUserRaw = localStorage.getItem("user");
 const savedToken = localStorage.getItem("token");
 
@@ -31,21 +29,17 @@ const initialState: UserState = {
   firstName: savedUser?.firstName || null,
   lastName: savedUser?.lastName || null,
   email: savedUser?.email || null,
-
   token: savedToken || null,
-
   isAuth: Boolean(savedToken),
-  isLoaded: true, // 🔥 мы сразу загружены, чтобы не было мигания
+  isLoaded: true,
 };
 
-// ===================
-// Slice
-// ===================
+// ====== SLICE ======
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    // === УСТАНОВИТЬ ПОЛЬЗОВАТЕЛЯ ===
+    // === УСТАНОВИТЬ ПОЛЬЗОВАТЕЛЯ (ЛОГИН) ===
     setUser(
       state,
       action: PayloadAction<{
@@ -65,7 +59,6 @@ const userSlice = createSlice({
         email: action.payload.email,
       };
 
-      // Сохраняем в localStorage
       localStorage.setItem("user", JSON.stringify(userData));
       localStorage.setItem("token", action.payload.token);
 
@@ -77,12 +70,36 @@ const userSlice = createSlice({
       };
     },
 
+    // === ОБНОВИТЬ ДАННЫЕ ПОЛЬЗОВАТЕЛЯ ===
+    updateUser(
+      state,
+      action: PayloadAction<{
+        firstName?: string;
+        lastName?: string;
+        email?: string;
+        contact?: string;
+        position?: string;
+      }>
+    ) {
+      const updatedData = { ...state, ...action.payload };
+
+      // Обновляем в localStorage
+      const savedUser = localStorage.getItem("user");
+      if (savedUser) {
+        const parsedUser = JSON.parse(savedUser);
+        const newUserData = { ...parsedUser, ...action.payload };
+        localStorage.setItem("user", JSON.stringify(newUserData));
+      }
+
+      return updatedData;
+    },
+
     // === УСТАНОВИТЬ ФЛАГ ЗАГРУЗКИ ===
     setLoaded(state, action: PayloadAction<boolean>) {
       state.isLoaded = action.payload;
     },
 
-    // === ВЫХОД ИЗ СИСТЕМЫ ===
+    // === ВЫХОД ===
     logout() {
       localStorage.removeItem("user");
       localStorage.removeItem("token");
@@ -95,11 +112,12 @@ const userSlice = createSlice({
         email: null,
         token: null,
         isAuth: false,
-        isLoaded: true, // уже загружено
+        isLoaded: true,
       };
     },
   },
 });
 
-export const { setUser, logout, setLoaded } = userSlice.actions;
+// ====== EXPORTS ======
+export const { setUser, updateUser, logout, setLoaded } = userSlice.actions;
 export default userSlice.reducer;

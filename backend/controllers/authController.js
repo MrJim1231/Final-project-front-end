@@ -91,3 +91,56 @@ exports.getProfile = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+// ============================
+//   UPDATE PROFILE
+// ============================
+exports.updateProfile = async (req, res) => {
+  try {
+    const { firstName, lastName, email, contact, position } = req.body;
+
+    // Проверка email на уникальность
+    const existEmail = await User.findOne({ email, _id: { $ne: req.user.id } });
+    if (existEmail)
+      return res.status(400).json({ message: "Email already in use" });
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.id,
+      { firstName, lastName, email, contact, position },
+      { new: true }
+    ).select("-passwordHash");
+
+    res.json({
+      message: "Profile updated successfully",
+      user: updatedUser,
+    });
+  } catch (err) {
+    console.log("UPDATE PROFILE ERROR:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// ============================
+//   CHANGE PASSWORD
+// ============================
+exports.changePassword = async (req, res) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const isMatch = await bcrypt.compare(oldPassword, user.passwordHash);
+    if (!isMatch)
+      return res.status(400).json({ message: "Incorrect old password" });
+
+    const salt = await bcrypt.genSalt(10);
+    user.passwordHash = await bcrypt.hash(newPassword, salt);
+    await user.save();
+
+    res.json({ message: "Password updated successfully" });
+  } catch (err) {
+    console.log("CHANGE PASSWORD ERROR:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};

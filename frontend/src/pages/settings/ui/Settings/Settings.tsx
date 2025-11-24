@@ -2,12 +2,16 @@ import "./Settings.css";
 import userAvatar from "../../../../shared/assets/images/avatar.png";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { apiUsers } from "@/shared/api/apiUsers";
+import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/app/providers/store";
+import { updateUser } from "@/entities/user/model/userSlice";
 
 export const Settings = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const USER_ID = "1"; // ⭐ обязательный ID MockAPI
+  const token = useSelector((state: RootState) => state.user.token);
 
   // === FORM STATE ===
   const [firstName, setFirstName] = useState("");
@@ -21,11 +25,18 @@ export const Settings = () => {
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // === LOADING USER INFO AT START ===
+  // === LOAD USER INFO ON START ===
   useEffect(() => {
     const fetchUser = async () => {
+      if (!token) return;
+
       try {
-        const { data } = await apiUsers.get(`/users/${USER_ID}`);
+        const { data } = await axios.get(
+          "http://localhost:5000/api/auth/profile",
+          {
+            headers: { Authorization: token },
+          }
+        );
 
         setFirstName(data.firstName || "");
         setLastName(data.lastName || "");
@@ -33,12 +44,13 @@ export const Settings = () => {
         setContact(data.contact || "");
         setPosition(data.position || "");
       } catch (err) {
-        console.error("Load user error:", err);
+        console.error("Load profile error:", err);
+        setError("Не вдалося завантажити дані профілю");
       }
     };
 
     fetchUser();
-  }, []);
+  }, [token]);
 
   // === VALIDATION ===
   const validateEmail = (email: string) => /\S+@\S+\.\S+/.test(email);
@@ -61,14 +73,21 @@ export const Settings = () => {
     try {
       setLoading(true);
 
-      // ⭐ UPDATE (PUT)
-      await apiUsers.put(`/users/${USER_ID}`, {
-        firstName,
-        lastName,
-        email,
-        contact,
-        position,
-      });
+      const { data } = await axios.put(
+        "http://localhost:5000/api/auth/profile",
+        { firstName, lastName, email, contact, position },
+        { headers: { Authorization: token } }
+      );
+
+      dispatch(
+        updateUser({
+          firstName: data.user.firstName,
+          lastName: data.user.lastName,
+          email: data.user.email,
+          contact: data.user.contact,
+          position: data.user.position,
+        })
+      );
 
       setSuccess("Налаштування успішно оновлено!");
     } catch (err: any) {
@@ -93,7 +112,6 @@ export const Settings = () => {
         {/* === USER INFO BLOCK === */}
         <div className="settings__user">
           <img src={userAvatar} alt="User" className="settings__avatar" />
-
           <div className="settings__user-info">
             <h4 className="settings__user-name">
               {firstName || "User"} {lastName}
