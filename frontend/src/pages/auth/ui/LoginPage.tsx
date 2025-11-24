@@ -1,7 +1,6 @@
 import "./LoginPage.css";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 
 // Redux
 import { useDispatch, useSelector } from "react-redux";
@@ -14,10 +13,12 @@ import { BsPersonFill, BsLockFill } from "react-icons/bs";
 // Images
 import backgroundPattern from "@/shared/assets/images/auth/background.png";
 import loginImage from "@/shared/assets/images/auth/login-image.png";
-
 import facebookIcon from "@/shared/assets/images/auth/facebook.png";
 import googleIcon from "@/shared/assets/images/auth/google.png";
 import xIcon from "@/shared/assets/images/auth/x-image.png";
+
+// API
+import { UserAPI } from "@/shared/api/apiUser";
 
 export const LoginPage = () => {
   const [form, setForm] = useState({
@@ -32,7 +33,7 @@ export const LoginPage = () => {
 
   const { isAuth } = useSelector((state: RootState) => state.user);
 
-  // 🔥 Если пользователь уже авторизован — отправляем на главную
+  // Если пользователь уже авторизован — отправляем на главную
   useEffect(() => {
     if (isAuth) navigate("/");
   }, [isAuth]);
@@ -47,20 +48,18 @@ export const LoginPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     try {
       setLoading(true);
 
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
+      // Используем централизованный API
+      const res = await UserAPI.login({
         username: form.username,
         password: form.password,
       });
 
       const { token, user } = res.data;
 
-      // ================================
-      //   📌 Remember me логика
-      // ================================
+      // Remember me логика
       if (form.remember) {
         localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(user));
@@ -68,7 +67,7 @@ export const LoginPage = () => {
         sessionStorage.setItem("token", token);
       }
 
-      // 🔥 Сохраняем в Redux
+      // Сохраняем в Redux
       dispatch(
         setUser({
           id: user.id,
@@ -152,7 +151,6 @@ export const LoginPage = () => {
             {/* Social Icons */}
             <div className="login__social">
               <span>Or, Login with</span>
-
               <div className="login__social-icons">
                 <img src={facebookIcon} alt="facebook" />
                 <img src={googleIcon} alt="google" />

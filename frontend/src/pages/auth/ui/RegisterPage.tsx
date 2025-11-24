@@ -1,9 +1,8 @@
 import "./RegisterPage.css";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
 
-// ИКОНКИ — как в макете
+// Иконки
 import {
   BsPersonPlusFill,
   BsPersonVcardFill,
@@ -16,6 +15,9 @@ import {
 // Картинки
 import backgroundPattern from "@/shared/assets/images/auth/background.png";
 import personImage from "@/shared/assets/images/auth/register-image.png";
+
+// API
+import { UserAPI } from "@/shared/api/apiUser";
 
 export const RegisterPage = () => {
   const [form, setForm] = useState({
@@ -62,15 +64,13 @@ export const RegisterPage = () => {
         password: form.password,
       };
 
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/register",
-        payload
-      );
+      // Используем централизованный API
+      const res = await UserAPI.register(payload);
 
       alert("Registration successful!");
       console.log("Server response:", res.data);
 
-      // 🔥 ОЧИСТКА формы после успешной регистрации
+      // Очистка формы
       setForm({
         firstName: "",
         lastName: "",
@@ -94,7 +94,6 @@ export const RegisterPage = () => {
       style={{ backgroundImage: `url(${backgroundPattern})` }}
     >
       <div className="register__card">
-        {/* LEFT SIDE */}
         <div className="register__left">
           <img
             src={personImage}
@@ -103,7 +102,6 @@ export const RegisterPage = () => {
           />
         </div>
 
-        {/* RIGHT SIDE */}
         <div className="register__right">
           <h2 className="register__title">Sign Up</h2>
 
@@ -188,8 +186,8 @@ export const RegisterPage = () => {
                 type="password"
                 name="confirmPassword"
                 placeholder="Confirm Password"
-                value={form.confirmPassword}
                 autoComplete="new-password"
+                value={form.confirmPassword}
                 onChange={handleChange}
                 required
               />

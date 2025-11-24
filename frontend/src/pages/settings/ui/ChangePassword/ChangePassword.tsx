@@ -2,9 +2,11 @@ import "./ChangePassword.css";
 import userAvatar from "../../../../shared/assets/images/avatar.png";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/providers/store";
+
+// API
+import { UserAPI } from "@/shared/api/apiUser";
 
 export const ChangePassword = () => {
   const navigate = useNavigate();
@@ -47,14 +49,12 @@ export const ChangePassword = () => {
     try {
       setLoading(true);
 
-      await axios.put(
-        "http://localhost:5000/api/auth/change-password",
-        {
-          oldPassword: current,
-          newPassword: newPass,
-        },
-        { headers: { Authorization: token } }
-      );
+      // Используем централизованный API
+      await UserAPI.changePassword({
+        oldPassword: current,
+        newPassword: newPass,
+        token,
+      });
 
       setSuccess("Пароль успішно оновлено!");
       setCurrent("");

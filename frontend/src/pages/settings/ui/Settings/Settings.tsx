@@ -1,16 +1,16 @@
+// pages/settings/ui/Settings/Settings.tsx
 import "./Settings.css";
 import userAvatar from "../../../../shared/assets/images/avatar.png";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/app/providers/store";
 import { updateUser } from "@/entities/user/model/userSlice";
+import { UserAPI } from "@/shared/api/apiUser";
 
 export const Settings = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const token = useSelector((state: RootState) => state.user.token);
 
   // === FORM STATE ===
@@ -29,15 +29,10 @@ export const Settings = () => {
   useEffect(() => {
     const fetchUser = async () => {
       if (!token) return;
+      UserAPI.setToken(token);
 
       try {
-        const { data } = await axios.get(
-          "http://localhost:5000/api/auth/profile",
-          {
-            headers: { Authorization: token },
-          }
-        );
-
+        const { data } = await UserAPI.getProfile();
         setFirstName(data.firstName || "");
         setLastName(data.lastName || "");
         setEmail(data.email || "");
@@ -70,14 +65,23 @@ export const Settings = () => {
       return;
     }
 
+    if (!token) {
+      setError("Ви не авторизовані.");
+      return;
+    }
+
+    UserAPI.setToken(token);
+
     try {
       setLoading(true);
 
-      const { data } = await axios.put(
-        "http://localhost:5000/api/auth/profile",
-        { firstName, lastName, email, contact, position },
-        { headers: { Authorization: token } }
-      );
+      const { data } = await UserAPI.updateProfile({
+        firstName,
+        lastName,
+        email,
+        contact,
+        position,
+      });
 
       dispatch(
         updateUser({
