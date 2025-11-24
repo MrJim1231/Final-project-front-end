@@ -1,32 +1,22 @@
 import "./ChangePassword.css";
 import userAvatar from "../../../../shared/assets/images/avatar.png";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { apiUsers } from "@/shared/api/apiUsers";
+import { useState } from "react";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import { RootState } from "@/app/providers/store";
 
 export const ChangePassword = () => {
   const navigate = useNavigate();
-  const USER_ID = "1";
+  const token = useSelector((state: RootState) => state.user.token);
 
   const [current, setCurrent] = useState("");
   const [newPass, setNewPass] = useState("");
   const [confirm, setConfirm] = useState("");
 
-  const [realPassword, setRealPassword] = useState("");
-
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-
-  // === Load user from MockAPI ===
-  useEffect(() => {
-    const loadUser = async () => {
-      const { data } = await apiUsers.get(`/users/${USER_ID}`);
-      setRealPassword(data.password || "");
-    };
-
-    loadUser();
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,27 +39,31 @@ export const ChangePassword = () => {
       return;
     }
 
-    // === Check old password ===
-    if (current !== realPassword) {
-      setError("Поточний пароль невірний.");
+    if (!token) {
+      setError("Ви не авторизовані.");
       return;
     }
 
     try {
       setLoading(true);
 
-      // === Update password ===
-      await apiUsers.put(`/users/${USER_ID}`, {
-        password: newPass,
-      });
+      await axios.put(
+        "http://localhost:5000/api/auth/change-password",
+        {
+          oldPassword: current,
+          newPassword: newPass,
+        },
+        { headers: { Authorization: token } }
+      );
 
       setSuccess("Пароль успішно оновлено!");
       setCurrent("");
       setNewPass("");
       setConfirm("");
-      setRealPassword(newPass);
     } catch (err: any) {
-      setError("Помилка сервера. Спробуйте пізніше.");
+      setError(
+        err.response?.data?.message || "Помилка сервера. Спробуйте пізніше."
+      );
     } finally {
       setLoading(false);
     }
@@ -110,7 +104,6 @@ export const ChangePassword = () => {
               value={current}
               autoComplete="current-password"
               onChange={(e) => setCurrent(e.target.value)}
-              placeholder="Подскаска сейчас пароль 1234567"
             />
           </label>
 
