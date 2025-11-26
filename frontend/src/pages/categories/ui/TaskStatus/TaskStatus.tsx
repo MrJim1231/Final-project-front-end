@@ -21,18 +21,6 @@ export const TaskStatus = () => {
   const [editItem, setEditItem] = useState<StatusItem | null>(null);
 
   // --------------------------
-  // Универсальная обёртка для запросов
-  // --------------------------
-  const safeAction = async (action: () => Promise<void>) => {
-    try {
-      await action();
-      await loadStatuses();
-    } catch (err) {
-      console.error("Task status error:", err);
-    }
-  };
-
-  // --------------------------
   // Загрузка статусов
   // --------------------------
   const loadStatuses = useCallback(async () => {
@@ -47,6 +35,18 @@ export const TaskStatus = () => {
   useEffect(() => {
     loadStatuses();
   }, [loadStatuses]);
+
+  // --------------------------
+  // Универсальная обёртка для действий
+  // --------------------------
+  const safeAction = async (action: () => Promise<void>) => {
+    try {
+      await action();
+      await loadStatuses();
+    } catch (err) {
+      console.error("Task status error:", err);
+    }
+  };
 
   // --------------------------
   // Добавление
@@ -101,20 +101,27 @@ export const TaskStatus = () => {
         <table className="status-table__inner">
           <thead>
             <tr>
-              <th>SN</th>
-              <th>Task Status</th>
-              <th>Action</th>
+              <th className="status-table__col">SN</th>
+              <th className="status-table__col">Task Status</th>
+              <th className="status-table__col">Action</th>
             </tr>
           </thead>
 
           <tbody>
             {statuses.map((status, index) => (
               <tr key={status.id} className="status-table__row">
-                <td data-label="SN">{index + 1}</td>
+                <td className="status-table__cell" data-label="SN">
+                  {index + 1}
+                </td>
 
-                <td data-label="Task Status">{status.title}</td>
+                <td className="status-table__cell" data-label="Task Status">
+                  {status.title}
+                </td>
 
-                <td data-label="Action" className="status-table__actions">
+                <td
+                  className="status-table__cell status-table__actions"
+                  data-label="Action"
+                >
                   <button
                     className="status-btn status-btn--edit"
                     onClick={() => {
