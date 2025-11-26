@@ -1,6 +1,6 @@
 import "./TaskStatus.css";
 import { FiEdit2, FiTrash2, FiPlus } from "react-icons/fi";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { AddModal } from "../AddModal/AddModal";
 
 import {
@@ -20,55 +20,67 @@ export const TaskStatus = () => {
   const [showModal, setShowModal] = useState(false);
   const [editItem, setEditItem] = useState<StatusItem | null>(null);
 
-  // === Загружаем статусы ===
-  const loadStatuses = async () => {
+  // --------------------------
+  // Универсальная обёртка для запросов
+  // --------------------------
+  const safeAction = async (action: () => Promise<void>) => {
     try {
-      const data = await getTaskStatus(); // теперь это массив
+      await action();
+      await loadStatuses();
+    } catch (err) {
+      console.error("Task status error:", err);
+    }
+  };
+
+  // --------------------------
+  // Загрузка статусов
+  // --------------------------
+  const loadStatuses = useCallback(async () => {
+    try {
+      const data = await getTaskStatus();
       setStatuses(data);
     } catch (err) {
       console.error("Failed to load statuses:", err);
     }
-  };
+  }, []);
 
   useEffect(() => {
     loadStatuses();
-  }, []);
+  }, [loadStatuses]);
 
-  // === Добавление ===
-  const handleAddStatus = async (value: string) => {
-    try {
+  // --------------------------
+  // Добавление
+  // --------------------------
+  const handleAddStatus = (value: string) =>
+    safeAction(async () => {
       await createTaskStatus({ title: value });
-      await loadStatuses();
       setShowModal(false);
-    } catch (err) {
-      console.error("Error creating status:", err);
-    }
-  };
+    });
 
-  // === Редактирование ===
-  const handleEditStatus = async (value: string) => {
+  // --------------------------
+  // Редактирование
+  // --------------------------
+  const handleEditStatus = (value: string) => {
     if (!editItem) return;
 
-    try {
+    return safeAction(async () => {
       await updateTaskStatus(editItem.id, { title: value });
-      await loadStatuses();
       setEditItem(null);
       setShowModal(false);
-    } catch (err) {
-      console.error("Error updating status:", err);
-    }
+    });
   };
 
-  // === Удаление ===
-  const handleDelete = async (id: string) => {
-    try {
+  // --------------------------
+  // Удаление
+  // --------------------------
+  const handleDelete = (id: string) =>
+    safeAction(async () => {
       await deleteTaskStatus(id);
-      await loadStatuses();
-    } catch (err) {
-      console.error("Error deleting status:", err);
-    }
-  };
+    });
 
+  // --------------------------
+  // UI
+  // --------------------------
   return (
     <div className="status-block">
       <div className="status-block__header">
@@ -96,20 +108,13 @@ export const TaskStatus = () => {
           </thead>
 
           <tbody>
-            {statuses.map((status, i) => (
+            {statuses.map((status, index) => (
               <tr key={status.id} className="status-table__row">
-                <td className="status-table__cell" data-label="SN">
-                  {i + 1}
-                </td>
+                <td data-label="SN">{index + 1}</td>
 
-                <td className="status-table__cell" data-label="Task Status">
-                  {status.title}
-                </td>
+                <td data-label="Task Status">{status.title}</td>
 
-                <td
-                  className="status-table__cell status-table__actions"
-                  data-label="Action"
-                >
+                <td data-label="Action" className="status-table__actions">
                   <button
                     className="status-btn status-btn--edit"
                     onClick={() => {

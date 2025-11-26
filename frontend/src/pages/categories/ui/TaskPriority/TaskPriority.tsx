@@ -20,10 +20,14 @@ export const TaskPriority = () => {
   const [showModal, setShowModal] = useState(false);
   const [editItem, setEditItem] = useState<PriorityItem | null>(null);
 
-  // === Получение приоритетов ===
+  // === Загрузка всех приоритетов ===
   const loadPriorities = async () => {
-    const { data } = await getTaskPriority();
-    setPriorities(data);
+    try {
+      const list = await getTaskPriority(); // API возвращает массив
+      setPriorities(list);
+    } catch (err) {
+      console.error("Failed to load priorities:", err);
+    }
   };
 
   useEffect(() => {
@@ -32,25 +36,37 @@ export const TaskPriority = () => {
 
   // === Добавление ===
   const handleAdd = async (value: string) => {
-    await createTaskPriority({ title: value });
-    await loadPriorities();
-    setShowModal(false);
+    try {
+      await createTaskPriority({ title: value });
+      await loadPriorities();
+      setShowModal(false);
+    } catch (err) {
+      console.error("Error creating priority:", err);
+    }
   };
 
   // === Редактирование ===
   const handleEdit = async (value: string) => {
     if (!editItem) return;
 
-    await updateTaskPriority(editItem.id, { title: value });
-    await loadPriorities();
-    setEditItem(null);
-    setShowModal(false);
+    try {
+      await updateTaskPriority(editItem.id, { title: value });
+      await loadPriorities();
+      setEditItem(null);
+      setShowModal(false);
+    } catch (err) {
+      console.error("Error updating priority:", err);
+    }
   };
 
   // === Удаление ===
   const handleDelete = async (id: string) => {
-    await deleteTaskPriority(id);
-    await loadPriorities();
+    try {
+      await deleteTaskPriority(id);
+      await loadPriorities();
+    } catch (err) {
+      console.error("Error deleting priority:", err);
+    }
   };
 
   return (

@@ -1,15 +1,21 @@
-import { apiMeta } from "@/shared/api/apiMeta";
+import { api } from "./api";
 
 export const getTaskStatus = async () => {
-  const { data } = await apiMeta.get("task-status");
-  return data; // ← теперь возвращается массив статусов
+  const res = await api.get("/status");
+  return res.data; // массив
 };
 
-export const createTaskStatus = (data: { title: string }) =>
-  apiMeta.post("task-status", data);
+export const createTaskStatus = async (data: { title: string }) => {
+  const res = await api.post("/status", data);
+  return res.data;
+};
 
-export const updateTaskStatus = (id: string, data: { title: string }) =>
-  apiMeta.put(`task-status/${id}`, data);
+export const updateTaskStatus = async (id: string, data: { title: string }) => {
+  const res = await api.put(`/status/${id}`, data);
+  return res.data;
+};
 
-export const deleteTaskStatus = (id: string) =>
-  apiMeta.delete(`task-status/${id}`);
+export const deleteTaskStatus = async (id: string) => {
+  const res = await api.delete(`/status/${id}`);
+  return res.data;
+};

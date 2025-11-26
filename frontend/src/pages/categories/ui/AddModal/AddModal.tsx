@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./AddModal.css";
 
 interface AddModalProps {
@@ -9,7 +9,7 @@ interface AddModalProps {
   onSubmit: (value: string) => void;
   confirmText?: string;
   cancelText?: string;
-  initialValue?: string; // ⭐ добавили сюда
+  initialValue?: string;
 }
 
 export const AddModal: React.FC<AddModalProps> = ({
@@ -20,13 +20,18 @@ export const AddModal: React.FC<AddModalProps> = ({
   onSubmit,
   confirmText = "Create",
   cancelText = "Cancel",
-  initialValue = "", // ⭐ значение по умолчанию
+  initialValue = "",
 }) => {
-  const [value, setValue] = React.useState(initialValue); // ⭐ теперь заполняется авто
+  const [value, setValue] = useState(initialValue);
+
+  // 🔥 Обновляет input при изменении initialValue
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(value);
+    onSubmit(value.trim());
   };
 
   return (
