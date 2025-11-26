@@ -31,6 +31,7 @@ const profileRoutes = require("./routes/profileRoutes");
 // новые роуты
 const statusRoutes = require("./routes/statusRoutes");
 const priorityRoutes = require("./routes/priorityRoutes");
+const todoRoutes = require("./routes/todoRoutes");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
@@ -38,6 +39,7 @@ app.use("/api/profile", profileRoutes);
 // новые подключения
 app.use("/api/status", statusRoutes);
 app.use("/api/priority", priorityRoutes);
+app.use("/api/todos", todoRoutes);
 
 // ==========================
 // Test route
