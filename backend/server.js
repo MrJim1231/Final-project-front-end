@@ -28,8 +28,16 @@ mongoose
 const authRoutes = require("./routes/authRoutes");
 const profileRoutes = require("./routes/profileRoutes");
 
+// новые роуты
+const statusRoutes = require("./routes/statusRoutes");
+const priorityRoutes = require("./routes/priorityRoutes");
+
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
+
+// новые подключения
+app.use("/api/status", statusRoutes);
+app.use("/api/priority", priorityRoutes);
 
 // ==========================
 // Test route
