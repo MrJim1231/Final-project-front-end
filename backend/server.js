@@ -16,9 +16,15 @@ app.use(express.json());
 // ==========================
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => {
+  .then(async () => {
     console.log("MongoDB connected successfully ✅");
     console.log("DB Name:", mongoose.connection.name);
+
+    // ==========================
+    // Создание дефолтных статусов и приоритетов
+    // ==========================
+    const initDefaults = require("./initDefaults");
+    await initDefaults();
   })
   .catch((err) => console.log("MongoDB connection error ❌:", err));
 
@@ -27,16 +33,12 @@ mongoose
 // ==========================
 const authRoutes = require("./routes/authRoutes");
 const profileRoutes = require("./routes/profileRoutes");
-
-// новые роуты
 const statusRoutes = require("./routes/statusRoutes");
 const priorityRoutes = require("./routes/priorityRoutes");
 const todoRoutes = require("./routes/todoRoutes");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
-
-// новые подключения
 app.use("/api/status", statusRoutes);
 app.use("/api/priority", priorityRoutes);
 app.use("/api/todos", todoRoutes);

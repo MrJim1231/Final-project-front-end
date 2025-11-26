@@ -7,7 +7,9 @@ module.exports = {
       res.json(items);
     } catch (err) {
       console.error("TODO GET ERROR:", err);
-      res.status(500).json({ message: "Server error" });
+      res
+        .status(err.status || 500)
+        .json({ message: err.message || "Server error" });
     }
   },
 
@@ -17,7 +19,9 @@ module.exports = {
       res.json(created);
     } catch (err) {
       console.error("TODO CREATE ERROR:", err);
-      res.status(500).json({ message: "Server error" });
+      res
+        .status(err.status || 500)
+        .json({ message: err.message || "Server error" });
     }
   },
 
@@ -41,7 +45,9 @@ module.exports = {
       res.json({ success: true });
     } catch (err) {
       console.error("TODO DELETE ERROR:", err);
-      res.status(500).json({ message: "Server error" });
+      res
+        .status(err.status || 500)
+        .json({ message: err.message || "Server error" });
     }
   },
 };

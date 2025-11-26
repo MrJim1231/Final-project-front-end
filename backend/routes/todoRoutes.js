@@ -3,7 +3,6 @@ const router = express.Router();
 const todoController = require("../controllers/todoController");
 const auth = require("../middleware/auth");
 
-// защищенные маршруты
 router.get("/", auth, todoController.getAll);
 router.post("/", auth, todoController.create);
 router.put("/:id", auth, todoController.update);

@@ -2,11 +2,21 @@ const mongoose = require("mongoose");
 
 const TodoSchema = new mongoose.Schema({
   id: { type: String, unique: true, required: true },
-  userId: { type: String, required: false }, // если нужен логин
+  userId: { type: String, required: false },
   title: { type: String, required: true },
   description: { type: String, default: "" },
-  status: { type: String, default: "Not Started" },
-  priority: { type: String, default: "Low" },
+
+  status: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Status",
+    required: true,
+  },
+  priority: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Priority",
+    required: true,
+  },
+
   image: { type: String, default: "" },
   vital: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
