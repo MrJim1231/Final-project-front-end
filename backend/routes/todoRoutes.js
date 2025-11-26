@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const todoController = require("../controllers/todoController");
-const auth = require("../middleware/authMiddleware");
+const auth = require("../middleware/auth");
 
 // защищенные маршруты
 router.get("/", auth, todoController.getAll);
