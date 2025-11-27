@@ -1,6 +1,6 @@
 import "./LoginPage.css";
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 // Redux
 import { useDispatch, useSelector } from "react-redux";
@@ -32,14 +32,53 @@ export const LoginPage = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [params] = useSearchParams();
 
   const { isAuth } = useSelector((state: RootState) => state.user);
 
-  // Если уже авторизован → на главную
+  // ============================
+  // AUTO LOGIN AFTER GOOGLE
+  // ============================
+  useEffect(() => {
+    const googleToken = params.get("googleToken");
+    const userStr = params.get("user");
+
+    if (googleToken && userStr) {
+      try {
+        const user = JSON.parse(userStr);
+
+        // сохраняем токен
+        setAuthToken(googleToken);
+        localStorage.setItem("token", googleToken);
+        localStorage.setItem("user", JSON.stringify(user));
+
+        // диспатчим
+        dispatch(
+          setUser({
+            id: user._id,
+            username: user.username,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            token: googleToken,
+          })
+        );
+
+        navigate("/");
+      } catch (e) {
+        console.error("Google login parse error", e);
+      }
+    }
+  }, [params, dispatch, navigate]);
+
+  // redirect если уже авторизован
   useEffect(() => {
     if (isAuth) navigate("/");
   }, [isAuth]);
 
+  // ============================
+  // INPUT HANDLER
+  // ============================
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
 
@@ -49,13 +88,15 @@ export const LoginPage = () => {
     }));
   };
 
+  // ============================
+  // LOGIN WITH PASSWORD
+  // ============================
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
       setLoading(true);
 
-      // --- отправка запроса ---
       const res = await UserAPI.login({
         username: form.username,
         password: form.password,
@@ -63,10 +104,9 @@ export const LoginPage = () => {
 
       const { token, user } = res.data;
 
-      // --- глобально устанавливаем токен в axios ---
       setAuthToken(token);
 
-      // --- Remember Me ---
+      // remember me
       if (form.remember) {
         localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(user));
@@ -74,7 +114,6 @@ export const LoginPage = () => {
         sessionStorage.setItem("token", token);
       }
 
-      // --- Redux ---
       dispatch(
         setUser({
           id: user.id,
@@ -86,10 +125,8 @@ export const LoginPage = () => {
         })
       );
 
-      // Очистка формы
       setForm({ username: "", password: "", remember: false });
 
-      // Переход в Dashboard
       navigate("/");
     } catch (err: any) {
       console.error(err);
@@ -97,6 +134,13 @@ export const LoginPage = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // ============================
+  // GOOGLE LOGIN CLICK
+  // ============================
+  const handleGoogleLogin = () => {
+    window.location.href = "http://localhost:5000/api/auth/google";
   };
 
   return (
@@ -159,7 +203,12 @@ export const LoginPage = () => {
               <span>Or, Login with</span>
               <div className="login__social-icons">
                 <img src={facebookIcon} alt="facebook" />
-                <img src={googleIcon} alt="google" />
+                <img
+                  src={googleIcon}
+                  alt="google"
+                  style={{ cursor: "pointer" }}
+                  onClick={handleGoogleLogin}
+                />
                 <img src={xIcon} alt="x" />
               </div>
             </div>
