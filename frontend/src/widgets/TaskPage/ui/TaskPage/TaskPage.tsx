@@ -10,6 +10,7 @@ import {
   fetchTasks,
   removeTask,
   updateTaskStatus,
+  selectTask,
 } from "@/entities/task/model/tasksSlice";
 
 import { Pagination } from "@/entities/task/ui/Pagination/Pagination";
@@ -44,19 +45,19 @@ export const TaskPage = ({ type }: TaskPageProps) => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [isEditOpen, setIsEditOpen] = useState(false);
 
-  // Responsive
+  // -------- RESPONSIVE --------
   useEffect(() => {
     const fn = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener("resize", fn);
     return () => window.removeEventListener("resize", fn);
   }, []);
 
-  // Load tasks
+  // -------- LOAD TASKS --------
   useEffect(() => {
     if (tasks.length === 0) dispatch(fetchTasks());
   }, [tasks.length, dispatch]);
 
-  // Filtering & pagination
+  // -------- FILTERING / PAGINATION --------
   const filteredTasks = useFilteredTasks(
     tasks,
     selectedDate,
@@ -79,14 +80,23 @@ export const TaskPage = ({ type }: TaskPageProps) => {
     ? [...paginatedTasks, ...fallback.tasks]
     : paginatedTasks;
 
-  const selectTask = useTaskSelection(allVisibleTasks);
+  const selectTaskFn = useTaskSelection(allVisibleTasks, selected);
 
+  // -------- SELECT FIRST TASK --------
   useEffect(() => {
     if (!selected && allVisibleTasks.length > 0) {
-      selectTask(allVisibleTasks[0]);
+      selectTaskFn(allVisibleTasks[0]);
     }
-  }, [allVisibleTasks, selected, selectTask]);
+  }, [allVisibleTasks, selected, selectTaskFn]);
 
+  // -------- FIX: RESET SELECTED ON EMPTY LIST --------
+  useEffect(() => {
+    if (allVisibleTasks.length === 0) {
+      dispatch(selectTask(null));
+    }
+  }, [allVisibleTasks.length, dispatch]);
+
+  // -------- EDIT SUBMIT --------
   const handleEditSubmit = (updated: any) => {
     if (!selected) return;
     dispatch(updateTaskStatus({ id: selected.id, ...updated }));
@@ -95,12 +105,11 @@ export const TaskPage = ({ type }: TaskPageProps) => {
 
   if (loading) return <p>Loading...</p>;
 
-  // Header date
+  // -------- HEADER DATE --------
   const day = new Date(selectedDate).getDate();
   const month = new Date(selectedDate).toLocaleString("en-US", {
     month: "long",
   });
-
   const isToday =
     new Date().toISOString().split("T")[0] === selectedDate ? "· Today" : "";
 
@@ -119,7 +128,7 @@ export const TaskPage = ({ type }: TaskPageProps) => {
   return (
     <section className={`task-page task-page--${type}`}>
       <div className="task-page__content">
-        {/* LEFT */}
+        {/* LEFT SIDE */}
         <div className="task-page__left">
           <div className="task-list">
             {/* HEADER */}
@@ -147,14 +156,14 @@ export const TaskPage = ({ type }: TaskPageProps) => {
                   className={`task-list__item ${
                     selected?.id === task.id ? "active" : ""
                   }`}
-                  onClick={() => selectTask(task)}
+                  onClick={() => selectTaskFn(task)}
                 >
                   <TaskCard
                     {...task}
                     date={new Date(task.createdAt).toLocaleDateString()}
                     type={type === "my" ? "default" : type}
-                    status={task.status} // ← теперь это string
-                    priority={task.priority} // ← теперь это string
+                    status={task.status}
+                    priority={task.priority}
                   />
                 </div>
               ))
@@ -176,7 +185,7 @@ export const TaskPage = ({ type }: TaskPageProps) => {
                   <div
                     key={task.id}
                     className="task-list__item"
-                    onClick={() => selectTask(task)}
+                    onClick={() => selectTaskFn(task)}
                   >
                     <TaskCard
                       {...task}
@@ -198,7 +207,7 @@ export const TaskPage = ({ type }: TaskPageProps) => {
           </div>
         </div>
 
-        {/* RIGHT PANEL */}
+        {/* RIGHT SIDE */}
         {!isMobile && selected && (
           <div className="task-page__right">
             <TaskDetails

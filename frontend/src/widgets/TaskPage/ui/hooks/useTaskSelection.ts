@@ -1,26 +1,46 @@
 import { useEffect, useRef, useCallback } from "react";
 import { useDispatch } from "react-redux";
-import { selectTask, selectFirstTask } from "@/entities/task/model/tasksSlice";
+import {
+  selectTask,
+  selectFirstTask,
+  clearSelected,
+} from "@/entities/task/model/tasksSlice";
 import type { Todo } from "@/entities/task/api/todos";
 
-export const useTaskSelection = (visibleTasks: Todo[]) => {
+export const useTaskSelection = (
+  visibleTasks: Todo[],
+  selected: Todo | null
+) => {
   const dispatch = useDispatch();
-
-  // флаг: автоматический выбор уже был выполнен
   const autoSelected = useRef(false);
 
-  // === авто-выбор (делается только 1 раз при каждом обновлении списка)
   useEffect(() => {
-    if (!autoSelected.current && visibleTasks.length > 0) {
+    // --- 1. Список пуст — очищаем правую панель ---
+    if (visibleTasks.length === 0) {
+      dispatch(clearSelected());
+      autoSelected.current = false;
+      return;
+    }
+
+    // --- 2. Если выбранная задача исчезла — выбираем первую ---
+    if (selected && !visibleTasks.some((t) => t.id === selected.id)) {
       dispatch(selectFirstTask(visibleTasks));
       autoSelected.current = true;
+      return;
     }
-  }, [visibleTasks, dispatch]);
 
-  // === выбор при клике
+    // --- 3. Если ничего не выбрано — выбираем первую ---
+    if (!selected && !autoSelected.current) {
+      dispatch(selectFirstTask(visibleTasks));
+      autoSelected.current = true;
+      return;
+    }
+  }, [visibleTasks, selected, dispatch]);
+
+  // --- ручной выбор ---
   return useCallback(
     (task: Todo) => {
-      autoSelected.current = true; // чтобы авто-выбор не перебил ручной
+      autoSelected.current = true;
       dispatch(selectTask(task));
     },
     [dispatch]

@@ -7,41 +7,43 @@ export const useFilteredTasks = (
   type: "my" | "vital" | "completed",
   searchQuery: string
 ) => {
-  // 🔍 Проверка поиска
-  const matchSearch = (t: Todo) => {
-    if (!searchQuery.trim()) return true;
-    const q = searchQuery.toLowerCase();
-    return (
-      t.title.toLowerCase().includes(q) ||
-      t.description.toLowerCase().includes(q)
-    );
-  };
-
   return useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+
     return tasks.filter((t) => {
-      const matchesSearch = matchSearch(t);
+      const createdDate = new Date(t.createdAt).toISOString().split("T")[0];
 
-      // 🔎 Если есть поиск — игнорируем дату и фильтруем сразу по категориям
-      if (searchQuery.trim()) {
-        switch (type) {
-          case "my":
-            return matchesSearch && !t.vital && t.status !== "Completed";
-          case "vital":
-            return matchesSearch && t.vital === true;
-          case "completed":
-            return matchesSearch && t.status === "Completed";
-          default:
-            return matchesSearch;
-        }
-      }
-
-      // 📅 Фильтрация по дате (если поиск пустой)
-      const taskDate = new Date(t.createdAt).toISOString().split("T")[0];
-      if (taskDate !== selectedDate) return false;
+      // ------------------------------
+      // 🔍 MATCH SEARCH
+      // ------------------------------
+      const matchesSearch =
+        !query ||
+        t.title.toLowerCase().includes(query) ||
+        t.description.toLowerCase().includes(query);
 
       if (!matchesSearch) return false;
 
-      // 🔄 Фильтрация по типу страницы
+      // ------------------------------
+      // 🔍 Если есть search — пропускаем фильтр по дате
+      // ------------------------------
+      if (query) {
+        if (type === "my") return !t.vital && t.status !== "Completed";
+
+        if (type === "vital") return t.vital === true;
+
+        if (type === "completed") return t.status === "Completed";
+
+        return true;
+      }
+
+      // ------------------------------
+      // 📅 Фильтр по дате
+      // ------------------------------
+      if (createdDate !== selectedDate) return false;
+
+      // ------------------------------
+      // 🔥 Фильтр по type
+      // ------------------------------
       switch (type) {
         case "my":
           return !t.vital && t.status !== "Completed";

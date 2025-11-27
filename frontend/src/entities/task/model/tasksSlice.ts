@@ -94,22 +94,29 @@ const tasksSlice = createSlice({
     selectTask: (state, action: PayloadAction<Todo | null>) => {
       state.selected = action.payload;
     },
+
+    // 🟢 Добавлено: очистка выбранной задачи
     clearSelected: (state) => {
       state.selected = null;
     },
+
     setSelectedDate: (state, action: PayloadAction<string>) => {
       state.selectedDate = action.payload;
     },
+
     setSearchQuery: (state, action: PayloadAction<string>) => {
       state.searchQuery = action.payload;
     },
+
     clearError: (state) => {
       state.error = null;
     },
+
     selectFirstTask: (state, action: PayloadAction<Todo[]>) => {
       state.selected = action.payload[0] ?? null;
     },
   },
+
   extraReducers: (builder) => {
     builder
       // fetch
@@ -137,6 +144,8 @@ const tasksSlice = createSlice({
       // remove
       .addCase(removeTask.fulfilled, (state, action) => {
         state.items = state.items.filter((t) => t.id !== action.payload);
+
+        // 🟡 Если удалили выбранную карточку → выбираем новую
         if (state.selected?.id === action.payload) {
           state.selected = state.items[0] || null;
         }
@@ -149,9 +158,14 @@ const tasksSlice = createSlice({
       .addCase(updateTaskStatus.fulfilled, (state, action) => {
         const updated = action.payload;
         const index = state.items.findIndex((t) => t.id === updated.id);
+
         if (index !== -1) {
           state.items[index] = updated;
-          if (state.selected?.id === updated.id) state.selected = updated;
+
+          // 🟢 Если обновили выбранную задачу → обновляем selected
+          if (state.selected?.id === updated.id) {
+            state.selected = updated;
+          }
         }
       })
       .addCase(updateTaskStatus.rejected, (state, action) => {
