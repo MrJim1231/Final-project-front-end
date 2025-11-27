@@ -1,5 +1,6 @@
 import "./Sidebar.css";
-import avatar from "../../../shared/assets/images/avatar.png";
+import defaultAvatar from "../../../shared/assets/images/avatar.png";
+
 import {
   FiGrid,
   FiZap,
@@ -31,33 +32,34 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
   const user = useSelector((state: RootState) => state.user);
 
-  // 🔥 Logout Handler
+  // 🔥 LOGOUT
   const handleLogout = () => {
-    // удаляем токен
     localStorage.removeItem("token");
-    // чистим Redux
     dispatch(logout());
-    // редирект на login
     navigate("/login");
   };
 
-  // Автозакрытие sidebar на мобилках
+  // Закрытие при навигации на мобилках
   useEffect(() => {
     if (isOpen && window.innerWidth <= 992) {
       onClose();
     }
   }, [location.pathname]);
 
+  // === Выбираем аватар ===
+  const avatarSrc = user.avatar ? user.avatar : defaultAvatar;
+
   return (
     <aside className={`dashboard__sidebar ${isOpen ? "open" : ""}`}>
-      {/* === Верхняя часть === */}
       <div className="dashboard__sidebar-top">
         <div className="dashboard__sidebar-profile">
+          {/* === AVATAR === */}
           <img
-            src={avatar}
+            src={avatarSrc}
             alt="User Avatar"
             className="dashboard__sidebar-avatar"
           />
+
           <div className="dashboard__sidebar-user">
             <div className="dashboard__sidebar-name">
               {user.firstName} {user.lastName}
@@ -66,7 +68,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           </div>
         </div>
 
-        {/* === Навигация === */}
+        {/* === NAVIGATION === */}
         <nav className="dashboard__sidebar-nav">
           <NavLink
             to="/"
@@ -133,7 +135,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         </nav>
       </div>
 
-      {/* === Кнопка выхода === */}
+      {/* === LOGOUT === */}
       <button className="dashboard__sidebar-logout" onClick={handleLogout}>
         <FiLogOut className="dashboard__sidebar-icon" /> Logout
       </button>

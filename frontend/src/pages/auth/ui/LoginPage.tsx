@@ -43,35 +43,42 @@ export const LoginPage = () => {
     const googleToken = params.get("googleToken");
     const userStr = params.get("user");
 
+    console.log("🔵 [GOOGLE] raw token:", googleToken);
+    console.log("🔵 [GOOGLE] raw user string:", userStr);
+
     if (googleToken && userStr) {
       try {
         const user = JSON.parse(userStr);
 
-        // сохраняем токен
+        console.log("🟣 [GOOGLE] parsed user:", user);
+        console.log("🟣 [GOOGLE] user avatar:", user.avatar);
+
+        // Сохраняем токен
         setAuthToken(googleToken);
         localStorage.setItem("token", googleToken);
         localStorage.setItem("user", JSON.stringify(user));
 
-        // диспатчим
+        // Диспатчим пользователя
         dispatch(
           setUser({
-            id: user._id,
+            id: user.id,
             username: user.username,
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
+            avatar: user.avatar || "", // ВАЖНО!
             token: googleToken,
           })
         );
 
         navigate("/");
       } catch (e) {
-        console.error("Google login parse error", e);
+        console.error("Google login parse error:", e);
       }
     }
   }, [params, dispatch, navigate]);
 
-  // redirect если уже авторизован
+  // redirect если уже вошёл
   useEffect(() => {
     if (isAuth) navigate("/");
   }, [isAuth]);
@@ -121,6 +128,7 @@ export const LoginPage = () => {
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
+          avatar: user.avatar || "",
           token,
         })
       );
@@ -140,6 +148,7 @@ export const LoginPage = () => {
   // GOOGLE LOGIN CLICK
   // ============================
   const handleGoogleLogin = () => {
+    console.log("🟢 Redirect to Google login…");
     window.location.href = "http://localhost:5000/api/auth/google";
   };
 
@@ -203,17 +212,18 @@ export const LoginPage = () => {
               <span>Or, Login with</span>
               <div className="login__social-icons">
                 <img src={facebookIcon} alt="facebook" />
+
                 <img
                   src={googleIcon}
                   alt="google"
                   style={{ cursor: "pointer" }}
                   onClick={handleGoogleLogin}
                 />
+
                 <img src={xIcon} alt="x" />
               </div>
             </div>
 
-            {/* Footer */}
             <p className="login__footer">
               Don’t have an account? <Link to="/register">Create One</Link>
             </p>
