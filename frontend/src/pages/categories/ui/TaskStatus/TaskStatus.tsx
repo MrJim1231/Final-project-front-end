@@ -11,7 +11,7 @@ import {
 } from "@/shared/api/statusApi";
 
 interface StatusItem {
-  id: string;
+  _id: string; // <— обновили тут
   title: string;
 }
 
@@ -37,7 +37,7 @@ export const TaskStatus = () => {
   }, [loadStatuses]);
 
   // --------------------------
-  // Универсальная обёртка для действий
+  // Универсальная обертка для действий
   // --------------------------
   const safeAction = async (action: () => Promise<void>) => {
     try {
@@ -64,7 +64,7 @@ export const TaskStatus = () => {
     if (!editItem) return;
 
     return safeAction(async () => {
-      await updateTaskStatus(editItem.id, { title: value });
+      await updateTaskStatus(editItem._id, { title: value }); // <— заменили id на _id
       setEditItem(null);
       setShowModal(false);
     });
@@ -109,7 +109,7 @@ export const TaskStatus = () => {
 
           <tbody>
             {statuses.map((status, index) => (
-              <tr key={status.id} className="status-table__row">
+              <tr key={status._id} className="status-table__row">
                 <td className="status-table__cell" data-label="SN">
                   {index + 1}
                 </td>
@@ -134,7 +134,7 @@ export const TaskStatus = () => {
 
                   <button
                     className="status-btn status-btn--delete"
-                    onClick={() => handleDelete(status.id)}
+                    onClick={() => handleDelete(status._id)}
                   >
                     <FiTrash2 /> Delete
                   </button>

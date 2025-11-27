@@ -11,7 +11,7 @@ import {
 } from "@/shared/api/priorityApi";
 
 interface PriorityItem {
-  id: string;
+  _id: string; // <— изменено
   title: string;
 }
 
@@ -20,10 +20,10 @@ export const TaskPriority = () => {
   const [showModal, setShowModal] = useState(false);
   const [editItem, setEditItem] = useState<PriorityItem | null>(null);
 
-  // === Загрузка всех приоритетов ===
+  // === Загрузка ===
   const loadPriorities = async () => {
     try {
-      const list = await getTaskPriority(); // API возвращает массив
+      const list = await getTaskPriority();
       setPriorities(list);
     } catch (err) {
       console.error("Failed to load priorities:", err);
@@ -50,7 +50,7 @@ export const TaskPriority = () => {
     if (!editItem) return;
 
     try {
-      await updateTaskPriority(editItem.id, { title: value });
+      await updateTaskPriority(editItem._id, { title: value }); // <— заменено
       await loadPriorities();
       setEditItem(null);
       setShowModal(false);
@@ -60,9 +60,9 @@ export const TaskPriority = () => {
   };
 
   // === Удаление ===
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (_id: string) => {
     try {
-      await deleteTaskPriority(id);
+      await deleteTaskPriority(_id); // <— заменено
       await loadPriorities();
     } catch (err) {
       console.error("Error deleting priority:", err);
@@ -97,7 +97,7 @@ export const TaskPriority = () => {
 
           <tbody>
             {priorities.map((priority, i) => (
-              <tr key={priority.id} className="priority-table__row">
+              <tr key={priority._id} className="priority-table__row">
                 <td className="priority-table__cell" data-label="SN">
                   {i + 1}
                 </td>
@@ -122,7 +122,7 @@ export const TaskPriority = () => {
 
                   <button
                     className="priority-btn priority-btn--delete"
-                    onClick={() => handleDelete(priority.id)}
+                    onClick={() => handleDelete(priority._id)}
                   >
                     <FiTrash2 /> Delete
                   </button>

@@ -1,5 +1,4 @@
 const Status = require("../models/Status");
-const { v4: uuid } = require("uuid");
 
 module.exports = {
   async getAll() {
@@ -7,17 +6,14 @@ module.exports = {
   },
 
   async create(title) {
-    return await Status.create({
-      id: uuid(),
-      title,
-    });
+    return await Status.create({ title });
   },
 
   async update(id, title) {
-    return await Status.findOneAndUpdate({ id }, { title }, { new: true });
+    return await Status.findByIdAndUpdate(id, { title }, { new: true });
   },
 
   async remove(id) {
-    return await Status.findOneAndDelete({ id });
+    return await Status.findByIdAndDelete(id);
   },
 };

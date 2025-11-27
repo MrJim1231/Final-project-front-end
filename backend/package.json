@@ -21,6 +21,7 @@
     "uuid": "^13.0.0"
   },
   "devDependencies": {
+    "baseline-browser-mapping": "^2.8.31",
     "nodemon": "^3.1.11"
   }
 }

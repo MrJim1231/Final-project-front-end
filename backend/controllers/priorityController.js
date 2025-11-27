@@ -2,27 +2,43 @@ const priorityService = require("../services/priorityService");
 
 module.exports = {
   async getAll(req, res) {
-    const items = await priorityService.getAll();
-    res.json(items);
+    try {
+      const items = await priorityService.getAll();
+      res.json(items);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch priorities" });
+    }
   },
 
   async create(req, res) {
-    const { title } = req.body;
-    const created = await priorityService.create(title);
-    res.json(created);
+    try {
+      const { title } = req.body;
+      const created = await priorityService.create(title);
+      res.json(created);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to create priority" });
+    }
   },
 
   async update(req, res) {
-    const { id } = req.params;
-    const { title } = req.body;
+    try {
+      const { id } = req.params;
+      const { title } = req.body;
 
-    const updated = await priorityService.update(id, title);
-    res.json(updated);
+      const updated = await priorityService.update(id, title);
+      res.json(updated);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update priority" });
+    }
   },
 
   async remove(req, res) {
-    const { id } = req.params;
-    await priorityService.remove(id);
-    res.json({ success: true });
+    try {
+      const { id } = req.params;
+      await priorityService.remove(id);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to remove priority" });
+    }
   },
 };

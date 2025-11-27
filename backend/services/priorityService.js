@@ -1,5 +1,4 @@
 const Priority = require("../models/Priority");
-const { v4: uuid } = require("uuid");
 
 module.exports = {
   async getAll() {
@@ -7,17 +6,14 @@ module.exports = {
   },
 
   async create(title) {
-    return await Priority.create({
-      id: uuid(),
-      title,
-    });
+    return await Priority.create({ title });
   },
 
   async update(id, title) {
-    return await Priority.findOneAndUpdate({ id }, { title }, { new: true });
+    return await Priority.findByIdAndUpdate(id, { title }, { new: true });
   },
 
   async remove(id) {
-    return await Priority.findOneAndDelete({ id });
+    return await Priority.findByIdAndDelete(id);
   },
 };
