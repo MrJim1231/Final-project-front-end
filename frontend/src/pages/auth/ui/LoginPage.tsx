@@ -43,22 +43,14 @@ export const LoginPage = () => {
     const googleToken = params.get("googleToken");
     const userStr = params.get("user");
 
-    console.log("🔵 [GOOGLE] raw token:", googleToken);
-    console.log("🔵 [GOOGLE] raw user string:", userStr);
-
     if (googleToken && userStr) {
       try {
         const user = JSON.parse(userStr);
 
-        console.log("🟣 [GOOGLE] parsed user:", user);
-        console.log("🟣 [GOOGLE] user avatar:", user.avatar);
-
-        // Сохраняем токен
         setAuthToken(googleToken);
         localStorage.setItem("token", googleToken);
         localStorage.setItem("user", JSON.stringify(user));
 
-        // Диспатчим пользователя
         dispatch(
           setUser({
             id: user.id,
@@ -66,15 +58,13 @@ export const LoginPage = () => {
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
-            avatar: user.avatar || "", // ВАЖНО!
+            avatar: user.avatar || "",
             token: googleToken,
           })
         );
 
         navigate("/");
-      } catch (e) {
-        console.error("Google login parse error:", e);
-      }
+      } catch {}
     }
   }, [params, dispatch, navigate]);
 
@@ -113,7 +103,6 @@ export const LoginPage = () => {
 
       setAuthToken(token);
 
-      // remember me
       if (form.remember) {
         localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(user));
@@ -137,7 +126,6 @@ export const LoginPage = () => {
 
       navigate("/");
     } catch (err: any) {
-      console.error(err);
       alert(err.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
@@ -148,7 +136,6 @@ export const LoginPage = () => {
   // GOOGLE LOGIN CLICK
   // ============================
   const handleGoogleLogin = () => {
-    console.log("🟢 Redirect to Google login…");
     window.location.href = "http://localhost:5000/api/auth/google";
   };
 
