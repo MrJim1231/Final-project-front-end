@@ -1,6 +1,6 @@
 // pages/settings/ui/Settings/Settings.tsx
 import "./Settings.css";
-import userAvatar from "../../../../shared/assets/images/avatar.png";
+import defaultAvatar from "../../../../shared/assets/images/avatar.png"; // ← ИСПРАВЛЕНО
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,7 +11,10 @@ import { UserAPI } from "@/shared/api/apiUser";
 export const Settings = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const token = useSelector((state: RootState) => state.user.token);
+
+  // берем ПОЛЬЗОВАТЕЛЯ из redux, чтобы получить avatar
+  const user = useSelector((state: RootState) => state.user);
+  const token = user.token;
 
   // === FORM STATE ===
   const [firstName, setFirstName] = useState("");
@@ -106,6 +109,9 @@ export const Settings = () => {
     }
   };
 
+  // === АВАТАР Пользователя ===
+  const avatarSrc = user.avatar ? user.avatar : defaultAvatar;
+
   return (
     <section className="settings">
       <div className="settings__header">
@@ -118,14 +124,14 @@ export const Settings = () => {
       <div className="settings__content">
         {/* === USER INFO BLOCK === */}
         <div className="settings__user">
-          <img src={userAvatar} alt="User" className="settings__avatar" />
+          <img src={avatarSrc} alt="User" className="settings__avatar" />{" "}
+          {/* ← ИСПРАВЛЕНО */}
           <div className="settings__user-info">
             <h4 className="settings__user-name">
-              {firstName || "User"} {lastName}
+              {firstName || user.firstName || "User"}{" "}
+              {lastName || user.lastName}
             </h4>
-            <p className="settings__user-email">
-              {email || "example@gmail.com"}
-            </p>
+            <p className="settings__user-email">{email || user.email}</p>
           </div>
         </div>
 

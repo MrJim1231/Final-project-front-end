@@ -1,5 +1,6 @@
+// pages/settings/ui/ChangePassword/ChangePassword.tsx
 import "./ChangePassword.css";
-import userAvatar from "../../../../shared/assets/images/avatar.png";
+import defaultAvatar from "../../../../shared/assets/images/avatar.png";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useSelector } from "react-redux";
@@ -10,14 +11,16 @@ import { UserAPI } from "@/shared/api/apiUser";
 
 export const ChangePassword = () => {
   const navigate = useNavigate();
-  const token = useSelector((state: RootState) => state.user.token);
+
+  const user = useSelector((state: RootState) => state.user);
+  const token = user.token;
 
   // === Form state ===
   const [current, setCurrent] = useState("");
   const [newPass, setNewPass] = useState("");
   const [confirm, setConfirm] = useState("");
 
-  // === Feedback state ===
+  // === Feedback ===
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -51,11 +54,12 @@ export const ChangePassword = () => {
     try {
       setLoading(true);
 
-      // === API call ===
+      // ⛔ token НЕ передаём — он уже в Authorization через UserAPI.setToken()
+      UserAPI.setToken(token);
+
       await UserAPI.changePassword({
         oldPassword: current,
         newPassword: newPass,
-        token,
       });
 
       setSuccess("Пароль успішно оновлено!");
@@ -72,6 +76,9 @@ export const ChangePassword = () => {
     }
   };
 
+  // === AVATAR (Google / local) ===
+  const avatarSrc = user.avatar ? user.avatar : defaultAvatar;
+
   return (
     <section className="settings">
       <div className="settings__header">
@@ -83,14 +90,17 @@ export const ChangePassword = () => {
 
       <div className="settings__content">
         <div className="settings__user">
-          <img src={userAvatar} alt="User" className="settings__avatar" />
+          <img src={avatarSrc} alt="User" className="settings__avatar" />
           <div className="settings__user-info">
-            <h4 className="settings__user-name">User</h4>
+            <h4 className="settings__user-name">
+              {user.firstName} {user.lastName}
+            </h4>
+            <p className="settings__user-email">{user.email}</p>
           </div>
         </div>
 
         <form className="settings__form" onSubmit={handleSubmit}>
-          {/* Hidden input to prevent browser autocomplete issues */}
+          {/* Anti-autocomplete hack */}
           <input
             type="text"
             autoComplete="username"
