@@ -7,7 +7,13 @@ interface Props {
   completedAt?: string | null;
 }
 
-// Определяем CSS-класс цвета статуса
+// Цвета приоритета
+const priorityColors: Record<string, string> = {
+  High: "#ff3b30", // красный
+  Medium: "#0a84ff", // синий
+  Low: "#34c759", // зелёный
+};
+
 const getStatusClass = (status: string) => {
   switch (status) {
     case "Not Started":
@@ -17,7 +23,7 @@ const getStatusClass = (status: string) => {
     case "Completed":
       return "status--green";
     default:
-      return ""; // кастомный статус — без цвета
+      return "";
   }
 };
 
@@ -27,12 +33,18 @@ export const TaskCardDetails = ({
   date,
   completedAt,
 }: Props) => {
+  // цвет приоритета
+  const priorityColor = priority ? priorityColors[priority] : undefined;
+
   return (
     <div className="task-card__bottom">
       {/* PRIORITY */}
       {status !== "Completed" && priority && (
-        <span className="task-card__priority">
-          Priority: <span>{priority}</span>
+        <span
+          className="task-card__priority"
+          style={{ color: priorityColor, fontWeight: 600 }}
+        >
+          Priority: {priority}
         </span>
       )}
 
