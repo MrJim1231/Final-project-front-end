@@ -8,6 +8,7 @@ interface UserState {
   lastName: string | null;
   email: string | null;
   avatar: string | null;
+  googleId: string | null; // <<< ДОБАВЛЕНО
   token: string | null;
 
   isAuth: boolean;
@@ -33,6 +34,7 @@ const initialState: UserState = {
   lastName: savedUser?.lastName || null,
   email: savedUser?.email || null,
   avatar: savedUser?.avatar || null,
+  googleId: savedUser?.googleId || null, // <<< ДОБАВЛЕНО
 
   token: savedToken || null,
   isAuth: Boolean(savedToken),
@@ -55,6 +57,7 @@ const userSlice = createSlice({
         lastName: string;
         email: string;
         avatar?: string | null;
+        googleId?: string | null; // <<< ДОБАВЛЕНО
         token: string;
       }>
     ) {
@@ -65,6 +68,7 @@ const userSlice = createSlice({
         lastName: action.payload.lastName,
         email: action.payload.email,
         avatar: action.payload.avatar || null,
+        googleId: action.payload.googleId || null, // <<< ДОБАВЛЕНО
       };
 
       // Save LS
@@ -125,6 +129,7 @@ const userSlice = createSlice({
         lastName: null,
         email: null,
         avatar: null,
+        googleId: null, // <<< ОБНУЛЯЕМ!
         token: null,
         isAuth: false,
         isLoaded: true,

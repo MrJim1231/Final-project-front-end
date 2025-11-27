@@ -1,6 +1,6 @@
 // pages/settings/ui/Settings/Settings.tsx
 import "./Settings.css";
-import defaultAvatar from "../../../../shared/assets/images/avatar.png"; // ← ИСПРАВЛЕНО
+import defaultAvatar from "../../../../shared/assets/images/avatar.png";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,7 +12,6 @@ export const Settings = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // берем ПОЛЬЗОВАТЕЛЯ из redux, чтобы получить avatar
   const user = useSelector((state: RootState) => state.user);
   const token = user.token;
 
@@ -109,8 +108,11 @@ export const Settings = () => {
     }
   };
 
-  // === АВАТАР Пользователя ===
+  // === AVATAR ===
   const avatarSrc = user.avatar ? user.avatar : defaultAvatar;
+
+  // === Google account detection ===
+  const isGoogleUser = Boolean((user as any).googleId);
 
   return (
     <section className="settings">
@@ -122,10 +124,10 @@ export const Settings = () => {
       </div>
 
       <div className="settings__content">
-        {/* === USER INFO BLOCK === */}
+        {/* USER INFO */}
         <div className="settings__user">
-          <img src={avatarSrc} alt="User" className="settings__avatar" />{" "}
-          {/* ← ИСПРАВЛЕНО */}
+          <img src={avatarSrc} alt="User" className="settings__avatar" />
+
           <div className="settings__user-info">
             <h4 className="settings__user-name">
               {firstName || user.firstName || "User"}{" "}
@@ -135,7 +137,7 @@ export const Settings = () => {
           </div>
         </div>
 
-        {/* === FORM === */}
+        {/* FORM */}
         <form className="settings__form" onSubmit={handleSubmit}>
           {error && <p className="settings__error">{error}</p>}
           {success && <p className="settings__success">{success}</p>}
@@ -199,10 +201,19 @@ export const Settings = () => {
               {loading ? "Saving..." : "Update Info"}
             </button>
 
+            {/* DISABLED FOR GOOGLE USERS */}
             <button
               type="button"
-              className="settings__btn settings__btn--password"
-              onClick={() => navigate("/settings/change-password")}
+              className={`settings__btn settings__btn--password ${
+                isGoogleUser ? "settings__btn--disabled" : ""
+              }`}
+              disabled={isGoogleUser}
+              onClick={() =>
+                !isGoogleUser && navigate("/settings/change-password")
+              }
+              title={
+                isGoogleUser ? "Google accounts cannot change password." : ""
+              }
             >
               Change Password
             </button>

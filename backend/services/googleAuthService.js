@@ -11,10 +11,7 @@ class GoogleAuthService {
       JWT_SECRET,
     } = process.env;
 
-    console.log("=== 🔵 GoogleAuthService START ===");
-    console.log("📌 Received code:", code);
-
-    // 1. Обмен code → access_token
+    // === 1. Exchange code → access_token
     const tokenRes = await axios.post("https://oauth2.googleapis.com/token", {
       code,
       client_id: GOOGLE_CLIENT_ID,
@@ -23,103 +20,86 @@ class GoogleAuthService {
       grant_type: "authorization_code",
     });
 
-    console.log("📌 Google token response:", tokenRes.data);
-
     if (!tokenRes.data.access_token) {
       throw { status: 400, message: "Failed to get Google access token" };
     }
 
     const accessToken = tokenRes.data.access_token;
 
-    // 2. Получение профиля Google
+    // === 2. Get Google profile
     const userRes = await axios.get(
       "https://www.googleapis.com/oauth2/v2/userinfo",
-      {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      }
+      { headers: { Authorization: `Bearer ${accessToken}` } }
     );
 
-    const googleUser = userRes.data;
+    const google = userRes.data;
 
-    console.log("📌 Google profile:", googleUser);
-
-    if (!googleUser.email) {
+    if (!google.email) {
       throw { status: 400, message: "Google user has no email" };
     }
 
-    // 3. Ищем пользователя по email
-    let user = await User.findOne({ email: googleUser.email });
+    // === 3. Find user in DB
+    let user = await User.findOne({ email: google.email });
 
-    console.log("📌 Found user in DB:", user);
-
-    // === 4. Если найден — обновляем данные ===
+    // === 4. Update existing user ===
     if (user) {
       let changed = false;
 
       if (!user.googleId) {
-        user.googleId = googleUser.id;
+        user.googleId = google.id;
         changed = true;
       }
 
-      // обновляем аватар
-      if (googleUser.picture && user.avatar !== googleUser.picture) {
-        console.log("📌 Updating avatar:", googleUser.picture);
-        user.avatar = googleUser.picture;
+      if (google.picture && user.avatar !== google.picture) {
+        user.avatar = google.picture;
         changed = true;
       }
 
-      // обновляем имя
-      if (!user.firstName && googleUser.given_name) {
-        user.firstName = googleUser.given_name;
+      if (!user.firstName && google.given_name) {
+        user.firstName = google.given_name;
         changed = true;
       }
 
-      if (!user.lastName && googleUser.family_name) {
-        user.lastName = googleUser.family_name;
+      if (!user.lastName && google.family_name) {
+        user.lastName = google.family_name;
         changed = true;
       }
 
-      if (changed) {
-        console.log("📌 Saving updated user...");
-        await user.save();
-      } else {
-        console.log("📌 No changes in user profile");
-      }
+      if (changed) await user.save();
     }
 
-    // === 5. Если не найден — создаём нового ===
+    // === 5. Create new user ===
     if (!user) {
-      console.log("📌 Creating new user...");
       user = await User.create({
-        email: googleUser.email,
-        firstName: googleUser.given_name || "",
-        lastName: googleUser.family_name || "",
-        googleId: googleUser.id,
-        avatar: googleUser.picture || "",
+        email: google.email,
+        firstName: google.given_name || "",
+        lastName: google.family_name || "",
+        googleId: google.id,
+        avatar: google.picture || "",
         username:
-          googleUser.email.split("@")[0] +
-          "_" +
-          Math.floor(Math.random() * 10000),
+          google.email.split("@")[0] + "_" + Math.floor(Math.random() * 10000),
         passwordHash: null,
       });
     }
 
-    console.log("📌 FINAL USER DATA:", user);
+    // === 6. Generate JWT ===
+    const token = jwt.sign({ id: user._id }, JWT_SECRET, {
+      expiresIn: "30d",
+    });
 
-    // 6. Генерируем JWT
-    const token = jwt.sign(
-      {
+    // === 7. Return minimal user object for frontend ===
+    return {
+      token,
+      user: {
         id: user._id,
+        username: user.username,
         email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        avatar: user.avatar || null,
+        googleId: user.googleId || null, // <<< ВАЖНО!
       },
-      JWT_SECRET,
-      { expiresIn: "30d" }
-    );
-
-    console.log("📌 Generated JWT:", token);
-    console.log("=== 🟢 GoogleAuthService END ===");
-
-    return { token, user };
+    };
   }
 }
 

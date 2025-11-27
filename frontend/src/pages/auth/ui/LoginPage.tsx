@@ -48,6 +48,7 @@ export const LoginPage = () => {
         const user = JSON.parse(userStr);
 
         setAuthToken(googleToken);
+
         localStorage.setItem("token", googleToken);
         localStorage.setItem("user", JSON.stringify(user));
 
@@ -59,6 +60,7 @@ export const LoginPage = () => {
             lastName: user.lastName,
             email: user.email,
             avatar: user.avatar || "",
+            googleId: user.googleId || null, // <<< ДОБАВЛЕНО!
             token: googleToken,
           })
         );
@@ -103,6 +105,7 @@ export const LoginPage = () => {
 
       setAuthToken(token);
 
+      // === Remember me ===
       if (form.remember) {
         localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(user));
@@ -118,12 +121,12 @@ export const LoginPage = () => {
           lastName: user.lastName,
           email: user.email,
           avatar: user.avatar || "",
+          googleId: user.googleId || null, // <<< ДОБАВЛЕНО
           token,
         })
       );
 
       setForm({ username: "", password: "", remember: false });
-
       navigate("/");
     } catch (err: any) {
       alert(err.response?.data?.message || "Login failed");
