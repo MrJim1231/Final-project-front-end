@@ -2,11 +2,20 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
-    firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
-    username: { type: String, required: true, unique: true },
-    email: { type: String, required: true, unique: true },
-    passwordHash: { type: String, required: true },
+    // === Обычная регистрация ===
+    firstName: { type: String },
+    lastName: { type: String },
+    username: { type: String, unique: true, sparse: true },
+    email: { type: String, required: true, unique: true, lowercase: true },
+
+    // пароль хранится только для обычной регистрации
+    passwordHash: { type: String },
+
+    // === Google OAuth ===
+    googleId: { type: String, unique: true, sparse: true },
+    avatar: { type: String, default: "" },
+
+    // дополнительные поля
     contact: { type: String, default: "" },
     position: { type: String, default: "" },
   },
