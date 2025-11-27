@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
-import "../AddTaskModal/AddTaskModal.css"; // Используем те же стили, НЕ меняем
+import "../AddTaskModal/AddTaskModal.css"; // те же стили
+
+import { getTaskPriority } from "@/shared/api/priorityApi";
 
 interface EditTaskModalProps {
   onClose: () => void;
@@ -7,17 +9,15 @@ interface EditTaskModalProps {
   initialData: {
     id?: string;
     title: string;
-    date?: string;
     priority?: string;
     description?: string;
     image?: string;
   };
 }
 
-// Цвета круглых точек (как в AddTaskModal)
 const priorityColors: Record<string, string> = {
-  Extreme: "#ff3b30",
-  Moderate: "#0a84ff",
+  High: "#ff3b30",
+  Medium: "#0a84ff",
   Low: "#34c759",
 };
 
@@ -28,18 +28,27 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
 }) => {
   const [form, setForm] = useState({
     title: "",
-    date: "",
     priority: "",
     description: "",
     imageUrl: "",
   });
 
-  const [showUrlInput, setShowUrlInput] = useState(true);
+  const [priorities, setPriorities] = useState<
+    { _id: string; title: string }[]
+  >([]);
+
+  useEffect(() => {
+    loadPriority();
+  }, []);
+
+  const loadPriority = async () => {
+    const list = await getTaskPriority();
+    setPriorities(list);
+  };
 
   useEffect(() => {
     setForm({
       title: initialData.title || "",
-      date: initialData.date || "",
       priority: initialData.priority || "",
       description: initialData.description || "",
       imageUrl: initialData.image || "",
@@ -54,7 +63,14 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(form);
+
+    onSubmit({
+      title: form.title,
+      priority: form.priority,
+      description: form.description,
+      image: form.imageUrl,
+    });
+
     onClose();
   };
 
@@ -85,38 +101,25 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
               />
             </label>
 
-            {/* DATE */}
-            <label className="form-label">
-              Date
-              <input
-                className="form-input"
-                type="date"
-                name="date"
-                value={form.date}
-                onChange={handleChange}
-              />
-            </label>
-
             {/* PRIORITY */}
             <div className="priority-block">
               <label className="form-label">Priority</label>
 
               <div className="priority-list">
-                {["Extreme", "Moderate", "Low"].map((level) => (
-                  <label key={level} className="priority-item">
+                {priorities.map((p) => (
+                  <label key={p._id} className="priority-item">
                     <div
                       className="priority-dot"
-                      style={{ backgroundColor: priorityColors[level] }}
+                      style={{ backgroundColor: priorityColors[p.title] }}
                     />
-
-                    <span className="priority-text">{level}</span>
+                    <span className="priority-text">{p.title}</span>
 
                     <input
                       className="priority-input"
                       type="radio"
                       name="priority"
-                      value={level}
-                      checked={form.priority === level}
+                      value={p.title}
+                      checked={form.priority === p.title}
                       onChange={handleChange}
                     />
                   </label>
@@ -136,23 +139,18 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
               />
             </label>
 
-            {/* IMAGE URL */}
-            <div className="addtask-modal__upload">
-              <label className="form-label">Image URL</label>
-
-              <div className="addtask-modal__upload-box">
-                <div className="addtask-modal__url-input">
-                  <input
-                    className="form-input"
-                    type="text"
-                    name="imageUrl"
-                    value={form.imageUrl}
-                    onChange={handleChange}
-                    placeholder="Paste image URL here..."
-                  />
-                </div>
-              </div>
-            </div>
+            {/* IMAGE */}
+            <label className="form-label">
+              Image URL
+              <input
+                className="form-input"
+                type="text"
+                name="imageUrl"
+                value={form.imageUrl}
+                onChange={handleChange}
+                placeholder="Paste image URL..."
+              />
+            </label>
 
             {/* SUBMIT */}
             <div className="addtask-modal__actions">

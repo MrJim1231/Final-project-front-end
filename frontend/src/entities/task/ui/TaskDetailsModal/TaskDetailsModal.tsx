@@ -8,8 +8,8 @@ interface TaskDetailsModalProps {
   title: string;
   desc?: string;
   date?: string;
-  priority?: string; // ← строка
-  status?: string; // ← строка
+  priority?: string; // priority title
+  status?: string; // status title
   image?: string;
   completedAt?: string | null;
 }
@@ -41,33 +41,31 @@ export const TaskDetailsModal = ({
     return src.startsWith("http") ? src : noImage;
   };
 
-  // 🟨 Цвет приоритета (универсально)
+  // 🟨 Цвет приоритета (backend: "Low" | "Medium" | "High")
   const getPriorityColor = (p?: string) => {
     switch (p) {
-      case "Extreme":
-        return "#ff4444";
       case "High":
-        return "#ff8800";
-      case "Moderate":
-        return "#007bff";
+        return "#ff3b30"; // red
+      case "Medium":
+        return "#ff9500"; // orange
       case "Low":
-        return "#00c851";
+        return "#34c759"; // green
       default:
-        return "#777"; // кастомный приоритет
+        return "#777"; // кастомный / неизвестный
     }
   };
 
-  // 🟦 Цвет статуса (универсально)
+  // 🟦 Цвет статуса (backend: "Not Started" | "In Progress" | "Completed")
   const getStatusColor = (s?: string) => {
     switch (s) {
       case "Completed":
-        return "#00c851";
+        return "#34c759"; // green
       case "In Progress":
-        return "#007bff";
+        return "#0a84ff"; // blue
       case "Not Started":
-        return "#ff4444";
+        return "#ff3b30"; // red
       default:
-        return "#777"; // кастомный статус
+        return "#777";
     }
   };
 

@@ -1,4 +1,3 @@
-// shared/api/api.ts
 import axios from "axios";
 
 export const api = axios.create({
@@ -8,6 +7,9 @@ export const api = axios.create({
 
 // функция для установки токена авторизации
 export const setAuthToken = (token: string | null) => {
-  if (token) api.defaults.headers.common["Authorization"] = token;
-  else delete api.defaults.headers.common["Authorization"];
+  if (token) {
+    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  } else {
+    delete api.defaults.headers.common["Authorization"];
+  }
 };

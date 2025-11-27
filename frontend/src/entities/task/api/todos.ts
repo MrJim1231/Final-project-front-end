@@ -1,54 +1,87 @@
 import { apiTasks } from "@/shared/api/apiTasks";
 
+// === Тип ответа с backend ===
+interface ServerTodo {
+  _id: string;
+  title: string;
+  description: string;
+  createdAt: string;
+  image?: string;
+  vital?: boolean;
+  completedAt?: string | null;
+
+  status: { _id: string; title: string };
+  priority: { _id: string; title: string };
+}
+
+// === Фронтовый Todo ===
 export interface Todo {
   id: string;
   title: string;
   description: string;
   createdAt: string;
 
-  // 🔥 теперь динамические статусы и приоритеты
-  priority: string;
   status: string;
+  priority: string;
 
   image?: string;
-  vital?: boolean;
+  vital: boolean;
   completedAt?: string | null;
-  date?: string;
 }
 
 const ENDPOINT = "todos";
 
-// === Получить все задачи ===
+// === Маппинг Server → Client ===
+const mapServerTodo = (t: ServerTodo): Todo => ({
+  id: t._id,
+  title: t.title,
+  description: t.description,
+  createdAt: t.createdAt,
+  status: t.status?.title ?? "",
+  priority: t.priority?.title ?? "",
+  image: t.image ?? "",
+  vital: Boolean(t.vital),
+  completedAt: t.completedAt ?? null,
+});
+
+// === GET /todos ===
 export const getTodos = async (): Promise<Todo[]> => {
-  const { data } = await apiTasks.get<Todo[]>(ENDPOINT);
-  return data;
+  const { data } = await apiTasks.get<ServerTodo[]>(ENDPOINT);
+  return data.map(mapServerTodo);
 };
 
-// === Добавить новую задачу ===
-export const createTodo = async (todo: Omit<Todo, "id">): Promise<Todo> => {
-  const { data } = await apiTasks.post<Todo>(ENDPOINT, todo);
-  return data;
+// === POST /todos ===
+export const createTodo = async (todo: {
+  title: string;
+  description: string;
+  priority: string;
+  status: string;
+  image?: string;
+  vital: boolean;
+}): Promise<Todo> => {
+  const { data } = await apiTasks.post<ServerTodo>(ENDPOINT, todo);
+  return mapServerTodo(data);
 };
 
-// === Удалить задачу ===
-export const deleteTodo = async (id: string): Promise<void> => {
+// === DELETE /todos/:id ===
+export const deleteTodo = async (id: string) => {
   await apiTasks.delete(`${ENDPOINT}/${id}`);
 };
 
-// === Обновить задачу полностью ===
+// === PUT /todos/:id (полное обновление) ===
 export const updateTodo = async (
   id: string,
-  updatedFields: Partial<Todo>
+  fields: Partial<Todo>
 ): Promise<Todo> => {
-  const { data } = await apiTasks.put<Todo>(`${ENDPOINT}/${id}`, updatedFields);
-  return data;
+  const { data } = await apiTasks.put<ServerTodo>(`${ENDPOINT}/${id}`, fields);
+  return mapServerTodo(data);
 };
 
-// === Частичное обновление ===
+// === PUT /todos/:id (частичное обновление) ===
 export const patchTodo = async (
   id: string,
   fields: Partial<Todo>
 ): Promise<Todo> => {
-  const { data } = await apiTasks.put<Todo>(`${ENDPOINT}/${id}`, fields);
-  return data;
+  const { data } = await apiTasks.put<ServerTodo>(`${ENDPOINT}/${id}`, fields);
+  return mapServerTodo(data);
 };

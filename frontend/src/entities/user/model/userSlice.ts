@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { setAuthToken } from "@/shared/api/api"; // ⬅️ СЮДА ПОДКЛЮЧАЕМ axios token setter
 
 interface UserState {
   id: string | null;
@@ -29,9 +30,10 @@ const initialState: UserState = {
   firstName: savedUser?.firstName || null,
   lastName: savedUser?.lastName || null,
   email: savedUser?.email || null,
+
   token: savedToken || null,
   isAuth: Boolean(savedToken),
-  isLoaded: true,
+  isLoaded: false, // важно! App сам выставит true
 };
 
 // ====== SLICE ======
@@ -39,7 +41,7 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    // === УСТАНОВИТЬ ПОЛЬЗОВАТЕЛЯ (ЛОГИН) ===
+    // === LOGIN ===
     setUser(
       state,
       action: PayloadAction<{
@@ -59,8 +61,12 @@ const userSlice = createSlice({
         email: action.payload.email,
       };
 
+      // Save in LS
       localStorage.setItem("user", JSON.stringify(userData));
       localStorage.setItem("token", action.payload.token);
+
+      // Set token in axios globally
+      setAuthToken(action.payload.token);
 
       return {
         ...userData,
@@ -70,7 +76,7 @@ const userSlice = createSlice({
       };
     },
 
-    // === ОБНОВИТЬ ДАННЫЕ ПОЛЬЗОВАТЕЛЯ ===
+    // === UPDATE PROFILE ===
     updateUser(
       state,
       action: PayloadAction<{
@@ -83,26 +89,29 @@ const userSlice = createSlice({
     ) {
       const updatedData = { ...state, ...action.payload };
 
-      // Обновляем в localStorage
+      // Update LS
       const savedUser = localStorage.getItem("user");
       if (savedUser) {
-        const parsedUser = JSON.parse(savedUser);
-        const newUserData = { ...parsedUser, ...action.payload };
+        const parsed = JSON.parse(savedUser);
+        const newUserData = { ...parsed, ...action.payload };
         localStorage.setItem("user", JSON.stringify(newUserData));
       }
 
       return updatedData;
     },
 
-    // === УСТАНОВИТЬ ФЛАГ ЗАГРУЗКИ ===
+    // === SET LOADED ===
     setLoaded(state, action: PayloadAction<boolean>) {
       state.isLoaded = action.payload;
     },
 
-    // === ВЫХОД ===
+    // === LOGOUT ===
     logout() {
       localStorage.removeItem("user");
       localStorage.removeItem("token");
+
+      // убираем токен из axios
+      setAuthToken(null);
 
       return {
         id: null,

@@ -19,6 +19,7 @@ import xIcon from "@/shared/assets/images/auth/x-image.png";
 
 // API
 import { UserAPI } from "@/shared/api/apiUser";
+import { setAuthToken } from "@/shared/api/api";
 
 export const LoginPage = () => {
   const [form, setForm] = useState({
@@ -28,18 +29,20 @@ export const LoginPage = () => {
   });
 
   const [loading, setLoading] = useState(false);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const { isAuth } = useSelector((state: RootState) => state.user);
 
-  // Если пользователь уже авторизован — отправляем на главную
+  // Если уже авторизован → на главную
   useEffect(() => {
     if (isAuth) navigate("/");
   }, [isAuth]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
+
     setForm((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
@@ -48,10 +51,11 @@ export const LoginPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     try {
       setLoading(true);
 
-      // Используем централизованный API
+      // --- отправка запроса ---
       const res = await UserAPI.login({
         username: form.username,
         password: form.password,
@@ -59,7 +63,10 @@ export const LoginPage = () => {
 
       const { token, user } = res.data;
 
-      // Remember me логика
+      // --- глобально устанавливаем токен в axios ---
+      setAuthToken(token);
+
+      // --- Remember Me ---
       if (form.remember) {
         localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(user));
@@ -67,7 +74,7 @@ export const LoginPage = () => {
         sessionStorage.setItem("token", token);
       }
 
-      // Сохраняем в Redux
+      // --- Redux ---
       dispatch(
         setUser({
           id: user.id,
@@ -82,10 +89,10 @@ export const LoginPage = () => {
       // Очистка формы
       setForm({ username: "", password: "", remember: false });
 
-      // Редирект
+      // Переход в Dashboard
       navigate("/");
     } catch (err: any) {
-      console.log(err);
+      console.error(err);
       alert(err.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
@@ -98,7 +105,6 @@ export const LoginPage = () => {
       style={{ backgroundImage: `url(${backgroundPattern})` }}
     >
       <div className="login__card">
-        {/* LEFT SIDE */}
         <div className="login__left">
           <h2 className="login__title">Sign In</h2>
 
@@ -111,10 +117,10 @@ export const LoginPage = () => {
                 name="username"
                 placeholder="Enter Username"
                 value={form.username}
-                autoComplete="username"
                 onChange={handleChange}
-                className="login__input"
                 required
+                autoComplete="username"
+                className="login__input"
               />
             </div>
 
@@ -127,9 +133,9 @@ export const LoginPage = () => {
                 placeholder="Enter Password"
                 value={form.password}
                 onChange={handleChange}
-                className="login__input"
-                autoComplete="current-password"
                 required
+                autoComplete="current-password"
+                className="login__input"
               />
             </div>
 
@@ -148,7 +154,7 @@ export const LoginPage = () => {
               {loading ? "Loading..." : "Login"}
             </button>
 
-            {/* Social Icons */}
+            {/* Social login */}
             <div className="login__social">
               <span>Or, Login with</span>
               <div className="login__social-icons">
@@ -165,7 +171,6 @@ export const LoginPage = () => {
           </form>
         </div>
 
-        {/* RIGHT IMAGE */}
         <div className="login__right">
           <img
             src={loginImage}

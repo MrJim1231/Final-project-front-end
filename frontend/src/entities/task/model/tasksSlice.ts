@@ -1,7 +1,11 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
-import { getTodos, createTodo, deleteTodo, patchTodo } from "../api/todos";
-import type { Todo } from "../api/todos";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import {
+  getTodos,
+  createTodo,
+  deleteTodo,
+  patchTodo,
+  Todo,
+} from "../api/todos";
 
 // === Тип состояния ===
 interface TasksState {
@@ -10,7 +14,7 @@ interface TasksState {
   selected: Todo | null;
   error: string | null;
   selectedDate: string;
-  searchQuery: string; // 🆕 добавили поле поиска
+  searchQuery: string;
 }
 
 const initialState: TasksState = {
@@ -19,7 +23,17 @@ const initialState: TasksState = {
   selected: null,
   error: null,
   selectedDate: new Date().toISOString().split("T")[0],
-  searchQuery: "", // 🆕 начальное значение
+  searchQuery: "",
+};
+
+// === тип для создания задачи ===
+type CreateTodoPayload = {
+  title: string;
+  description: string;
+  priority: string;
+  status: string;
+  image?: string;
+  vital: boolean;
 };
 
 // === 🟢 Получить все задачи ===
@@ -37,7 +51,7 @@ export const fetchTasks = createAsyncThunk(
 // === 🟣 Добавить задачу ===
 export const addNewTask = createAsyncThunk(
   "tasks/addNew",
-  async (task: Omit<Todo, "id">, { rejectWithValue }) => {
+  async (task: CreateTodoPayload, { rejectWithValue }) => {
     try {
       return await createTodo(task);
     } catch (err: any) {
@@ -86,12 +100,9 @@ const tasksSlice = createSlice({
     setSelectedDate: (state, action: PayloadAction<string>) => {
       state.selectedDate = action.payload;
     },
-
-    // 🆕 === Поиск ===
     setSearchQuery: (state, action: PayloadAction<string>) => {
       state.searchQuery = action.payload;
     },
-
     clearError: (state) => {
       state.error = null;
     },
@@ -99,10 +110,9 @@ const tasksSlice = createSlice({
       state.selected = action.payload[0] ?? null;
     },
   },
-
   extraReducers: (builder) => {
     builder
-      // === Получение ===
+      // fetch
       .addCase(fetchTasks.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -116,7 +126,7 @@ const tasksSlice = createSlice({
         state.error = action.payload as string;
       })
 
-      // === Добавление ===
+      // add
       .addCase(addNewTask.fulfilled, (state, action) => {
         state.items.push(action.payload);
       })
@@ -124,7 +134,7 @@ const tasksSlice = createSlice({
         state.error = action.payload as string;
       })
 
-      // === Удаление ===
+      // remove
       .addCase(removeTask.fulfilled, (state, action) => {
         state.items = state.items.filter((t) => t.id !== action.payload);
         if (state.selected?.id === action.payload) {
@@ -135,7 +145,7 @@ const tasksSlice = createSlice({
         state.error = action.payload as string;
       })
 
-      // === Обновление ===
+      // update
       .addCase(updateTaskStatus.fulfilled, (state, action) => {
         const updated = action.payload;
         const index = state.items.findIndex((t) => t.id === updated.id);
@@ -150,14 +160,13 @@ const tasksSlice = createSlice({
   },
 });
 
-// === Экспорты ===
 export const {
   selectTask,
   clearSelected,
   clearError,
   setSelectedDate,
   selectFirstTask,
-  setSearchQuery, // 🆕 экспорт
+  setSearchQuery,
 } = tasksSlice.actions;
 
 export default tasksSlice.reducer;

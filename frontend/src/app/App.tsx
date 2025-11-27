@@ -1,27 +1,45 @@
 // src/app/App.tsx
 import { useState, useEffect } from "react";
 import { useLocation, Navigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 import { Header } from "../widgets/Header";
 import { Sidebar } from "../widgets/Sidebar";
 import { AppRouter } from "./routes/AppRouter";
 
 import { RootState } from "./providers/store";
+import { setAuthToken } from "@/shared/api/api";
+import { setLoaded } from "@/entities/user/model/userSlice";
 
 import "./App.css";
 
 export const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
+  const dispatch = useDispatch();
 
-  // 🟦 Загружаем auth-состояние
-  const { isAuth, isLoaded } = useSelector((state: RootState) => state.user);
+  const { isAuth, isLoaded, token } = useSelector(
+    (state: RootState) => state.user
+  );
 
   const isAuthPage =
     location.pathname === "/login" || location.pathname === "/register";
 
-  // 🔹 Блокируем скролл при открытом меню (но не на auth страницах)
+  // ===================================================
+  // 🔥 1) При загрузке приложения — активируем axios токен
+  // ===================================================
+  useEffect(() => {
+    if (token) {
+      setAuthToken(token); // ставим токен глобально в axios
+    }
+
+    // когда восстановление завершилось — говорим что готово
+    dispatch(setLoaded(true));
+  }, [token, dispatch]);
+
+  // ===================================================
+  // 🔹 Блокируем скролл при открытом sidebar
+  // ===================================================
   useEffect(() => {
     if (isAuthPage) {
       document.body.style.overflow = "auto";
@@ -30,33 +48,33 @@ export const App = () => {
     document.body.style.overflow = sidebarOpen ? "hidden" : "auto";
   }, [sidebarOpen, isAuthPage]);
 
-  // ============================================
-  // 1) Показываем лоадер ПОКА НЕ ЗАГРУЖЕН REDUX
-  // ============================================
+  // ===================================================
+  // 2) Пока Redux не готов — показываем загрузку
+  // ===================================================
   if (!isLoaded) {
     return <div className="app__loader">Loading...</div>;
   }
 
-  // ============================================
-  // 2) Если НЕ авторизован → на /login
-  // ============================================
+  // ===================================================
+  // 3) Если НЕ авторизован — отправляем на /login
+  // ===================================================
   if (!isAuth && !isAuthPage) {
     return <Navigate to="/login" replace />;
   }
 
-  // ============================================
-  // 3) Если авторизационные страницы — без layout
-  // ============================================
+  // ===================================================
+  // 4) На login/register без layout
+  // ===================================================
   if (isAuthPage) {
     return <AppRouter />;
   }
 
-  // ============================================
-  // 4) Основной layout (авторизован)
-  // ============================================
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
   const closeSidebar = () => setSidebarOpen(false);
 
+  // ===================================================
+  // 5) Основной layout (авторизованный)
+  // ===================================================
   return (
     <>
       <Header onToggleSidebar={toggleSidebar} />
