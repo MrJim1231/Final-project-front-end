@@ -11,8 +11,9 @@ import {
 } from "@/shared/api/statusApi";
 
 interface StatusItem {
-  _id: string; // <— обновили тут
+  _id: string;
   title: string;
+  isDefault: boolean; // ← добавлено
 }
 
 export const TaskStatus = () => {
@@ -64,7 +65,7 @@ export const TaskStatus = () => {
     if (!editItem) return;
 
     return safeAction(async () => {
-      await updateTaskStatus(editItem._id, { title: value }); // <— заменили id на _id
+      await updateTaskStatus(editItem._id, { title: value });
       setEditItem(null);
       setShowModal(false);
     });
@@ -115,7 +116,10 @@ export const TaskStatus = () => {
                 </td>
 
                 <td className="status-table__cell" data-label="Task Status">
-                  {status.title}
+                  {status.title}{" "}
+                  {status.isDefault && (
+                    <span className="status-default-tag">(default)</span>
+                  )}
                 </td>
 
                 <td
@@ -135,6 +139,12 @@ export const TaskStatus = () => {
                   <button
                     className="status-btn status-btn--delete"
                     onClick={() => handleDelete(status._id)}
+                    disabled={status.isDefault} // ← Блокировка
+                    title={
+                      status.isDefault
+                        ? "Нельзя удалить дефолтный статус"
+                        : "Delete"
+                    }
                   >
                     <FiTrash2 /> Delete
                   </button>
