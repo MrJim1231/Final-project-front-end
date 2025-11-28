@@ -1,6 +1,6 @@
 import "./RegisterPage.css";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 // Иконки
 import {
@@ -20,6 +20,10 @@ import personImage from "@/shared/assets/images/auth/register-image.png";
 import { UserAPI } from "@/shared/api/apiUser";
 
 export const RegisterPage = () => {
+  // ========= ПОЛУЧАЕМ INVITE TOKEN =========
+  const [searchParams] = useSearchParams();
+  const invite = searchParams.get("invite");
+
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -56,15 +60,16 @@ export const RegisterPage = () => {
     try {
       setLoading(true);
 
+      // ========= ОТПРАВЛЯЕМ INVITE НА BACKEND =========
       const payload = {
         firstName: form.firstName,
         lastName: form.lastName,
         username: form.username,
         email: form.email,
         password: form.password,
+        invite: invite || null,
       };
 
-      // Используем централизованный API
       const res = await UserAPI.register(payload);
 
       alert("Registration successful!");
