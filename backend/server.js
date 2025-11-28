@@ -44,7 +44,7 @@ app.use("/api/profile", profileRoutes);
 app.use("/api/status", statusRoutes);
 app.use("/api/priority", priorityRoutes);
 app.use("/api/todos", todoRoutes);
-app.use("/api/invites", inviteRoutes); // <--- подключили
+app.use("/api/invite", inviteRoutes); // <--- подключили
 
 // ==========================
 // Test route

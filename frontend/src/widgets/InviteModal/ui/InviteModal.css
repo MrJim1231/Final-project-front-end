@@ -1,0 +1,193 @@
+/* === OVERLAY === */
+.invite-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* === MODAL BOX === */
+.invite-modal {
+  width: 650px;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 32px;
+  box-shadow: 0 10px 50px rgba(0, 0, 0, 0.25);
+  animation: showModal 0.2s ease-out;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+@keyframes showModal {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === HEADER === */
+.invite-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.invite-header h2 {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.invite-back {
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  color: #555;
+  text-decoration: underline;
+}
+
+/* === INPUT & BUTTON ROW === */
+.invite-row {
+  display: flex;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.invite-row input {
+  flex: 1;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 15px;
+  background: #fafafa;
+}
+
+.invite-send-btn,
+.invite-copy-btn {
+  background: #ff5722;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #fff;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.invite-send-btn:hover,
+.invite-copy-btn:hover {
+  background: #e04e1f;
+}
+
+/* === MEMBERS === */
+.members-list {
+  margin-top: 15px;
+}
+
+.member-item {
+  display: flex;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid #eee;
+  position: relative;
+}
+
+.member-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 15px;
+}
+
+.member-info {
+  flex: 1;
+}
+
+.member-name {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.member-email {
+  font-size: 14px;
+  color: #777;
+}
+
+/* === ROLE SELECT === */
+.role-select {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  user-select: none;
+}
+
+.role-select:hover {
+  background: #f3f3f3;
+}
+
+.role-select span {
+  font-size: 14px;
+}
+
+/* === DROPDOWN === */
+.role-dropdown {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 38px;
+  background: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  width: 130px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  padding: 6px 0;
+  animation: dropdown 0.15s ease-out;
+}
+
+@keyframes dropdown {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.role-select:hover .role-dropdown {
+  display: block;
+}
+
+.role-dropdown div {
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.role-dropdown div:hover {
+  background: #f0f0f0;
+}
+
+/* === SECTION TITLES === */
+.invite-modal h3 {
+  margin-top: 25px;
+  font-size: 16px;
+  font-weight: 600;
+}

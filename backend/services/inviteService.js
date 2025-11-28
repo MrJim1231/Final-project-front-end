@@ -13,7 +13,7 @@ class InviteService {
       role,
     });
 
-    const link = `http://localhost:3000/register?invite=${token}`;
+    const link = `http://localhost:5173/register?invite=${token}`;
 
     await sendEmail(
       email,
