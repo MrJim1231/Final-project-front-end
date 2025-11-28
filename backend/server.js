@@ -37,11 +37,14 @@ const statusRoutes = require("./routes/statusRoutes");
 const priorityRoutes = require("./routes/priorityRoutes");
 const todoRoutes = require("./routes/todoRoutes");
 
+const inviteRoutes = require("./routes/inviteRoutes"); // <--- добавили
+
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/status", statusRoutes);
 app.use("/api/priority", priorityRoutes);
 app.use("/api/todos", todoRoutes);
+app.use("/api/invites", inviteRoutes); // <--- подключили
 
 // ==========================
 // Test route
