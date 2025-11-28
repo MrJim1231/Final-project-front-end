@@ -1,49 +1,43 @@
 const Invite = require("../models/Invite");
+const Member = require("../models/Member");
 const crypto = require("crypto");
 const sendEmail = require("../utils/sendEmail");
 
 class InviteService {
-  async createInvite(email) {
+  async sendInvite(email, role = "edit") {
     const token = crypto.randomBytes(20).toString("hex");
 
-    // Сохраняем в БД
     const invite = await Invite.create({
       email,
       token,
-      createdAt: Date.now(),
+      role,
     });
 
-    // Формируем ссылку
-    const inviteLink = `http://localhost:3000/register?invite=${token}`;
+    const link = `http://localhost:3000/register?invite=${token}`;
 
-    // Отправляем письмо
     await sendEmail(
       email,
-      "You are invited to Todo App",
+      "You're invited to the project",
       `
-        <h2>Invitation to Todo App</h2>
-        <p>You were invited to join Todo App.</p>
-        <p><a href="${inviteLink}">Click here to join</a></p>
-        <p>Or open this link manually:</p>
-        <p>${inviteLink}</p>
+        <h2>Project Invitation</h2>
+        <p>You were invited to collaborate on this project.</p>
+        <p>Click to join: <a href="${link}">${link}</a></p>
       `
     );
 
     return invite;
   }
 
-  async getInvites() {
-    return await Invite.find().sort({ createdAt: -1 });
+  async listMembers() {
+    return await Member.find();
   }
 
-  async acceptInvite(token) {
-    const invite = await Invite.findOne({ token });
-    if (!invite) throw new Error("Invalid invite token");
+  async updateRole(memberId, role) {
+    return await Member.findByIdAndUpdate(memberId, { role }, { new: true });
+  }
 
-    invite.status = "accepted";
-    await invite.save();
-
-    return invite;
+  async getProjectLink() {
+    return { link: "https://sharelinkhereandthere.com/34565yy29" };
   }
 }
 

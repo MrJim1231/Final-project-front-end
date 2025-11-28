@@ -1,27 +1,28 @@
 const inviteService = require("../services/inviteService");
 
 module.exports = {
-  async create(req, res) {
+  async invite(req, res) {
     try {
-      const { email } = req.body;
-      const invite = await inviteService.createInvite(email);
-      res.json({ success: true, invite });
-    } catch (err) {
-      res.status(400).json({ error: err.message });
+      const { email, role } = req.body;
+      const data = await inviteService.sendInvite(email, role);
+      res.json({ success: true, invite: data });
+    } catch (e) {
+      res.status(400).json({ error: e.message });
     }
   },
 
-  async getAll(req, res) {
-    const invites = await inviteService.getInvites();
-    res.json(invites);
+  async members(req, res) {
+    const data = await inviteService.listMembers();
+    res.json(data);
   },
 
-  async accept(req, res) {
-    try {
-      const invite = await inviteService.acceptInvite(req.params.token);
-      res.json({ success: true, invite });
-    } catch (err) {
-      res.status(400).json({ error: err.message });
-    }
+  async updateRole(req, res) {
+    const { role } = req.body;
+    const updated = await inviteService.updateRole(req.params.id, role);
+    res.json(updated);
+  },
+
+  async projectLink(req, res) {
+    res.json(await inviteService.getProjectLink());
   },
 };
