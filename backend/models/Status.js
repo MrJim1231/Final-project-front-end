@@ -1,11 +1,16 @@
 const mongoose = require("mongoose");
 
-const StatusSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  isDefault: { type: Boolean, default: false }, // Флаг защиты
-});
+const StatusSchema = new mongoose.Schema(
+  {
+    title: { type: String, required: true, unique: true },
+    isDefault: { type: Boolean, default: false },
+  },
+  {
+    collection: "statuses", // <--- ВАЖНО! Теперь коллекция всегда одна и правильная
+  }
+);
 
-// Блокировка удаления дефолтных
+// === Запрещаем удаление дефолтных статусов ===
 StatusSchema.pre("findOneAndDelete", async function (next) {
   const doc = await this.model.findOne(this.getQuery());
   if (doc?.isDefault) {
