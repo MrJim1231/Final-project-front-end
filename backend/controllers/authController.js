@@ -4,10 +4,10 @@ const Member = require("../models/Member");
 
 exports.register = async (req, res) => {
   try {
-    // 1. Регистрируем пользователя через твой сервис
+    // 1. Регистрируем пользователя
     const user = await authService.register(req.body);
 
-    // 2. Проверяем, был ли invite token
+    // 2. Проверяем invite token (из query или body)
     const inviteToken = req.query.invite || req.body.invite;
     console.log("Invite token:", inviteToken);
 
@@ -17,15 +17,16 @@ exports.register = async (req, res) => {
       if (invite) {
         console.log("Invite found:", invite);
 
-        // 3. Создаём участника (Member)
+        // 3. СОЗДАЁМ Member и ПЕРЕДАЁМ ownerId
         await Member.create({
+          ownerId: invite.ownerId, // <<< ВАЖНО!!!
           name: `${user.firstName} ${user.lastName}`,
           email: user.email,
           avatar: null,
-          role: invite.role, // owner / edit / view
+          role: invite.role,
         });
 
-        // 4. Удаляем использованный invite
+        // 4. Удаляем invite
         await Invite.deleteOne({ token: inviteToken });
 
         console.log("Member created and invite removed");

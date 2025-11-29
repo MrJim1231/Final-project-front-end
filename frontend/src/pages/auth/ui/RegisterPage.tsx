@@ -45,12 +45,11 @@ export const RegisterPage = () => {
 
   const [loading, setLoading] = useState(false);
 
-  // =============================================
+  // =====================================================
   // AUTO LOGIN AFTER GOOGLE (как на LoginPage)
-  // =============================================
+  // =====================================================
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-
     const googleToken = params.get("googleToken");
     const userStr = params.get("user");
 
@@ -95,7 +94,9 @@ export const RegisterPage = () => {
     }));
   };
 
-  // ========= FORM SUBMIT =========
+  // =====================================================
+  // SUBMIT (REGISTRATION + AUTO LOGIN)
+  // =====================================================
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -119,19 +120,40 @@ export const RegisterPage = () => {
         invite: invite || null,
       };
 
-      const res = await UserAPI.register(payload);
+      // 1️⃣ REGISTER USER
+      await UserAPI.register(payload);
 
-      alert("Registration successful!");
-
-      setForm({
-        firstName: "",
-        lastName: "",
-        username: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-        agree: false,
+      // 2️⃣ AUTO LOGIN right after registration
+      const loginRes = await UserAPI.login({
+        username: form.username,
+        password: form.password,
       });
+
+      const { token, user } = loginRes.data;
+
+      // Save token globally
+      setAuthToken(token);
+
+      // Save to storage
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      // Save to Redux
+      dispatch(
+        setUser({
+          id: user.id,
+          username: user.username,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          avatar: user.avatar || "",
+          googleId: user.googleId || null,
+          token,
+        })
+      );
+
+      // Redirect
+      navigate("/");
     } catch (err: any) {
       console.log(err);
       alert(err.response?.data?.message || "Registration error");
@@ -140,9 +162,9 @@ export const RegisterPage = () => {
     }
   };
 
-  // ====================================
-  // GOOGLE REGISTER (УЧИТЫВАЕМ INVITE)
-  // ====================================
+  // =====================================================
+  // GOOGLE REGISTER (ПЕРЕДАЁМ INVITE ЧЕРЕЗ state)
+  // =====================================================
   const handleGoogleRegister = () => {
     if (invite) {
       window.location.href = `http://localhost:5000/api/auth/google?invite=${invite}`;
