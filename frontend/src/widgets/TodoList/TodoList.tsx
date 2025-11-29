@@ -7,7 +7,7 @@ import { AddTaskModal } from "../../entities/task/ui/AddTaskModal/AddTaskModal";
 
 import { useSelector, useDispatch } from "react-redux";
 import { fetchTasks, addNewTask } from "../../entities/task/model/tasksSlice";
-import type { RootState, AppDispatch } from "../../app/providers/store";
+import type { RootState, AppDispatch } from "../../app/store";
 
 export const TodoList = () => {
   const dispatch = useDispatch<AppDispatch>();

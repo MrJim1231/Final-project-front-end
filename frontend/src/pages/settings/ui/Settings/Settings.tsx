@@ -4,7 +4,7 @@ import defaultAvatar from "@/shared/assets/images/avatar6.png";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/app/providers/store";
+import { RootState } from "@/app/store";
 import { updateUser } from "@/entities/user/model/userSlice";
 import { UserAPI } from "@/entities/user/api/apiUser";
 

@@ -21,7 +21,7 @@ import { useFallbackTasks } from "../hooks/useFallbackTasks";
 import { usePaginationTasks } from "../hooks/usePaginationTasks";
 import { useTaskSelection } from "../hooks/useTaskSelection";
 
-import type { RootState, AppDispatch } from "@/app/providers/store";
+import type { RootState, AppDispatch } from "@/app/store";
 
 interface TaskPageProps {
   type: "my" | "vital" | "completed";

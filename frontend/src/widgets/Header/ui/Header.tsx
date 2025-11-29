@@ -6,7 +6,7 @@ import {
   setSelectedDate,
   setSearchQuery,
 } from "../../../entities/task/model/tasksSlice";
-import type { RootState, AppDispatch } from "../../../app/providers/store";
+import type { RootState, AppDispatch } from "../../../app/store";
 
 interface HeaderProps {
   onToggleSidebar: () => void;

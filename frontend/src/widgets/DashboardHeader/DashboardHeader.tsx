@@ -5,7 +5,7 @@ import { InviteModal } from "@/features/invite";
 import { inviteApi } from "@/features/invite/api/inviteApi";
 import { Member } from "@/entities/user/model/memberTypes";
 import { useSelector } from "react-redux";
-import { RootState } from "@/app/providers/store";
+import { RootState } from "@/app/store";
 
 import defaultAvatar from "@/shared/assets/images/avatar6.png";
 

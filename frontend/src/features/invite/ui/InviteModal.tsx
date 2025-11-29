@@ -2,7 +2,7 @@ import "./InviteModal.css";
 import { IoIosArrowDown } from "react-icons/io";
 import { useInvite } from "../model/useInvite";
 import { useSelector } from "react-redux";
-import { RootState } from "@/app/providers/store";
+import { RootState } from "@/app/store";
 import { useState } from "react";
 
 import defaultAvatar from "@/shared/assets/images/avatar6.png";

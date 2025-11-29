@@ -5,7 +5,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 // Redux
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "@/entities/user/model/userSlice";
-import { RootState } from "@/app/providers/store";
+import { RootState } from "@/app/store";
 
 // Icons
 import { BsPersonFill, BsLockFill } from "react-icons/bs";

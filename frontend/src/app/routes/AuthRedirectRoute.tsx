@@ -1,7 +1,7 @@
 // src/app/routes/AuthRedirectRoute.tsx
 import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { RootState } from "@/app/providers/store";
+import { RootState } from "@/app/store";
 
 export const AuthRedirectRoute = ({
   children,

@@ -316,12 +316,19 @@ src/
 ├── index.css                    # Глобальные стили
 │
 ├── app/                         # Инфраструктура приложения
-│   ├── providers/               # Провайдеры: store, router, redux
-│   │   └── store/
-│   │       ├── store.ts
-│   │       └── index.ts
-│   └── routes/
-│       └── AppRouter.tsx        # Роутер приложения
+│   ├── providers/               # Провайдеры: router, redux, auth
+│   │   └── RouterProvider.tsx   # Провайдер маршрутизации (например)
+│   │
+│   ├── store/                   # Хранилище Redux Toolkit
+│   │   ├── store.ts             # Конфигурация store
+│   │   └── index.ts             # Экспорт useAppDispatch/useAppSelector
+│   │
+│   ├── routes/                  # Маршрутизация приложения
+│   │   └── AppRouter.tsx        # Основной файл роутинга
+│   │
+│   ├── styles/                  # Глобальные стили
+│   │   ├── App.css
+│   │   └── variables.css (если появится)
 │
 ├── pages/                       # Страницы (Routes)
 │   ├── auth/

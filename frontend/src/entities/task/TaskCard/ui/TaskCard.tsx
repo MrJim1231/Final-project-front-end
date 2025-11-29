@@ -13,7 +13,7 @@ import { TaskCardDetails } from "./TaskCardDetails";
 
 import { useDispatch } from "react-redux";
 import { updateTaskStatus } from "@/entities/task/model/tasksSlice";
-import type { AppDispatch } from "@/app/providers/store";
+import type { AppDispatch } from "@/app/store";
 
 interface TaskCardProps {
   id: string;

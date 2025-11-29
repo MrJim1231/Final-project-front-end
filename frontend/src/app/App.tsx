@@ -7,7 +7,7 @@ import { Header } from "../widgets/Header";
 import { Sidebar } from "../widgets/Sidebar";
 import { AppRouter } from "./routes/AppRouter";
 
-import { RootState } from "./providers/store";
+import { RootState } from "./store";
 import { setAuthToken } from "@/shared/api/api";
 import { setLoaded } from "@/entities/user/model/userSlice";
 

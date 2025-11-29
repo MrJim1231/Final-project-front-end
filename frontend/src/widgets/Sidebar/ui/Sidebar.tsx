@@ -18,7 +18,7 @@ import { useEffect } from "react";
 // Redux
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "@/entities/user/model/userSlice";
-import { RootState } from "@/app/providers/store";
+import { RootState } from "@/app/store";
 
 interface SidebarProps {
   isOpen: boolean;

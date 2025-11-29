@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import type { AppDispatch } from "@/app/providers/store";
+import type { AppDispatch } from "@/app/store";
 import { removeTask, updateTaskStatus } from "@/entities/task/model/tasksSlice";
 
 export const useTaskActions = () => {

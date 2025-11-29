@@ -5,7 +5,7 @@ import { FiCheckSquare } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import { TaskCard } from "../../entities/task/TaskCard/ui/TaskCard";
 import { fetchTasks } from "../../entities/task/model/tasksSlice";
-import type { RootState, AppDispatch } from "../../app/providers/store";
+import type { RootState, AppDispatch } from "../../app/store";
 
 export const CompletedTask = () => {
   const dispatch = useDispatch<AppDispatch>();
