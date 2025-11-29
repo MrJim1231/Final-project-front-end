@@ -3,6 +3,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import { useInvite } from "../model/useInvite";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/providers/store";
+import { useState } from "react";
 
 import defaultAvatar from "@/shared/assets/images/avatar6.png";
 
@@ -10,15 +11,24 @@ export const InviteModal = ({ onClose }: { onClose: () => void }) => {
   const { email, setEmail, members, projectLink, sendInvite, changeRole } =
     useInvite();
 
-  // 🎯 роль текущего пользователя
   const myRole = useSelector((state: RootState) => state.user.role);
-
   const isOwner = myRole === "owner";
+
+  // 🔥 локальное состояние — какой dropdown открыт
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+
+  const toggleDropdown = (id: string) => {
+    setOpenDropdownId((prev) => (prev === id ? null : id));
+  };
+
+  const onSelectRole = async (memberId: string, role: string) => {
+    await changeRole(memberId, role);
+    setOpenDropdownId(null);
+  };
 
   return (
     <div className="invite-modal-overlay">
       <div className="invite-modal">
-        {/* HEADER */}
         <div className="invite-header">
           <h2>Send an invite to a new member</h2>
           <button className="invite-back" onClick={onClose}>
@@ -26,7 +36,6 @@ export const InviteModal = ({ onClose }: { onClose: () => void }) => {
           </button>
         </div>
 
-        {/* SEND INVITE — только для OWNER */}
         {isOwner && (
           <div className="invite-row">
             <input
@@ -42,7 +51,6 @@ export const InviteModal = ({ onClose }: { onClose: () => void }) => {
           </div>
         )}
 
-        {/* MEMBERS LIST */}
         <h3>Members</h3>
 
         <div className="members-list">
@@ -51,21 +59,23 @@ export const InviteModal = ({ onClose }: { onClose: () => void }) => {
 
             return (
               <div key={m._id} className="member-item">
-                {/* AVATAR */}
                 <img
                   src={m.avatar || defaultAvatar}
                   alt={m.name || "User"}
                   className="member-avatar"
                 />
 
-                {/* INFO */}
                 <div className="member-info">
                   <div className="member-name">{m.name}</div>
                   <div className="member-email">{m.email}</div>
                 </div>
 
-                {/* ROLE SELECTOR */}
-                <div className="role-select">
+                <div
+                  className="role-select"
+                  onClick={() => {
+                    if (isOwner && !isMemberOwner) toggleDropdown(m._id);
+                  }}
+                >
                   <span>
                     {m.role === "edit"
                       ? "Can edit"
@@ -74,34 +84,32 @@ export const InviteModal = ({ onClose }: { onClose: () => void }) => {
                       : "Owner"}
                   </span>
 
-                  {/* Только OWNER может менять роли + нельзя менять владельца */}
-                  {isOwner && !isMemberOwner && (
-                    <>
-                      <IoIosArrowDown />
+                  {isOwner && !isMemberOwner && <IoIosArrowDown />}
 
-                      <div className="role-dropdown">
-                        <div onClick={() => changeRole(m._id, "edit")}>
-                          Can edit
-                        </div>
-                        <div onClick={() => changeRole(m._id, "view")}>
-                          Can view
-                        </div>
-                        {/* ❌ Убираем возможность назначить owner */}
-                      </div>
-                    </>
-                  )}
+                  <div
+                    className={
+                      openDropdownId === m._id
+                        ? "role-dropdown show"
+                        : "role-dropdown"
+                    }
+                  >
+                    <div onClick={() => onSelectRole(m._id, "edit")}>
+                      Can edit
+                    </div>
+                    <div onClick={() => onSelectRole(m._id, "view")}>
+                      Can view
+                    </div>
+                  </div>
                 </div>
               </div>
             );
           })}
         </div>
 
-        {/* PROJECT LINK */}
         <h3>Project Link</h3>
 
         <div className="invite-row">
           <input type="text" readOnly value={projectLink} />
-
           <button
             className="invite-copy-btn"
             onClick={() => navigator.clipboard.writeText(projectLink)}

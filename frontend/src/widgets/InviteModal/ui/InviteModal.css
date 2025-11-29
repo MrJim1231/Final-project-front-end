@@ -146,7 +146,7 @@
 
 /* === DROPDOWN === */
 .role-dropdown {
-  display: none;
+  display: none; /* скрыто по умолчанию */
   position: absolute;
   right: 0;
   top: 38px;
@@ -156,21 +156,11 @@
   width: 130px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
   padding: 6px 0;
-  animation: dropdown 0.15s ease-out;
+  z-index: 10;
 }
 
-@keyframes dropdown {
-  from {
-    opacity: 0;
-    transform: translateY(-5px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.role-select:hover .role-dropdown {
+/* Появляется ТОЛЬКО если React добавил класс .show */
+.role-dropdown.show {
   display: block;
 }
 
