@@ -20,18 +20,13 @@ router.get("/google", (req, res) => {
 
   const invite = req.query.invite || ""; // получаем инвайт
 
-  console.log("GOOGLE_CLIENT_ID =", GOOGLE_CLIENT_ID);
-  console.log("GOOGLE_REDIRECT_URI =", GOOGLE_REDIRECT_URI);
-  console.log("Invite passed =", invite);
-
   if (!GOOGLE_CLIENT_ID || !GOOGLE_REDIRECT_URI) {
     return res.status(500).json({
       message: "Google OAuth not configured (.env missing)",
     });
   }
 
-  // НЕ добавляем invite в redirect_uri !!!
-  // invite передаём через state (Google это поддерживает)
+  // invite передаём через state
   const url =
     `https://accounts.google.com/o/oauth2/v2/auth?` +
     `client_id=${GOOGLE_CLIENT_ID}` +
@@ -40,7 +35,7 @@ router.get("/google", (req, res) => {
     `&access_type=offline` +
     `&prompt=consent` +
     `&scope=${encodeURIComponent("email profile openid")}` +
-    (invite ? `&state=${invite}` : ""); // <<< ВОТ ТАК ПРАВИЛЬНО!
+    (invite ? `&state=${invite}` : "");
 
   res.redirect(url);
 });
