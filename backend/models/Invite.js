@@ -19,7 +19,7 @@ const InviteSchema = new mongoose.Schema({
 
   role: {
     type: String,
-    enum: ["owner", "edit", "view"],
+    enum: ["edit", "view"],
     default: "edit",
   },
 

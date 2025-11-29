@@ -64,17 +64,17 @@ export const InviteModal = ({ onClose }: { onClose: () => void }) => {
                   <div className="member-email">{m.email}</div>
                 </div>
 
-                {/* ROLE SELECTOR — только owner может менять */}
+                {/* ROLE SELECTOR */}
                 <div className="role-select">
                   <span>
-                    {m.role === "owner"
-                      ? "Owner"
-                      : m.role === "edit"
+                    {m.role === "edit"
                       ? "Can edit"
-                      : "Can view"}
+                      : m.role === "view"
+                      ? "Can view"
+                      : "Owner"}
                   </span>
 
-                  {/* Только владелец может менять роли + нельзя менять роль owner */}
+                  {/* Только OWNER может менять роли + нельзя менять владельца */}
                   {isOwner && !isMemberOwner && (
                     <>
                       <IoIosArrowDown />
@@ -86,9 +86,7 @@ export const InviteModal = ({ onClose }: { onClose: () => void }) => {
                         <div onClick={() => changeRole(m._id, "view")}>
                           Can view
                         </div>
-                        <div onClick={() => changeRole(m._id, "owner")}>
-                          Owner
-                        </div>
+                        {/* ❌ Убираем возможность назначить owner */}
                       </div>
                     </>
                   )}
