@@ -1,20 +1,134 @@
-{
-  "ownerId": {
-    "$oid": "692b03c559ee16d73dcc211c"
+[
+  {
+    "ownerId": { "$oid": "692b03c559ee16d73dcc211c" },
+    "title": "Купить новый ноутбук",
+    "description": "По окончанию всех курсов",
+    "status": { "$oid": "6746afb8f1a86d59f0a11101" },
+    "priority": { "$oid": "6746afb8f1a86d59f0a11201" },
+    "image": "https://hyperditek.com.ua/image/cache/assembly/224-350x350.jpg",
+    "vital": false,
+    "createdAt": { "$date": "2025-11-29T13:44:59.998Z" },
+    "completedAt": null
   },
-  "title": "Купить новый ноутбук",
-  "description": "По оканчанию всех курсов",
-  "status": {
-    "$oid": "6746afb8f1a86d59f0a11101"
+  {
+    "ownerId": { "$oid": "692b03c559ee16d73dcc211c" },
+    "title": "Купить новый телефон",
+    "description": "Выбрать хорошую модель",
+    "status": { "$oid": "6746afb8f1a86d59f0a11101" },
+    "priority": { "$oid": "6746afb8f1a86d59f0a11201" },
+    "image": "https://upload.wikimedia.org/wikipedia/commons/4/43/%D0%AF%D0%BD%D0%B4%D0%B5%D0%BA%D1%81.%D1%82%D0%B5%D0%BB%D0%B5%D1%84%D0%BE%D0%BD.jpg",
+    "vital": false,
+    "createdAt": { "$date": "2025-11-29T14:00:00Z" },
+    "completedAt": null
   },
-  "priority": {
-    "$oid": "6746afb8f1a86d59f0a11201"
+  {
+    "ownerId": { "$oid": "692b03c559ee16d73dcc211c" },
+    "title": "Начать бегать по утрам",
+    "description": "Вставать на 30 минут раньше",
+    "status": { "$oid": "6746afb8f1a86d59f0a11101" },
+    "priority": { "$oid": "6746afb8f1a86d59f0a11201" },
+    "image": "https://www.buyrentkenya.com/discover/wp-content/uploads/2022/06/brk-blog-4reasons-why.png",
+    "vital": true,
+    "createdAt": { "$date": "2025-11-29T14:01:00Z" },
+    "completedAt": null
   },
-  "image": "https://hyperditek.com.ua/image/cache/assembly/224-350x350.jpg",
-  "vital": false,
-  "createdAt": {
-    "$date": "2025-11-29T13:44:59.998Z"
+  {
+    "ownerId": { "$oid": "692b03c559ee16d73dcc211c" },
+    "title": "Спланировать отпуск",
+    "description": "Подобрать хорошие места",
+    "status": { "$oid": "6746afb8f1a86d59f0a11101" },
+    "priority": { "$oid": "6746afb8f1a86d59f0a11201" },
+    "image": "https://thetravelyogi.com/wp-content/uploads/2021/06/health-benefits-traveling-travel-yogi-1024x683.png",
+    "vital": false,
+    "createdAt": { "$date": "2025-11-29T14:02:00Z" },
+    "completedAt": null
   },
-  "completedAt": null,
-  "__v": 0
-}
+  {
+    "ownerId": { "$oid": "692b03c559ee16d73dcc211c" },
+    "title": "Подготовить план путешествий",
+    "description": "Сделать список локаций",
+    "status": { "$oid": "6746afb8f1a86d59f0a11101" },
+    "priority": { "$oid": "6746afb8f1a86d59f0a11201" },
+    "image": "https://frontenacarchbiosphere.ca/wp-content/uploads/2023/02/full-shot-travel-concept-with-landmarks-1024x576.jpg",
+    "vital": false,
+    "createdAt": { "$date": "2025-11-29T14:03:00Z" },
+    "completedAt": null
+  },
+  {
+    "ownerId": { "$oid": "692b03c559ee16d73dcc211c" },
+    "title": "Сменить работу",
+    "description": "Найти лучшее место",
+    "status": { "$oid": "6746afb8f1a86d59f0a11101" },
+    "priority": { "$oid": "6746afb8f1a86d59f0a11201" },
+    "image": "https://www.ipsos.com/sites/default/files/ct/news_and_polls/2021-07/man-at-work-unhappy.jpg",
+    "vital": true,
+    "createdAt": { "$date": "2025-11-29T14:04:00Z" },
+    "completedAt": null
+  },
+  {
+    "ownerId": { "$oid": "692b03c559ee16d73dcc211c" },
+    "title": "Закончить обучение",
+    "description": "Завершить курсы полностью",
+    "status": { "$oid": "6746afb8f1a86d59f0a11101" },
+    "priority": { "$oid": "6746afb8f1a86d59f0a11201" },
+    "image": "https://world-study.ua/wp-content/uploads/2020/04/14.-Ucheba-vo-vremya-koronavirusa-Blog.jpg",
+    "vital": true,
+    "createdAt": { "$date": "2025-11-29T14:05:00Z" },
+    "completedAt": null
+  },
+  {
+    "ownerId": { "$oid": "692b03c559ee16d73dcc211c" },
+    "title": "Сделать плейлист",
+    "description": "Добавить любимые песни",
+    "status": { "$oid": "6746afb8f1a86d59f0a11101" },
+    "priority": { "$oid": "6746afb8f1a86d59f0a11201" },
+    "image": "https://powerfm.lv/wp-content/uploads/2025/08/horoshaja-muzika.jpg",
+    "vital": false,
+    "createdAt": { "$date": "2025-11-29T14:06:00Z" },
+    "completedAt": null
+  },
+  {
+    "ownerId": { "$oid": "692b03c559ee16d73dcc211c" },
+    "title": "Поехать в столицу",
+    "description": "Планировать поездку заранее",
+    "status": { "$oid": "6746afb8f1a86d59f0a11101" },
+    "priority": { "$oid": "6746afb8f1a86d59f0a11201" },
+    "image": "https://ru.diez.md/wp-content/uploads/2024/10/37385-6-kak_stolica_zapechatle_ru.jpg",
+    "vital": false,
+    "createdAt": { "$date": "2025-11-29T14:07:00Z" },
+    "completedAt": null
+  },
+  {
+    "ownerId": { "$oid": "692b03c559ee16d73dcc211c" },
+    "title": "Поехать на природу",
+    "description": "Собрать рюкзак и отправиться",
+    "status": { "$oid": "6746afb8f1a86d59f0a11101" },
+    "priority": { "$oid": "6746afb8f1a86d59f0a11201" },
+    "image": "https://www.svitstyle.com.ua/wp-content/uploads/2025/09/pryroda-svitu.jpg",
+    "vital": false,
+    "createdAt": { "$date": "2025-11-29T14:08:00Z" },
+    "completedAt": null
+  },
+  {
+    "ownerId": { "$oid": "692b03c559ee16d73dcc211c" },
+    "title": "Нарисовать лягушку",
+    "description": "Придумать стиль рисования",
+    "status": { "$oid": "6746afb8f1a86d59f0a11101" },
+    "priority": { "$oid": "6746afb8f1a86d59f0a11201" },
+    "image": "https://avatarko.ru/img/kartinka/33/multfilm_lyagushka_32117.jpg",
+    "vital": false,
+    "createdAt": { "$date": "2025-11-29T14:09:00Z" },
+    "completedAt": null
+  },
+  {
+    "ownerId": { "$oid": "692b03c559ee16d73dcc211c" },
+    "title": "Добавить мемы в коллекцию",
+    "description": "Выбрать лучшие мемы",
+    "status": { "$oid": "6746afb8f1a86d59f0a11101" },
+    "priority": { "$oid": "6746afb8f1a86d59f0a11201" },
+    "image": "https://avatarko.ru/img/kartinka/1/Crazy_Frog.jpg",
+    "vital": false,
+    "createdAt": { "$date": "2025-11-29T14:10:00Z" },
+    "completedAt": null
+  }
+]
