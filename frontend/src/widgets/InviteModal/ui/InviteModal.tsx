@@ -2,6 +2,8 @@ import "./InviteModal.css";
 import { IoIosArrowDown } from "react-icons/io";
 import { useInvite } from "../model/useInvite";
 
+import defaultAvatar from "@/shared/assets/images/avatar6.png";
+
 export const InviteModal = ({ onClose }: { onClose: () => void }) => {
   const { email, setEmail, members, projectLink, sendInvite, changeRole } =
     useInvite();
@@ -9,6 +11,7 @@ export const InviteModal = ({ onClose }: { onClose: () => void }) => {
   return (
     <div className="invite-modal-overlay">
       <div className="invite-modal">
+        {/* HEADER */}
         <div className="invite-header">
           <h2>Send an invite to a new member</h2>
           <button className="invite-back" onClick={onClose}>
@@ -16,6 +19,7 @@ export const InviteModal = ({ onClose }: { onClose: () => void }) => {
           </button>
         </div>
 
+        {/* SEND INVITE */}
         <div className="invite-row">
           <input
             type="email"
@@ -23,23 +27,32 @@ export const InviteModal = ({ onClose }: { onClose: () => void }) => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
+
           <button className="invite-send-btn" onClick={sendInvite}>
             Send Invite
           </button>
         </div>
 
+        {/* MEMBERS LIST */}
         <h3>Members</h3>
 
         <div className="members-list">
           {members.map((m: any) => (
             <div key={m._id} className="member-item">
-              <img src={m.avatar} alt="" className="member-avatar" />
+              {/* AVATAR WITH FALLBACK */}
+              <img
+                src={m.avatar || defaultAvatar}
+                alt={m.name || "User"}
+                className="member-avatar"
+              />
 
+              {/* INFO */}
               <div className="member-info">
                 <div className="member-name">{m.name}</div>
                 <div className="member-email">{m.email}</div>
               </div>
 
+              {/* ROLE SELECTOR */}
               <div className="role-select">
                 <span>
                   {m.role === "owner"
@@ -48,6 +61,7 @@ export const InviteModal = ({ onClose }: { onClose: () => void }) => {
                     ? "Can edit"
                     : "Can view"}
                 </span>
+
                 <IoIosArrowDown />
 
                 <div className="role-dropdown">
@@ -60,6 +74,7 @@ export const InviteModal = ({ onClose }: { onClose: () => void }) => {
           ))}
         </div>
 
+        {/* PROJECT LINK */}
         <h3>Project Link</h3>
 
         <div className="invite-row">

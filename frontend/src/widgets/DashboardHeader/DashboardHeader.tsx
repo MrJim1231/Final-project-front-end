@@ -5,11 +5,12 @@ import { InviteModal } from "@/widgets/InviteModal";
 import { inviteApi } from "@/widgets/InviteModal/api/inviteApi";
 import { Member } from "@/entities/user/model/memberTypes";
 
+import defaultAvatar from "@/shared/assets/images/avatar6.png";
+
 export const DashboardHeader = () => {
   const [open, setOpen] = useState(false);
   const [users, setUsers] = useState<Member[]>([]);
 
-  // Загружаем участников для аватарок хедера
   useEffect(() => {
     loadMembers();
   }, []);
@@ -31,13 +32,13 @@ export const DashboardHeader = () => {
         </h2>
 
         <div className="dashboard-header__team">
-          {/* АВАТАРЫ УЧАСТНИКОВ */}
+          {/* AVATARS */}
           <div className="dashboard-header__avatars">
             {users.slice(0, 5).map((user) => (
               <img
                 key={user._id}
-                src={user.avatar}
-                alt={user.name}
+                src={user.avatar || defaultAvatar}
+                alt={user.name || "User"}
                 className="dashboard-header__avatar"
               />
             ))}
@@ -47,7 +48,7 @@ export const DashboardHeader = () => {
             )}
           </div>
 
-          {/* КНОПКА INVITE */}
+          {/* INVITE BUTTON */}
           <button
             className="dashboard-header__invite"
             onClick={() => setOpen(true)}
@@ -58,7 +59,6 @@ export const DashboardHeader = () => {
         </div>
       </div>
 
-      {/* MODAL */}
       {open && <InviteModal onClose={() => setOpen(false)} />}
     </>
   );
