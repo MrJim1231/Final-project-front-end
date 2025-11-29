@@ -11,64 +11,80 @@ class GoogleAuthService {
       JWT_SECRET,
     } = process.env;
 
-    // === 1. Exchange code → access_token
-    const tokenRes = await axios.post("https://oauth2.googleapis.com/token", {
-      code,
-      client_id: GOOGLE_CLIENT_ID,
-      client_secret: GOOGLE_CLIENT_SECRET,
-      redirect_uri: GOOGLE_REDIRECT_URI,
-      grant_type: "authorization_code",
-    });
+    // =============================
+    // 1. EXCHANGE CODE → ACCESS TOKEN
+    // =============================
+    const tokenResponse = await axios.post(
+      "https://oauth2.googleapis.com/token",
+      {
+        code,
+        client_id: GOOGLE_CLIENT_ID,
+        client_secret: GOOGLE_CLIENT_SECRET,
+        redirect_uri: GOOGLE_REDIRECT_URI,
+        grant_type: "authorization_code",
+      }
+    );
 
-    if (!tokenRes.data.access_token) {
-      throw { status: 400, message: "Failed to get Google access token" };
+    const accessToken = tokenResponse.data?.access_token;
+
+    if (!accessToken) {
+      throw {
+        status: 400,
+        message: "Google OAuth: Failed to retrieve access token",
+      };
     }
 
-    const accessToken = tokenRes.data.access_token;
-
-    // === 2. Get Google profile
-    const userRes = await axios.get(
+    // =============================
+    // 2. GET GOOGLE USER INFO
+    // =============================
+    const googleUserResponse = await axios.get(
       "https://www.googleapis.com/oauth2/v2/userinfo",
       { headers: { Authorization: `Bearer ${accessToken}` } }
     );
 
-    const google = userRes.data;
+    const google = googleUserResponse.data;
 
-    if (!google.email) {
-      throw { status: 400, message: "Google user has no email" };
+    if (!google?.email) {
+      throw { status: 400, message: "Google OAuth: Email not available" };
     }
 
-    // === 3. Find user in DB
+    // =============================
+    // 3. FIND EXISTING USER
+    // =============================
     let user = await User.findOne({ email: google.email });
 
-    // === 4. Update existing user ===
+    // =============================
+    // 4. UPDATE EXISTING USER
+    // =============================
     if (user) {
-      let changed = false;
+      let updated = false;
 
       if (!user.googleId) {
         user.googleId = google.id;
-        changed = true;
+        updated = true;
       }
 
       if (google.picture && user.avatar !== google.picture) {
         user.avatar = google.picture;
-        changed = true;
+        updated = true;
       }
 
-      if (!user.firstName && google.given_name) {
+      if (google.given_name && !user.firstName) {
         user.firstName = google.given_name;
-        changed = true;
+        updated = true;
       }
 
-      if (!user.lastName && google.family_name) {
+      if (google.family_name && !user.lastName) {
         user.lastName = google.family_name;
-        changed = true;
+        updated = true;
       }
 
-      if (changed) await user.save();
+      if (updated) await user.save();
     }
 
-    // === 5. Create new user ===
+    // =============================
+    // 5. CREATE NEW USER
+    // =============================
     if (!user) {
       user = await User.create({
         email: google.email,
@@ -76,18 +92,23 @@ class GoogleAuthService {
         lastName: google.family_name || "",
         googleId: google.id,
         avatar: google.picture || "",
-        username:
-          google.email.split("@")[0] + "_" + Math.floor(Math.random() * 10000),
+        username: `${google.email.split("@")[0]}_${Math.floor(
+          Math.random() * 10000
+        )}`,
         passwordHash: null,
       });
     }
 
-    // === 6. Generate JWT ===
+    // =============================
+    // 6. GENERATE JWT
+    // =============================
     const token = jwt.sign({ id: user._id }, JWT_SECRET, {
       expiresIn: "30d",
     });
 
-    // === 7. Return minimal user object for frontend ===
+    // =============================
+    // 7. RETURN RESPONSE
+    // =============================
     return {
       token,
       user: {
@@ -97,7 +118,7 @@ class GoogleAuthService {
         firstName: user.firstName,
         lastName: user.lastName,
         avatar: user.avatar || null,
-        googleId: user.googleId || null, // <<< ВАЖНО!
+        googleId: user.googleId || null,
       },
     };
   }

@@ -1,8 +1,12 @@
 import "./RegisterPage.css";
-import { useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
-// Иконки
+// Redux
+import { useDispatch } from "react-redux";
+import { setUser } from "@/entities/user/model/userSlice";
+
+// Icons
 import {
   BsPersonPlusFill,
   BsPersonVcardFill,
@@ -12,17 +16,22 @@ import {
   BsUnlockFill,
 } from "react-icons/bs";
 
-// Картинки
+// Images
 import backgroundPattern from "@/shared/assets/images/auth/background.png";
 import personImage from "@/shared/assets/images/auth/register-image.png";
+import googleIcon from "@/shared/assets/images/auth/google.png";
 
 // API
 import { UserAPI } from "@/shared/api/apiUser";
+import { setAuthToken } from "@/shared/api/api";
 
 export const RegisterPage = () => {
-  // ========= ПОЛУЧАЕМ INVITE TOKEN =========
+  // ========= INVITE TOKEN =========
   const [searchParams] = useSearchParams();
   const invite = searchParams.get("invite");
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [form, setForm] = useState({
     firstName: "",
@@ -36,6 +45,48 @@ export const RegisterPage = () => {
 
   const [loading, setLoading] = useState(false);
 
+  // =============================================
+  // AUTO LOGIN AFTER GOOGLE (как на LoginPage)
+  // =============================================
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    const googleToken = params.get("googleToken");
+    const userStr = params.get("user");
+
+    if (googleToken && userStr) {
+      try {
+        const user = JSON.parse(userStr);
+
+        // Save token globally
+        setAuthToken(googleToken);
+
+        // Save to localStorage
+        localStorage.setItem("token", googleToken);
+        localStorage.setItem("user", JSON.stringify(user));
+
+        // Save to Redux
+        dispatch(
+          setUser({
+            id: user.id,
+            username: user.username,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            avatar: user.avatar || "",
+            googleId: user.googleId || null,
+            token: googleToken,
+          })
+        );
+
+        navigate("/");
+      } catch (err) {
+        console.error("Google auto-login error:", err);
+      }
+    }
+  }, [dispatch, navigate]);
+
+  // ========= HANDLE INPUTS =========
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
     setForm((prev) => ({
@@ -44,23 +95,21 @@ export const RegisterPage = () => {
     }));
   };
 
+  // ========= FORM SUBMIT =========
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (form.password !== form.confirmPassword) {
-      alert("Passwords do not match!");
-      return;
+      return alert("Passwords do not match!");
     }
 
     if (!form.agree) {
-      alert("You must agree to the terms");
-      return;
+      return alert("You must agree to the terms");
     }
 
     try {
       setLoading(true);
 
-      // ========= ОТПРАВЛЯЕМ INVITE НА BACKEND =========
       const payload = {
         firstName: form.firstName,
         lastName: form.lastName,
@@ -73,9 +122,7 @@ export const RegisterPage = () => {
       const res = await UserAPI.register(payload);
 
       alert("Registration successful!");
-      console.log("Server response:", res.data);
 
-      // Очистка формы
       setForm({
         firstName: "",
         lastName: "",
@@ -85,11 +132,22 @@ export const RegisterPage = () => {
         confirmPassword: "",
         agree: false,
       });
-    } catch (error: any) {
-      console.log(error);
-      alert(error.response?.data?.message || "Registration error");
+    } catch (err: any) {
+      console.log(err);
+      alert(err.response?.data?.message || "Registration error");
     } finally {
       setLoading(false);
+    }
+  };
+
+  // ====================================
+  // GOOGLE REGISTER (УЧИТЫВАЕМ INVITE)
+  // ====================================
+  const handleGoogleRegister = () => {
+    if (invite) {
+      window.location.href = `http://localhost:5000/api/auth/google?invite=${invite}`;
+    } else {
+      window.location.href = `http://localhost:5000/api/auth/google`;
     }
   };
 
@@ -111,7 +169,7 @@ export const RegisterPage = () => {
           <h2 className="register__title">Sign Up</h2>
 
           <form onSubmit={handleSubmit} className="register__form">
-            {/* First name */}
+            {/* First Name */}
             <div className="register__input-group">
               <BsPersonPlusFill className="register__input-icon" />
               <input
@@ -125,7 +183,7 @@ export const RegisterPage = () => {
               />
             </div>
 
-            {/* Last name */}
+            {/* Last Name */}
             <div className="register__input-group">
               <BsPersonVcardFill className="register__input-icon" />
               <input
@@ -191,14 +249,14 @@ export const RegisterPage = () => {
                 type="password"
                 name="confirmPassword"
                 placeholder="Confirm Password"
-                autoComplete="new-password"
                 value={form.confirmPassword}
+                autoComplete="new-password"
                 onChange={handleChange}
                 required
               />
             </div>
 
-            {/* Checkbox */}
+            {/* Terms */}
             <label className="register__checkbox">
               <input
                 type="checkbox"
@@ -209,9 +267,23 @@ export const RegisterPage = () => {
               <span>I agree to all terms</span>
             </label>
 
+            {/* SUBMIT */}
             <button type="submit" className="register__btn" disabled={loading}>
               {loading ? "Loading..." : "Register"}
             </button>
+
+            {/* GOOGLE SIGN UP */}
+            <div className="register__social">
+              <span>Or Register with</span>
+              <div className="register__social-icons">
+                <img
+                  src={googleIcon}
+                  alt="google"
+                  style={{ cursor: "pointer", width: "38px" }}
+                  onClick={handleGoogleRegister}
+                />
+              </div>
+            </div>
 
             <p className="register__footer">
               Already have an account? <Link to="/login">Sign In</Link>
