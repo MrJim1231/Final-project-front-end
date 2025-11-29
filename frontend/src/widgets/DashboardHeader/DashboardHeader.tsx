@@ -4,12 +4,18 @@ import { FiUserPlus } from "react-icons/fi";
 import { InviteModal } from "@/widgets/InviteModal";
 import { inviteApi } from "@/widgets/InviteModal/api/inviteApi";
 import { Member } from "@/entities/user/model/memberTypes";
+import { useSelector } from "react-redux";
+import { RootState } from "@/app/providers/store";
 
 import defaultAvatar from "@/shared/assets/images/avatar6.png";
 
 export const DashboardHeader = () => {
   const [open, setOpen] = useState(false);
   const [users, setUsers] = useState<Member[]>([]);
+
+  // 🎯 РОЛЬ ТЕКУЩЕГО ПОЛЬЗОВАТЕЛЯ
+  const role = useSelector((state: RootState) => state.user.role);
+  const firstName = useSelector((state: RootState) => state.user.firstName);
 
   useEffect(() => {
     loadMembers();
@@ -28,7 +34,7 @@ export const DashboardHeader = () => {
     <>
       <div className="dashboard-header">
         <h2 className="dashboard-header__title">
-          Welcome back, <span>Sundar</span> 👋
+          Welcome back, <span>{firstName || "User"}</span> 👋
         </h2>
 
         <div className="dashboard-header__team">
@@ -48,14 +54,16 @@ export const DashboardHeader = () => {
             )}
           </div>
 
-          {/* INVITE BUTTON */}
-          <button
-            className="dashboard-header__invite"
-            onClick={() => setOpen(true)}
-          >
-            <FiUserPlus className="dashboard-header__invite-icon" />
-            Invite
-          </button>
+          {/* === INVITE BUTTON (ONLY FOR OWNER) === */}
+          {role === "owner" && (
+            <button
+              className="dashboard-header__invite"
+              onClick={() => setOpen(true)}
+            >
+              <FiUserPlus className="dashboard-header__invite-icon" />
+              Invite
+            </button>
+          )}
         </div>
       </div>
 

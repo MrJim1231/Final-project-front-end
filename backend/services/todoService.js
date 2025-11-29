@@ -4,19 +4,19 @@ const Priority = require("../models/Priority");
 
 module.exports = {
   // ============================
-  // 📌 GET ALL TODOS
+  // 📌 GET ALL TODOS (по ownerId)
   // ============================
-  async getAll(userId) {
-    return await Todo.find({ userId })
+  async getAll(ownerId) {
+    return await Todo.find({ ownerId })
       .sort({ createdAt: -1 })
       .populate("status")
       .populate("priority");
   },
 
   // ============================
-  // 📌 CREATE TODO
+  // 📌 CREATE TODO (для ownerId)
   // ============================
-  async create(userId, data) {
+  async create(ownerId, data) {
     const statusTitle = data.status || "Not Started";
     const statusDoc = await Status.findOne({ title: statusTitle });
     if (!statusDoc) {
@@ -38,7 +38,7 @@ module.exports = {
     }
 
     const todo = new Todo({
-      userId,
+      ownerId, // ← теперь задача привязана к workspace-владельцу
       title: data.title,
       description: data.description || "",
       status: statusDoc._id,
@@ -51,7 +51,6 @@ module.exports = {
 
     const saved = await todo.save();
 
-    // корректный populate
     await saved.populate("status");
     await saved.populate("priority");
 
@@ -72,6 +71,7 @@ module.exports = {
       if (!statusDoc) {
         throw { status: 400, message: "Invalid status" };
       }
+
       data.status = statusDoc._id;
 
       if (statusDoc.title === "Completed" && !todo.completedAt) {
@@ -84,6 +84,7 @@ module.exports = {
       if (!priorityDoc) {
         throw { status: 400, message: "Invalid priority" };
       }
+
       data.priority = priorityDoc._id;
     }
 

@@ -1,6 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { setAuthToken } from "@/shared/api/api";
 
+// ========================
+//     TYPES
+// ========================
 interface UserState {
   id: string | null;
   username: string | null;
@@ -8,9 +11,11 @@ interface UserState {
   lastName: string | null;
   email: string | null;
   avatar: string | null;
-  googleId: string | null; // <<< ДОБАВЛЕНО
-  token: string | null;
+  googleId: string | null;
 
+  role: "owner" | "edit" | "view" | null; // <<< ДОБАВЛЕНО
+
+  token: string | null;
   isAuth: boolean;
   isLoaded: boolean;
 }
@@ -34,7 +39,9 @@ const initialState: UserState = {
   lastName: savedUser?.lastName || null,
   email: savedUser?.email || null,
   avatar: savedUser?.avatar || null,
-  googleId: savedUser?.googleId || null, // <<< ДОБАВЛЕНО
+  googleId: savedUser?.googleId || null,
+
+  role: savedUser?.role || null, // <<< ЗАГРУЖАЕМ ROLE
 
   token: savedToken || null,
   isAuth: Boolean(savedToken),
@@ -47,7 +54,9 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    // ================= LOGIN =================
+    // ========================================================
+    //                     SET USER (LOGIN)
+    // ========================================================
     setUser(
       state,
       action: PayloadAction<{
@@ -57,7 +66,8 @@ const userSlice = createSlice({
         lastName: string;
         email: string;
         avatar?: string | null;
-        googleId?: string | null; // <<< ДОБАВЛЕНО
+        googleId?: string | null;
+        role?: "owner" | "edit" | "view" | null; // <<< ПОЛУЧАЕМ ROLE
         token: string;
       }>
     ) {
@@ -68,7 +78,8 @@ const userSlice = createSlice({
         lastName: action.payload.lastName,
         email: action.payload.email,
         avatar: action.payload.avatar || null,
-        googleId: action.payload.googleId || null, // <<< ДОБАВЛЕНО
+        googleId: action.payload.googleId || null,
+        role: action.payload.role ?? null, // <<< СОХРАНЯЕМ ROLE
       };
 
       // Save LS
@@ -86,7 +97,9 @@ const userSlice = createSlice({
       };
     },
 
-    // ================= UPDATE USER =================
+    // ========================================================
+    //                  UPDATE USER
+    // ========================================================
     updateUser(
       state,
       action: PayloadAction<{
@@ -110,12 +123,16 @@ const userSlice = createSlice({
       return updated;
     },
 
-    // ================= SET LOADED =================
+    // ========================================================
+    //                  SET LOADED
+    // ========================================================
     setLoaded(state, action: PayloadAction<boolean>) {
       state.isLoaded = action.payload;
     },
 
-    // ================= LOGOUT =================
+    // ========================================================
+    //                  LOGOUT
+    // ========================================================
     logout() {
       localStorage.removeItem("user");
       localStorage.removeItem("token");
@@ -129,7 +146,8 @@ const userSlice = createSlice({
         lastName: null,
         email: null,
         avatar: null,
-        googleId: null, // <<< ОБНУЛЯЕМ!
+        googleId: null,
+        role: null, // <<< ОБНУЛЯЕМ ROLE
         token: null,
         isAuth: false,
         isLoaded: true,

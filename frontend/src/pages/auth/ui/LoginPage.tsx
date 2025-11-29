@@ -36,9 +36,9 @@ export const LoginPage = () => {
 
   const { isAuth } = useSelector((state: RootState) => state.user);
 
-  // ============================
-  // AUTO LOGIN AFTER GOOGLE
-  // ============================
+  // ======================================================
+  // 🔥 AUTO LOGIN AFTER GOOGLE
+  // ======================================================
   useEffect(() => {
     const googleToken = params.get("googleToken");
     const userStr = params.get("user");
@@ -47,26 +47,37 @@ export const LoginPage = () => {
       try {
         const user = JSON.parse(userStr);
 
+        // IMPORTANT: add role
+        const fullUser = {
+          ...user,
+          role: user.role || "owner",
+        };
+
+        // Save token
         setAuthToken(googleToken);
 
         localStorage.setItem("token", googleToken);
-        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("user", JSON.stringify(fullUser));
 
+        // Save to Redux
         dispatch(
           setUser({
-            id: user.id,
-            username: user.username,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-            avatar: user.avatar || "",
-            googleId: user.googleId || null, // <<< ДОБАВЛЕНО!
+            id: fullUser.id,
+            username: fullUser.username,
+            firstName: fullUser.firstName,
+            lastName: fullUser.lastName,
+            email: fullUser.email,
+            avatar: fullUser.avatar || "",
+            googleId: fullUser.googleId || null,
+            role: fullUser.role,
             token: googleToken,
           })
         );
 
         navigate("/");
-      } catch {}
+      } catch (err) {
+        console.error("Google auto-login parse error:", err);
+      }
     }
   }, [params, dispatch, navigate]);
 
@@ -75,9 +86,9 @@ export const LoginPage = () => {
     if (isAuth) navigate("/");
   }, [isAuth]);
 
-  // ============================
+  // ======================================================
   // INPUT HANDLER
-  // ============================
+  // ======================================================
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
 
@@ -87,9 +98,9 @@ export const LoginPage = () => {
     }));
   };
 
-  // ============================
-  // LOGIN WITH PASSWORD
-  // ============================
+  // ======================================================
+  // 🔥 LOGIN WITH PASSWORD
+  // ======================================================
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -105,23 +116,29 @@ export const LoginPage = () => {
 
       setAuthToken(token);
 
-      // === Remember me ===
+      const fullUser = {
+        ...user,
+        role: user.role || "owner", // add role
+      };
+
+      // Remember me
       if (form.remember) {
         localStorage.setItem("token", token);
-        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("user", JSON.stringify(fullUser));
       } else {
         sessionStorage.setItem("token", token);
       }
 
       dispatch(
         setUser({
-          id: user.id,
-          username: user.username,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          avatar: user.avatar || "",
-          googleId: user.googleId || null, // <<< ДОБАВЛЕНО
+          id: fullUser.id,
+          username: fullUser.username,
+          firstName: fullUser.firstName,
+          lastName: fullUser.lastName,
+          email: fullUser.email,
+          avatar: fullUser.avatar || "",
+          googleId: fullUser.googleId || null,
+          role: fullUser.role,
           token,
         })
       );
@@ -135,9 +152,9 @@ export const LoginPage = () => {
     }
   };
 
-  // ============================
-  // GOOGLE LOGIN CLICK
-  // ============================
+  // ======================================================
+  // GOOGLE LOGIN
+  // ======================================================
   const handleGoogleLogin = () => {
     window.location.href = "http://localhost:5000/api/auth/google";
   };

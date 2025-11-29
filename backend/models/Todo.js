@@ -1,7 +1,12 @@
 const mongoose = require("mongoose");
 
 const TodoSchema = new mongoose.Schema({
-  userId: { type: String, required: false },
+  ownerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true, // <<< теперь задача всегда принадлежит владельцу
+  },
+
   title: { type: String, required: true },
   description: { type: String, default: "" },
 
@@ -18,6 +23,7 @@ const TodoSchema = new mongoose.Schema({
 
   image: { type: String, default: "" },
   vital: { type: Boolean, default: false },
+
   createdAt: { type: Date, default: Date.now },
   completedAt: { type: Date, default: null },
 });

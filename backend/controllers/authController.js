@@ -7,7 +7,10 @@ exports.register = async (req, res) => {
     // 1. Регистрируем пользователя
     const user = await authService.register(req.body);
 
-    // 2. Проверяем invite token (из query или body)
+    // Роль по умолчанию — owner (если нет инвайта)
+    let finalRole = "owner";
+
+    // 2. Проверяем invite token (из query или из body)
     const inviteToken = req.query.invite || req.body.invite;
     console.log("Invite token:", inviteToken);
 
@@ -17,16 +20,18 @@ exports.register = async (req, res) => {
       if (invite) {
         console.log("Invite found:", invite);
 
-        // 3. СОЗДАЁМ Member и ПЕРЕДАЁМ ownerId
+        finalRole = invite.role; // роль берём из инвайта
+
+        // 3. СОЗДАЁМ участника (Member)
         await Member.create({
-          ownerId: invite.ownerId, // <<< ВАЖНО!!!
+          ownerId: invite.ownerId, // ← владелец
           name: `${user.firstName} ${user.lastName}`,
           email: user.email,
           avatar: null,
           role: invite.role,
         });
 
-        // 4. Удаляем invite
+        // 4. Удаляем приглашение
         await Invite.deleteOne({ token: inviteToken });
 
         console.log("Member created and invite removed");
@@ -35,9 +40,11 @@ exports.register = async (req, res) => {
       }
     }
 
+    // 5. Возвращаем роль в ответе
     res.status(201).json({
       message: "User registered successfully",
       userId: user._id,
+      role: finalRole, // <<< ДОБАВЛЕНО
     });
   } catch (err) {
     console.error("REGISTER ERROR:", err);
@@ -50,7 +57,21 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const result = await authService.login(req.body);
-    res.json({ message: "Login success", ...result });
+
+    // Получаем роль пользователя (если он участник в чём-то)
+    const member = await Member.findOne({ email: result.user.email });
+
+    let role = "owner"; // если пользователь никому не принадлежит
+
+    if (member) {
+      role = member.role;
+    }
+
+    res.json({
+      message: "Login success",
+      ...result,
+      role, // <<< ДОБАВЛЕНО
+    });
   } catch (err) {
     console.error("LOGIN ERROR:", err);
     res

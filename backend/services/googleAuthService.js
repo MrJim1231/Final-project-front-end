@@ -85,18 +85,20 @@ class GoogleAuthService {
     }
 
     // =============================
-    // 5. CREATE NEW USER
+    // 5. CREATE NEW USER (Google registration)
     // =============================
     if (!user) {
+      const baseUsername = google.email.split("@")[0];
+      const randomSuffix = Math.floor(Math.random() * 10000);
+      const uniqueUsername = `${baseUsername}_${randomSuffix}`;
+
       user = await User.create({
         email: google.email,
         firstName: google.given_name || "",
         lastName: google.family_name || "",
         googleId: google.id,
         avatar: google.picture || "",
-        username: `${google.email.split("@")[0]}_${Math.floor(
-          Math.random() * 10000
-        )}`,
+        username: uniqueUsername,
         passwordHash: null,
       });
     }

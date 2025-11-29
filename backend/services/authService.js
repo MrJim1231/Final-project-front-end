@@ -10,15 +10,18 @@ exports.register = async ({
   password,
 }) => {
   // Проверяем существование email/username
-  if (await User.findOne({ email }))
+  if (await User.findOne({ email })) {
     throw { status: 400, message: "Email already exists" };
-  if (await User.findOne({ username }))
+  }
+  if (await User.findOne({ username })) {
     throw { status: 400, message: "Username already exists" };
+  }
 
   // Хешируем пароль
   const salt = await bcrypt.genSalt(10);
   const passwordHash = await bcrypt.hash(password, salt);
 
+  // Создаём пользователя
   const user = await User.create({
     firstName,
     lastName,
@@ -26,7 +29,15 @@ exports.register = async ({
     email,
     passwordHash,
   });
-  return user;
+
+  // Возвращаем только пользователя (роль обработает контроллер!)
+  return {
+    id: user._id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    username: user.username,
+    email: user.email,
+  };
 };
 
 exports.login = async ({ username, password }) => {
@@ -36,6 +47,7 @@ exports.login = async ({ username, password }) => {
   const isMatch = await bcrypt.compare(password, user.passwordHash);
   if (!isMatch) throw { status: 400, message: "Invalid username or password" };
 
+  // JWT
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
     expiresIn: "7d",
   });

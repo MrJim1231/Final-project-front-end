@@ -15,6 +15,9 @@ exports.googleAuth = async (req, res) => {
     const result = await googleAuthService.loginWithGoogle(code);
     const user = result.user;
 
+    // роль по умолчанию — owner
+    let finalRole = "owner";
+
     // =====================================================
     // 🔥 2. Если есть invite → создаём Member с ownerId
     // =====================================================
@@ -23,6 +26,8 @@ exports.googleAuth = async (req, res) => {
 
       if (foundInvite) {
         console.log("Invite found for Google registration:", foundInvite);
+
+        finalRole = foundInvite.role; // роль берём из инвайта
 
         await Member.create({
           ownerId: foundInvite.ownerId, // ← ВАЖНО! привязка к владельцу
@@ -39,15 +44,18 @@ exports.googleAuth = async (req, res) => {
       } else {
         console.log("Invite not found or expired");
       }
+    } else {
+      // нет инвайта → пользователь сам себе Owner
+      finalRole = "owner";
     }
 
     // =====================================================
-    // 🔄 3. Редирект на фронтенд для авто-логина
+    // 🔄 3. Редирект на фронтенд + передаём роль
     // =====================================================
     res.redirect(
-      `http://localhost:5173/register?googleToken=${
-        result.token
-      }&user=${encodeURIComponent(JSON.stringify(user))}`
+      `http://localhost:5173/register?googleToken=${result.token}` +
+        `&user=${encodeURIComponent(JSON.stringify(user))}` +
+        `&role=${finalRole}`
     );
   } catch (err) {
     console.error("GOOGLE LOGIN ERROR:", err);

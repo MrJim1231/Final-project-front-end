@@ -46,7 +46,8 @@ export const RegisterPage = () => {
   const [loading, setLoading] = useState(false);
 
   // =====================================================
-  // AUTO LOGIN AFTER GOOGLE (как на LoginPage)
+  // 🔥 AUTO LOGIN AFTER GOOGLE
+  // (точно как в LoginPage, но теперь сохраняем role!)
   // =====================================================
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -60,9 +61,16 @@ export const RegisterPage = () => {
         // Save token globally
         setAuthToken(googleToken);
 
-        // Save to localStorage
+        // Save user with ROLE
+        localStorage.setItem(
+          "user",
+          JSON.stringify({
+            ...user,
+            role: user.role || "owner",
+          })
+        );
+
         localStorage.setItem("token", googleToken);
-        localStorage.setItem("user", JSON.stringify(user));
 
         // Save to Redux
         dispatch(
@@ -74,6 +82,7 @@ export const RegisterPage = () => {
             email: user.email,
             avatar: user.avatar || "",
             googleId: user.googleId || null,
+            role: user.role || "owner",
             token: googleToken,
           })
         );
@@ -95,7 +104,7 @@ export const RegisterPage = () => {
   };
 
   // =====================================================
-  // SUBMIT (REGISTRATION + AUTO LOGIN)
+  // 🔥 SUBMIT (REGISTRATION + AUTO LOGIN)
   // =====================================================
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -120,10 +129,10 @@ export const RegisterPage = () => {
         invite: invite || null,
       };
 
-      // 1️⃣ REGISTER USER
+      // 🟦 1) REGISTER USER
       await UserAPI.register(payload);
 
-      // 2️⃣ AUTO LOGIN right after registration
+      // 🟦 2) LOGIN пользователем сразу после регистрации
       const loginRes = await UserAPI.login({
         username: form.username,
         password: form.password,
@@ -134,9 +143,16 @@ export const RegisterPage = () => {
       // Save token globally
       setAuthToken(token);
 
-      // Save to storage
+      // Save user with ROLE
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          ...user,
+          role: user.role || "owner",
+        })
+      );
+
       localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
 
       // Save to Redux
       dispatch(
@@ -148,11 +164,11 @@ export const RegisterPage = () => {
           email: user.email,
           avatar: user.avatar || "",
           googleId: user.googleId || null,
+          role: user.role || "owner",
           token,
         })
       );
 
-      // Redirect
       navigate("/");
     } catch (err: any) {
       console.log(err);
@@ -163,7 +179,7 @@ export const RegisterPage = () => {
   };
 
   // =====================================================
-  // GOOGLE REGISTER (ПЕРЕДАЁМ INVITE ЧЕРЕЗ state)
+  // 🔥 GOOGLE REGISTER — через state передаём invite
   // =====================================================
   const handleGoogleRegister = () => {
     if (invite) {

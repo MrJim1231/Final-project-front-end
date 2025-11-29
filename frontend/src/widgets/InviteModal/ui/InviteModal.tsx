@@ -1,12 +1,19 @@
 import "./InviteModal.css";
 import { IoIosArrowDown } from "react-icons/io";
 import { useInvite } from "../model/useInvite";
+import { useSelector } from "react-redux";
+import { RootState } from "@/app/providers/store";
 
 import defaultAvatar from "@/shared/assets/images/avatar6.png";
 
 export const InviteModal = ({ onClose }: { onClose: () => void }) => {
   const { email, setEmail, members, projectLink, sendInvite, changeRole } =
     useInvite();
+
+  // 🎯 роль текущего пользователя
+  const myRole = useSelector((state: RootState) => state.user.role);
+
+  const isOwner = myRole === "owner";
 
   return (
     <div className="invite-modal-overlay">
@@ -19,59 +26,76 @@ export const InviteModal = ({ onClose }: { onClose: () => void }) => {
           </button>
         </div>
 
-        {/* SEND INVITE */}
-        <div className="invite-row">
-          <input
-            type="email"
-            placeholder="email@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+        {/* SEND INVITE — только для OWNER */}
+        {isOwner && (
+          <div className="invite-row">
+            <input
+              type="email"
+              placeholder="email@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
 
-          <button className="invite-send-btn" onClick={sendInvite}>
-            Send Invite
-          </button>
-        </div>
+            <button className="invite-send-btn" onClick={sendInvite}>
+              Send Invite
+            </button>
+          </div>
+        )}
 
         {/* MEMBERS LIST */}
         <h3>Members</h3>
 
         <div className="members-list">
-          {members.map((m: any) => (
-            <div key={m._id} className="member-item">
-              {/* AVATAR WITH FALLBACK */}
-              <img
-                src={m.avatar || defaultAvatar}
-                alt={m.name || "User"}
-                className="member-avatar"
-              />
+          {members.map((m: any) => {
+            const isMemberOwner = m.role === "owner";
 
-              {/* INFO */}
-              <div className="member-info">
-                <div className="member-name">{m.name}</div>
-                <div className="member-email">{m.email}</div>
-              </div>
+            return (
+              <div key={m._id} className="member-item">
+                {/* AVATAR */}
+                <img
+                  src={m.avatar || defaultAvatar}
+                  alt={m.name || "User"}
+                  className="member-avatar"
+                />
 
-              {/* ROLE SELECTOR */}
-              <div className="role-select">
-                <span>
-                  {m.role === "owner"
-                    ? "Owner"
-                    : m.role === "edit"
-                    ? "Can edit"
-                    : "Can view"}
-                </span>
+                {/* INFO */}
+                <div className="member-info">
+                  <div className="member-name">{m.name}</div>
+                  <div className="member-email">{m.email}</div>
+                </div>
 
-                <IoIosArrowDown />
+                {/* ROLE SELECTOR — только owner может менять */}
+                <div className="role-select">
+                  <span>
+                    {m.role === "owner"
+                      ? "Owner"
+                      : m.role === "edit"
+                      ? "Can edit"
+                      : "Can view"}
+                  </span>
 
-                <div className="role-dropdown">
-                  <div onClick={() => changeRole(m._id, "edit")}>Can edit</div>
-                  <div onClick={() => changeRole(m._id, "view")}>Can view</div>
-                  <div onClick={() => changeRole(m._id, "owner")}>Owner</div>
+                  {/* Только владелец может менять роли + нельзя менять роль owner */}
+                  {isOwner && !isMemberOwner && (
+                    <>
+                      <IoIosArrowDown />
+
+                      <div className="role-dropdown">
+                        <div onClick={() => changeRole(m._id, "edit")}>
+                          Can edit
+                        </div>
+                        <div onClick={() => changeRole(m._id, "view")}>
+                          Can view
+                        </div>
+                        <div onClick={() => changeRole(m._id, "owner")}>
+                          Owner
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* PROJECT LINK */}
