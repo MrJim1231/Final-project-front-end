@@ -95,7 +95,6 @@ const tasksSlice = createSlice({
       state.selected = action.payload;
     },
 
-    // 🟢 Добавлено: очистка выбранной задачи
     clearSelected: (state) => {
       state.selected = null;
     },
@@ -145,7 +144,6 @@ const tasksSlice = createSlice({
       .addCase(removeTask.fulfilled, (state, action) => {
         state.items = state.items.filter((t) => t.id !== action.payload);
 
-        // 🟡 Если удалили выбранную карточку → выбираем новую
         if (state.selected?.id === action.payload) {
           state.selected = state.items[0] || null;
         }
@@ -162,7 +160,6 @@ const tasksSlice = createSlice({
         if (index !== -1) {
           state.items[index] = updated;
 
-          // 🟢 Если обновили выбранную задачу → обновляем selected
           if (state.selected?.id === updated.id) {
             state.selected = updated;
           }

@@ -1,4 +1,4 @@
-import { apiTasks } from "@/shared/api/apiTasks";
+import { api } from "@/shared/api/api";
 
 // === Тип ответа с backend ===
 interface ServerTodo {
@@ -46,7 +46,7 @@ const mapServerTodo = (t: ServerTodo): Todo => ({
 
 // === GET /todos ===
 export const getTodos = async (): Promise<Todo[]> => {
-  const { data } = await apiTasks.get<ServerTodo[]>(ENDPOINT);
+  const { data } = await api.get<ServerTodo[]>(ENDPOINT);
   return data.map(mapServerTodo);
 };
 
@@ -59,29 +59,29 @@ export const createTodo = async (todo: {
   image?: string;
   vital: boolean;
 }): Promise<Todo> => {
-  const { data } = await apiTasks.post<ServerTodo>(ENDPOINT, todo);
+  const { data } = await api.post<ServerTodo>(ENDPOINT, todo);
   return mapServerTodo(data);
 };
 
 // === DELETE /todos/:id ===
 export const deleteTodo = async (id: string) => {
-  await apiTasks.delete(`${ENDPOINT}/${id}`);
+  await api.delete(`${ENDPOINT}/${id}`);
 };
 
-// === PUT /todos/:id (полное обновление) ===
+// === PUT /todos/:id ===
 export const updateTodo = async (
   id: string,
   fields: Partial<Todo>
 ): Promise<Todo> => {
-  const { data } = await apiTasks.put<ServerTodo>(`${ENDPOINT}/${id}`, fields);
+  const { data } = await api.put<ServerTodo>(`${ENDPOINT}/${id}`, fields);
   return mapServerTodo(data);
 };
 
-// === PUT /todos/:id (частичное обновление) ===
+// === PATCH /todos/:id ===
 export const patchTodo = async (
   id: string,
   fields: Partial<Todo>
 ): Promise<Todo> => {
-  const { data } = await apiTasks.put<ServerTodo>(`${ENDPOINT}/${id}`, fields);
+  const { data } = await api.patch<ServerTodo>(`${ENDPOINT}/${id}`, fields);
   return mapServerTodo(data);
 };
