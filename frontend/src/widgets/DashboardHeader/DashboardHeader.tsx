@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import "./DashboardHeader.css";
 import { FiUserPlus } from "react-icons/fi";
-import { InviteModal } from "@/widgets/InviteModal";
-import { inviteApi } from "@/widgets/InviteModal/api/inviteApi";
+import { InviteModal } from "@/features/invite";
+import { inviteApi } from "@/features/invite/api/inviteApi";
 import { Member } from "@/entities/user/model/memberTypes";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/providers/store";
