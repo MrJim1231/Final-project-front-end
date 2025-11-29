@@ -1,6 +1,6 @@
 // pages/settings/ui/ChangePassword/ChangePassword.tsx
 import "./ChangePassword.css";
-import defaultAvatar from "../../../../shared/assets/images/avatar.png";
+import defaultAvatar from "@/shared/assets/images/avatar6.png";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useSelector } from "react-redux";

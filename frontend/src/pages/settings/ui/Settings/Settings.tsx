@@ -1,6 +1,6 @@
 // pages/settings/ui/Settings/Settings.tsx
 import "./Settings.css";
-import defaultAvatar from "../../../../shared/assets/images/avatar.png";
+import defaultAvatar from "@/shared/assets/images/avatar6.png";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
