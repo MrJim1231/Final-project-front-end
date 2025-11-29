@@ -10,21 +10,18 @@ exports.register = async (req, res) => {
     // Роль по умолчанию — owner (если нет инвайта)
     let finalRole = "owner";
 
-    // 2. Проверяем invite token (из query или из body)
+    // 2. Проверяем invite token (из query или body)
     const inviteToken = req.query.invite || req.body.invite;
-    console.log("Invite token:", inviteToken);
 
     if (inviteToken) {
       const invite = await Invite.findOne({ token: inviteToken });
 
       if (invite) {
-        console.log("Invite found:", invite);
+        finalRole = invite.role;
 
-        finalRole = invite.role; // роль берём из инвайта
-
-        // 3. СОЗДАЁМ участника (Member)
+        // 3. Создаём участника (Member)
         await Member.create({
-          ownerId: invite.ownerId, // ← владелец
+          ownerId: invite.ownerId,
           name: `${user.firstName} ${user.lastName}`,
           email: user.email,
           avatar: null,
@@ -33,21 +30,16 @@ exports.register = async (req, res) => {
 
         // 4. Удаляем приглашение
         await Invite.deleteOne({ token: inviteToken });
-
-        console.log("Member created and invite removed");
-      } else {
-        console.log("Invite not found");
       }
     }
 
-    // 5. Возвращаем роль в ответе
+    // 5. Ответ
     res.status(201).json({
       message: "User registered successfully",
       userId: user._id,
-      role: finalRole, // <<< ДОБАВЛЕНО
+      role: finalRole,
     });
   } catch (err) {
-    console.error("REGISTER ERROR:", err);
     res
       .status(err.status || 500)
       .json({ message: err.message || "Server error" });
@@ -58,22 +50,17 @@ exports.login = async (req, res) => {
   try {
     const result = await authService.login(req.body);
 
-    // Получаем роль пользователя (если он участник в чём-то)
+    // Определяем роль пользователя
     const member = await Member.findOne({ email: result.user.email });
 
-    let role = "owner"; // если пользователь никому не принадлежит
-
-    if (member) {
-      role = member.role;
-    }
+    const role = member ? member.role : "owner";
 
     res.json({
       message: "Login success",
       ...result,
-      role, // <<< ДОБАВЛЕНО
+      role,
     });
   } catch (err) {
-    console.error("LOGIN ERROR:", err);
     res
       .status(err.status || 500)
       .json({ message: err.message || "Server error" });
