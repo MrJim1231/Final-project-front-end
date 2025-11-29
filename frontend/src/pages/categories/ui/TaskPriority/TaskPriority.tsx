@@ -8,7 +8,7 @@ import {
   createTaskPriority,
   updateTaskPriority,
   deleteTaskPriority,
-} from "@/shared/api/priorityApi";
+} from "@/entities/priority/api/priorityApi";
 
 interface PriorityItem {
   _id: string;

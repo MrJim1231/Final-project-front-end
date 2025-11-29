@@ -22,7 +22,7 @@ import personImage from "@/shared/assets/images/auth/register-image.png";
 import googleIcon from "@/shared/assets/images/auth/google.png";
 
 // API
-import { UserAPI } from "@/shared/api/apiUser";
+import { UserAPI } from "@/entities/user/api/apiUser";
 import { setAuthToken } from "@/shared/api/api";
 
 export const RegisterPage = () => {

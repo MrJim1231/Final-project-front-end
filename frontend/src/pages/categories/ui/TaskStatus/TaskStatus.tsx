@@ -8,7 +8,7 @@ import {
   createTaskStatus,
   updateTaskStatus,
   deleteTaskStatus,
-} from "@/shared/api/statusApi";
+} from "@/entities/status/api/statusApi";
 
 interface StatusItem {
   _id: string;

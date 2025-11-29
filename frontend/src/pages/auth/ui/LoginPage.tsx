@@ -18,7 +18,7 @@ import googleIcon from "@/shared/assets/images/auth/google.png";
 import xIcon from "@/shared/assets/images/auth/x-image.png";
 
 // API
-import { UserAPI } from "@/shared/api/apiUser";
+import { UserAPI } from "@/entities/user/api/apiUser";
 import { setAuthToken } from "@/shared/api/api";
 
 export const LoginPage = () => {

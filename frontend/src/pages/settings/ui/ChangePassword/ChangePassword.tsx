@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/app/providers/store";
 
 // API
-import { UserAPI } from "@/shared/api/apiUser";
+import { UserAPI } from "@/entities/user/api/apiUser";
 
 export const ChangePassword = () => {
   const navigate = useNavigate();

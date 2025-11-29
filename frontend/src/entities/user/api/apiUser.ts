@@ -1,4 +1,5 @@
-import { api, setAuthToken } from "./api";
+import { api } from "@/shared/api/api";
+import { setAuthToken } from "@/shared/api/api";
 
 export const UserAPI = {
   setToken: setAuthToken,

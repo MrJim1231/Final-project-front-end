@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./AddTaskModal.css";
 
-import { getTaskPriority } from "@/shared/api/priorityApi";
+import { getTaskPriority } from "@/entities/priority/api/priorityApi";
 
 interface AddTaskModalProps {
   onClose: () => void;
