@@ -39,7 +39,9 @@ class GoogleAuthService {
     // =============================
     const googleUserResponse = await axios.get(
       "https://www.googleapis.com/oauth2/v2/userinfo",
-      { headers: { Authorization: `Bearer ${accessToken}` } }
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
     );
 
     const google = googleUserResponse.data;
@@ -57,29 +59,29 @@ class GoogleAuthService {
     // 4. UPDATE EXISTING USER
     // =============================
     if (user) {
-      let updated = false;
+      let shouldSave = false;
 
       if (!user.googleId) {
         user.googleId = google.id;
-        updated = true;
+        shouldSave = true;
       }
 
       if (google.picture && user.avatar !== google.picture) {
         user.avatar = google.picture;
-        updated = true;
+        shouldSave = true;
       }
 
       if (google.given_name && !user.firstName) {
         user.firstName = google.given_name;
-        updated = true;
+        shouldSave = true;
       }
 
       if (google.family_name && !user.lastName) {
         user.lastName = google.family_name;
-        updated = true;
+        shouldSave = true;
       }
 
-      if (updated) await user.save();
+      if (shouldSave) await user.save();
     }
 
     // =============================

@@ -1,6 +1,10 @@
 const inviteService = require("../services/inviteService");
+const Member = require("../models/Member");
 
 module.exports = {
+  // ===========================================
+  // 📩 СОЗДАТЬ ПРИГЛАШЕНИЕ
+  // ===========================================
   async invite(req, res) {
     try {
       console.log("📩 [INVITE] Incoming request body:", req.body);
@@ -12,9 +16,16 @@ module.exports = {
         return res.status(400).json({ error: "Email is required" });
       }
 
-      console.log(`📨 [INVITE] Sending invite to: ${email}, role: ${role}`);
+      console.log(
+        `📨 [INVITE] Sending invite to: ${email}, role: ${role}, ownerId: ${req.user.id}`
+      );
 
-      const data = await inviteService.sendInvite(email, role);
+      // Передаём ownerId — КТО создаёт приглашение
+      const data = await inviteService.sendInvite({
+        email,
+        role,
+        ownerId: req.user.id,
+      });
 
       console.log("✅ [INVITE SUCCESS] Invite created:", data);
 
@@ -25,11 +36,18 @@ module.exports = {
     }
   },
 
+  // ===========================================
+  // 👥 ПОЛУЧИТЬ СПИСОК УЧАСТНИКОВ ДЛЯ ТЕКУЩЕГО ВЛАДЕЛЬЦА
+  // ===========================================
   async members(req, res) {
     try {
-      console.log("👥 [MEMBERS] Fetching members...");
-      const data = await inviteService.listMembers();
+      console.log(`👥 [MEMBERS] Fetching members for ownerId: ${req.user.id}`);
+
+      // ВАЖНО: ТОЛЬКО УЧАСТНИКИ ТЕКУЩЕГО ПОЛЬЗОВАТЕЛЯ
+      const data = await Member.find({ ownerId: req.user.id });
+
       console.log("✅ [MEMBERS] Loaded:", data.length);
+
       res.json(data);
     } catch (e) {
       console.log("🔥 [MEMBERS ERROR] Failed:", e);
@@ -37,13 +55,29 @@ module.exports = {
     }
   },
 
+  // ===========================================
+  // 🔄 ОБНОВИТЬ РОЛЬ УЧАСТНИКА
+  // ===========================================
   async updateRole(req, res) {
     try {
       console.log("🔄 [UPDATE ROLE] Params:", req.params);
       console.log("🔄 [UPDATE ROLE] Body:", req.body);
 
+      const memberId = req.params.id;
       const { role } = req.body;
-      const updated = await inviteService.updateRole(req.params.id, role);
+
+      // Меняем только если member принадлежит текущему владельцу!
+      const updated = await Member.findOneAndUpdate(
+        { _id: memberId, ownerId: req.user.id },
+        { role },
+        { new: true }
+      );
+
+      if (!updated) {
+        return res
+          .status(403)
+          .json({ error: "You cannot update members of another user" });
+      }
 
       console.log("✅ [UPDATE ROLE] Updated member:", updated);
       res.json(updated);
@@ -53,11 +87,17 @@ module.exports = {
     }
   },
 
+  // ===========================================
+  // 🔗 ССЫЛКА ПРОЕКТА (если требуется)
+  // ===========================================
   async projectLink(req, res) {
     try {
       console.log("🔗 [PROJECT LINK] Getting link...");
+
       const link = await inviteService.getProjectLink();
+
       console.log("✅ [PROJECT LINK] Loaded:", link);
+
       res.json(link);
     } catch (e) {
       console.log("🔥 [PROJECT LINK ERROR] Failed:", e);

@@ -4,10 +4,15 @@ const crypto = require("crypto");
 const sendEmail = require("../utils/sendEmail");
 
 class InviteService {
-  async sendInvite(email, role = "edit") {
+  // ================================================
+  // 📩 ОТПРАВИТЬ ПРИГЛАШЕНИЕ
+  // ================================================
+  async sendInvite({ email, role = "edit", ownerId }) {
     const token = crypto.randomBytes(20).toString("hex");
 
+    // Сохраняем, кто отправил приглашение
     const invite = await Invite.create({
+      ownerId,
       email,
       token,
       role,
@@ -28,14 +33,27 @@ class InviteService {
     return invite;
   }
 
-  async listMembers() {
-    return await Member.find();
+  // ================================================
+  // 👥 ПОЛУЧИТЬ УЧАСТНИКОВ ДЛЯ ТЕКУЩЕГО ПОЛЬЗОВАТЕЛЯ
+  // ================================================
+  async listMembers(ownerId) {
+    return await Member.find({ ownerId });
   }
 
-  async updateRole(memberId, role) {
-    return await Member.findByIdAndUpdate(memberId, { role }, { new: true });
+  // ================================================
+  // 🔄 ОБНОВИТЬ РОЛЬ УЧАСТНИКА (ТОЛЬКО СВОИХ)
+  // ================================================
+  async updateRole(memberId, role, ownerId) {
+    return await Member.findOneAndUpdate(
+      { _id: memberId, ownerId },
+      { role },
+      { new: true }
+    );
   }
 
+  // ================================================
+  // 🔗 ПОЛУЧИТЬ ССЫЛКУ НА ПРОЕКТ (оставим как есть)
+  // ================================================
   async getProjectLink() {
     return { link: "https://sharelinkhereandthere.com/34565yy29" };
   }

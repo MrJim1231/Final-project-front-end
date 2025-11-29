@@ -4,8 +4,8 @@ const Member = require("../models/Member");
 
 exports.googleAuth = async (req, res) => {
   try {
-    const { code, state } = req.query; // ← Google передает invite через state
-    const invite = state || null;
+    const { code, state } = req.query; // state = invite token
+    const inviteToken = state || null;
 
     if (!code) {
       return res.status(400).json({ message: "Missing code" });
@@ -16,22 +16,24 @@ exports.googleAuth = async (req, res) => {
     const user = result.user;
 
     // =====================================================
-    // 🔥 2. Если есть invite → создаём Member и удаляем invite
+    // 🔥 2. Если есть invite → создаём Member с ownerId
     // =====================================================
-    if (invite) {
-      const foundInvite = await Invite.findOne({ token: invite });
+    if (inviteToken) {
+      const foundInvite = await Invite.findOne({ token: inviteToken });
 
       if (foundInvite) {
         console.log("Invite found for Google registration:", foundInvite);
 
         await Member.create({
+          ownerId: foundInvite.ownerId, // ← ВАЖНО! привязка к владельцу
           name: `${user.firstName} ${user.lastName}`,
           email: user.email,
           avatar: user.avatar || null,
           role: foundInvite.role,
         });
 
-        await Invite.deleteOne({ token: invite });
+        // удаляем invite после использования
+        await Invite.deleteOne({ token: inviteToken });
 
         console.log("Member created via Google and invite removed");
       } else {
