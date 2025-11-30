@@ -53,7 +53,7 @@ export const googleAuth = async (req, res) => {
     // 🔄 3. Редирект на фронтенд + передаём роль
     // =====================================================
     res.redirect(
-      `http://test111-blue.vercel.app/register?googleToken=${result.token}` +
+      `https://test111-blue.vercel.app/register?googleToken=${result.token}` +
         `&user=${encodeURIComponent(JSON.stringify(user))}` +
         `&role=${finalRole}`
     );
