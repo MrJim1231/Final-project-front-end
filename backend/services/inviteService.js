@@ -4,11 +4,8 @@ import crypto from "crypto";
 import sendEmail from "../utils/sendEmail.js";
 
 class InviteService {
-  // ================================================
   // 📩 ОТПРАВИТЬ ПРИГЛАШЕНИЕ
-  // ================================================
   async sendInvite({ email, role = "edit", ownerId }) {
-    // ❌ Защита от owner
     if (role === "owner") {
       throw new Error("Owner role cannot be assigned");
     }
@@ -22,7 +19,7 @@ class InviteService {
       role,
     });
 
-    const link = `https://test111-blue.vercel.app/register?invite=${token}`;
+    const link = `https://todolist-front-end-five.vercel.app/register?invite=${token}`;
 
     await sendEmail(
       email,
@@ -37,18 +34,13 @@ class InviteService {
     return invite;
   }
 
-  // ================================================
   // 👥 СПИСОК УЧАСТНИКОВ
-  // ================================================
   async listMembers(ownerId) {
     return await Member.find({ ownerId });
   }
 
-  // ================================================
   // 🔄 ОБНОВИТЬ РОЛЬ
-  // ================================================
   async updateRole(memberId, role, ownerId) {
-    // ❌ Нельзя назначать owner
     if (role === "owner") {
       throw new Error("Owner role cannot be assigned");
     }
@@ -60,9 +52,7 @@ class InviteService {
     );
   }
 
-  // ================================================
-  // 🔗 LINK
-  // ================================================
+  // 🔗 ПОДЕЛИТЬСЯ ССЫЛКОЙ
   async getProjectLink() {
     return { link: "https://sharelinkhereandthere.com/34565yy29" };
   }
