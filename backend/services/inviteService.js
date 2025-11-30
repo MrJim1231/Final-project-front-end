@@ -22,7 +22,7 @@ class InviteService {
       role,
     });
 
-    const link = `http://localhost:5173/register?invite=${token}`;
+    const link = `http://test111-blue.vercel.app/register?invite=${token}`;
 
     await sendEmail(
       email,
