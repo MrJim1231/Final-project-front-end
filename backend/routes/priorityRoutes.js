@@ -1,10 +1,10 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const priorityController = require("../controllers/priorityController");
+import * as priorityController from "../controllers/priorityController.js";
 
 router.get("/", priorityController.getAll);
 router.post("/", priorityController.create);
 router.put("/:id", priorityController.update);
 router.delete("/:id", priorityController.remove);
 
-module.exports = router;
+export default router;

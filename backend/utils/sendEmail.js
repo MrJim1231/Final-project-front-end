@@ -1,4 +1,4 @@
-const transporter = require("./transporter");
+import transporter from "./transporter.js";
 
 async function sendEmail(to, subject, html) {
   try {
@@ -13,4 +13,4 @@ async function sendEmail(to, subject, html) {
   }
 }
 
-module.exports = sendEmail;
+export default sendEmail;

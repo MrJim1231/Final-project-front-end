@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const TodoSchema = new mongoose.Schema({
   ownerId: {
@@ -28,4 +28,4 @@ const TodoSchema = new mongoose.Schema({
   completedAt: { type: Date, default: null },
 });
 
-module.exports = mongoose.model("Todo", TodoSchema);
+export default mongoose.model("Todo", TodoSchema);

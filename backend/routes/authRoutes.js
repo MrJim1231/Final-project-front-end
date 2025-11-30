@@ -1,8 +1,8 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
-const { register, login } = require("../controllers/authController");
-const googleAuthController = require("../controllers/googleAuthController");
+import { register, login } from "../controllers/authController.js";
+import { googleAuth } from "../controllers/googleAuthController.js";
 
 // ===============================
 // === STANDARD LOGIN / REGISTER =
@@ -41,6 +41,6 @@ router.get("/google", (req, res) => {
 });
 
 // 2) Google возвращает code + state (invite)
-router.get("/google/callback", googleAuthController.googleAuth);
+router.get("/google/callback", googleAuth);
 
-module.exports = router;
+export default router;

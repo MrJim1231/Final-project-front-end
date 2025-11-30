@@ -1,13 +1,13 @@
-const User = require("../models/User");
-const bcrypt = require("bcryptjs");
+import User from "../models/User.js";
+import bcrypt from "bcryptjs";
 
-exports.getProfile = async (userId) => {
+export const getProfile = async (userId) => {
   const user = await User.findById(userId).select("-passwordHash");
   if (!user) throw { status: 404, message: "User not found" };
   return user;
 };
 
-exports.updateProfile = async (
+export const updateProfile = async (
   userId,
   { firstName, lastName, email, contact, position }
 ) => {
@@ -24,7 +24,7 @@ exports.updateProfile = async (
   return updatedUser;
 };
 
-exports.changePassword = async (userId, { oldPassword, newPassword }) => {
+export const changePassword = async (userId, { oldPassword, newPassword }) => {
   const user = await User.findById(userId);
   if (!user) throw { status: 404, message: "User not found" };
 
@@ -35,3 +35,5 @@ exports.changePassword = async (userId, { oldPassword, newPassword }) => {
   user.passwordHash = await bcrypt.hash(newPassword, salt);
   await user.save();
 };
+
+export default { getProfile, updateProfile, changePassword };

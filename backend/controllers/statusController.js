@@ -1,28 +1,26 @@
-const statusService = require("../services/statusService");
+import statusService from "../services/statusService.js";
 
-module.exports = {
-  async getAll(req, res) {
-    const list = await statusService.getAll();
-    res.json(list);
-  },
+export const getAll = async (req, res) => {
+  const list = await statusService.getAll();
+  res.json(list);
+};
 
-  async create(req, res) {
-    const { title } = req.body;
-    const created = await statusService.create(title);
-    res.json(created);
-  },
+export const create = async (req, res) => {
+  const { title } = req.body;
+  const created = await statusService.create(title);
+  res.json(created);
+};
 
-  async update(req, res) {
-    const { id } = req.params;
-    const { title } = req.body;
+export const update = async (req, res) => {
+  const { id } = req.params;
+  const { title } = req.body;
 
-    const updated = await statusService.update(id, title);
-    res.json(updated);
-  },
+  const updated = await statusService.update(id, title);
+  res.json(updated);
+};
 
-  async remove(req, res) {
-    const { id } = req.params;
-    await statusService.remove(id);
-    res.json({ success: true });
-  },
+export const remove = async (req, res) => {
+  const { id } = req.params;
+  await statusService.remove(id);
+  res.json({ success: true });
 };

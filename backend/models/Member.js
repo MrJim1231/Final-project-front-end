@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const MemberSchema = new mongoose.Schema({
   ownerId: {
@@ -20,4 +20,4 @@ const MemberSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model("Member", MemberSchema);
+export default mongoose.model("Member", MemberSchema);

@@ -1,8 +1,8 @@
-const authService = require("../services/authService");
-const Invite = require("../models/Invite");
-const Member = require("../models/Member");
+import authService from "../services/authService.js";
+import Invite from "../models/Invite.js";
+import Member from "../models/Member.js";
 
-exports.register = async (req, res) => {
+export const register = async (req, res) => {
   try {
     // 1. Регистрируем пользователя
     const user = await authService.register(req.body);
@@ -46,7 +46,7 @@ exports.register = async (req, res) => {
   }
 };
 
-exports.login = async (req, res) => {
+export const login = async (req, res) => {
   try {
     const result = await authService.login(req.body);
 

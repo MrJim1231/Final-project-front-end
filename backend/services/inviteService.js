@@ -1,7 +1,7 @@
-const Invite = require("../models/Invite");
-const Member = require("../models/Member");
-const crypto = require("crypto");
-const sendEmail = require("../utils/sendEmail");
+import Invite from "../models/Invite.js";
+import Member from "../models/Member.js";
+import crypto from "crypto";
+import sendEmail from "../utils/sendEmail.js";
 
 class InviteService {
   // ================================================
@@ -68,4 +68,4 @@ class InviteService {
   }
 }
 
-module.exports = new InviteService();
+export default new InviteService();

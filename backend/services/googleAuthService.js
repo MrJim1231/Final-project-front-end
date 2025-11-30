@@ -1,6 +1,6 @@
-const axios = require("axios");
-const jwt = require("jsonwebtoken");
-const User = require("../models/User");
+import axios from "axios";
+import jwt from "jsonwebtoken";
+import User from "../models/User.js";
 
 class GoogleAuthService {
   async loginWithGoogle(code) {
@@ -128,4 +128,4 @@ class GoogleAuthService {
   }
 }
 
-module.exports = new GoogleAuthService();
+export default new GoogleAuthService();

@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const InviteSchema = new mongoose.Schema({
   ownerId: {
@@ -29,4 +29,4 @@ const InviteSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Invite", InviteSchema);
+export default mongoose.model("Invite", InviteSchema);

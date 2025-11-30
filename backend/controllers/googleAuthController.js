@@ -1,8 +1,8 @@
-const googleAuthService = require("../services/googleAuthService");
-const Invite = require("../models/Invite");
-const Member = require("../models/Member");
+import googleAuthService from "../services/googleAuthService.js";
+import Invite from "../models/Invite.js";
+import Member from "../models/Member.js";
 
-exports.googleAuth = async (req, res) => {
+export const googleAuth = async (req, res) => {
   try {
     const { code, state } = req.query; // state = invite token
     const inviteToken = state || null;

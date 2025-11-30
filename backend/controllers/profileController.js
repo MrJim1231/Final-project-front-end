@@ -1,6 +1,6 @@
-const profileService = require("../services/profileService");
+import profileService from "../services/profileService.js";
 
-exports.getProfile = async (req, res) => {
+export const getProfile = async (req, res) => {
   try {
     const user = await profileService.getProfile(req.user.id);
     res.json(user);
@@ -12,7 +12,7 @@ exports.getProfile = async (req, res) => {
   }
 };
 
-exports.updateProfile = async (req, res) => {
+export const updateProfile = async (req, res) => {
   try {
     const updatedUser = await profileService.updateProfile(
       req.user.id,
@@ -27,7 +27,7 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
-exports.changePassword = async (req, res) => {
+export const changePassword = async (req, res) => {
   try {
     await profileService.changePassword(req.user.id, req.body);
     res.json({ message: "Password updated successfully" });

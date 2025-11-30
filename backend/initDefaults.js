@@ -1,5 +1,5 @@
-const Status = require("./models/Status");
-const Priority = require("./models/Priority");
+import Status from "../models/Status.js";
+import Priority from "../models/Priority.js";
 
 async function initDefaults() {
   const defaultStatuses = ["Not Started", "In Progress", "Completed"];
@@ -30,4 +30,4 @@ async function initDefaults() {
   }
 }
 
-module.exports = initDefaults;
+export default initDefaults;

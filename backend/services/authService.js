@@ -1,8 +1,8 @@
-const User = require("../models/User");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+import User from "../models/User.js";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
-exports.register = async ({
+export const register = async ({
   firstName,
   lastName,
   username,
@@ -40,7 +40,7 @@ exports.register = async ({
   };
 };
 
-exports.login = async ({ username, password }) => {
+export const login = async ({ username, password }) => {
   const user = await User.findOne({ username });
   if (!user) throw { status: 400, message: "Invalid username or password" };
 
@@ -63,3 +63,5 @@ exports.login = async ({ username, password }) => {
     },
   };
 };
+
+export default { register, login };

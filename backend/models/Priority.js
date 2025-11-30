@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const PrioritySchema = new mongoose.Schema({
   title: { type: String, required: true },
@@ -25,4 +25,4 @@ PrioritySchema.pre(
   }
 );
 
-module.exports = mongoose.model("Priority", PrioritySchema);
+export default mongoose.model("Priority", PrioritySchema);
