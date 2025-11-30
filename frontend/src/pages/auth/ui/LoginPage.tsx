@@ -19,7 +19,7 @@ import xIcon from "@/shared/assets/images/auth/x-image.png";
 
 // API
 import { UserAPI } from "@/entities/user/api/apiUser";
-import { setAuthToken } from "@/shared/api/api";
+import { API_URL, setAuthToken } from "@/shared/api/api";
 
 export const LoginPage = () => {
   const [form, setForm] = useState({
@@ -43,41 +43,40 @@ export const LoginPage = () => {
     const googleToken = params.get("googleToken");
     const userStr = params.get("user");
 
-    if (googleToken && userStr) {
-      try {
-        const user = JSON.parse(userStr);
+    if (!googleToken || !userStr) return;
 
-        // IMPORTANT: add role
-        const fullUser = {
-          ...user,
-          role: user.role || "owner",
-        };
+    try {
+      const user = JSON.parse(userStr);
 
-        // Save token
-        setAuthToken(googleToken);
+      const fullUser = {
+        ...user,
+        role: user.role || "owner",
+      };
 
-        localStorage.setItem("token", googleToken);
-        localStorage.setItem("user", JSON.stringify(fullUser));
+      // Save token globally
+      setAuthToken(googleToken);
 
-        // Save to Redux
-        dispatch(
-          setUser({
-            id: fullUser.id,
-            username: fullUser.username,
-            firstName: fullUser.firstName,
-            lastName: fullUser.lastName,
-            email: fullUser.email,
-            avatar: fullUser.avatar || "",
-            googleId: fullUser.googleId || null,
-            role: fullUser.role,
-            token: googleToken,
-          })
-        );
+      localStorage.setItem("token", googleToken);
+      localStorage.setItem("user", JSON.stringify(fullUser));
 
-        navigate("/");
-      } catch (err) {
-        console.error("Google auto-login parse error:", err);
-      }
+      // Save to Redux
+      dispatch(
+        setUser({
+          id: fullUser.id,
+          username: fullUser.username,
+          firstName: fullUser.firstName,
+          lastName: fullUser.lastName,
+          email: fullUser.email,
+          avatar: fullUser.avatar || "",
+          googleId: fullUser.googleId || null,
+          role: fullUser.role,
+          token: googleToken,
+        })
+      );
+
+      navigate("/");
+    } catch (err) {
+      console.error("Google auto-login parse error:", err);
     }
   }, [params, dispatch, navigate]);
 
@@ -118,10 +117,9 @@ export const LoginPage = () => {
 
       const fullUser = {
         ...user,
-        role: user.role || "owner", // add role
+        role: user.role || "owner",
       };
 
-      // Remember me
       if (form.remember) {
         localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(fullUser));
@@ -131,14 +129,7 @@ export const LoginPage = () => {
 
       dispatch(
         setUser({
-          id: fullUser.id,
-          username: fullUser.username,
-          firstName: fullUser.firstName,
-          lastName: fullUser.lastName,
-          email: fullUser.email,
-          avatar: fullUser.avatar || "",
-          googleId: fullUser.googleId || null,
-          role: fullUser.role,
+          ...fullUser,
           token,
         })
       );
@@ -156,7 +147,7 @@ export const LoginPage = () => {
   // GOOGLE LOGIN
   // ======================================================
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:5000/api/auth/google";
+    window.location.href = `${API_URL}/auth/google`;
   };
 
   return (
@@ -199,7 +190,7 @@ export const LoginPage = () => {
               />
             </div>
 
-            {/* Remember me */}
+            {/* Remember Me */}
             <label className="login__checkbox">
               <input
                 type="checkbox"
