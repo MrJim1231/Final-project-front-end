@@ -23,7 +23,7 @@ import googleIcon from "@/shared/assets/images/auth/google.png";
 
 // API
 import { UserAPI } from "@/entities/user/api/apiUser";
-import { setAuthToken } from "@/shared/api/api";
+import { API_URL, setAuthToken } from "@/shared/api/api";
 
 export const RegisterPage = () => {
   // ========= INVITE TOKEN =========
@@ -33,6 +33,7 @@ export const RegisterPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  // ========= FORM STATE =========
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -46,57 +47,44 @@ export const RegisterPage = () => {
   const [loading, setLoading] = useState(false);
 
   // =====================================================
-  // 🔥 AUTO LOGIN AFTER GOOGLE
-  // (точно как в LoginPage, но теперь сохраняем role!)
+  // 🔥 AUTO LOGIN AFTER GOOGLE OAUTH
   // =====================================================
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const googleToken = params.get("googleToken");
     const userStr = params.get("user");
 
-    if (googleToken && userStr) {
-      try {
-        const user = JSON.parse(userStr);
+    if (!googleToken || !userStr) return;
 
-        // Save token globally
-        setAuthToken(googleToken);
+    try {
+      const user = JSON.parse(userStr);
 
-        // Save user with ROLE
-        localStorage.setItem(
-          "user",
-          JSON.stringify({
-            ...user,
-            role: user.role || "owner",
-          })
-        );
+      // Save token globally
+      setAuthToken(googleToken);
 
-        localStorage.setItem("token", googleToken);
+      // Add fallback role
+      const fullUser = {
+        ...user,
+        role: user.role || "owner",
+      };
 
-        // Save to Redux
-        dispatch(
-          setUser({
-            id: user.id,
-            username: user.username,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-            avatar: user.avatar || "",
-            googleId: user.googleId || null,
-            role: user.role || "owner",
-            token: googleToken,
-          })
-        );
+      // Save user locally
+      localStorage.setItem("token", googleToken);
+      localStorage.setItem("user", JSON.stringify(fullUser));
 
-        navigate("/");
-      } catch (err) {
-        console.error("Google auto-login error:", err);
-      }
+      // Save to Redux
+      dispatch(setUser({ ...fullUser, token: googleToken }));
+
+      navigate("/");
+    } catch (err) {
+      console.error("Google auto-login error:", err);
     }
   }, [dispatch, navigate]);
 
   // ========= HANDLE INPUTS =========
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
+
     setForm((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
@@ -104,7 +92,7 @@ export const RegisterPage = () => {
   };
 
   // =====================================================
-  // 🔥 SUBMIT (REGISTRATION + AUTO LOGIN)
+  // 🔥 SUBMIT (REGISTRATION → AUTO LOGIN)
   // =====================================================
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -129,10 +117,10 @@ export const RegisterPage = () => {
         invite: invite || null,
       };
 
-      // 🟦 1) REGISTER USER
+      // --- 1) REGISTER USER ---
       await UserAPI.register(payload);
 
-      // 🟦 2) LOGIN пользователем сразу после регистрации
+      // --- 2) LOGIN RIGHT AFTER REGISTER ---
       const loginRes = await UserAPI.login({
         username: form.username,
         password: form.password,
@@ -140,38 +128,24 @@ export const RegisterPage = () => {
 
       const { token, user } = loginRes.data;
 
-      // Save token globally
+      // Save token
       setAuthToken(token);
-
-      // Save user with ROLE
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          ...user,
-          role: user.role || "owner",
-        })
-      );
-
       localStorage.setItem("token", token);
 
+      const fullUser = {
+        ...user,
+        role: user.role || "owner",
+      };
+
+      // Save user
+      localStorage.setItem("user", JSON.stringify(fullUser));
+
       // Save to Redux
-      dispatch(
-        setUser({
-          id: user.id,
-          username: user.username,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          avatar: user.avatar || "",
-          googleId: user.googleId || null,
-          role: user.role || "owner",
-          token,
-        })
-      );
+      dispatch(setUser({ ...fullUser, token }));
 
       navigate("/");
     } catch (err: any) {
-      console.log(err);
+      console.error(err);
       alert(err.response?.data?.message || "Registration error");
     } finally {
       setLoading(false);
@@ -179,13 +153,13 @@ export const RegisterPage = () => {
   };
 
   // =====================================================
-  // 🔥 GOOGLE REGISTER — через state передаём invite
+  // 🔥 GOOGLE SIGN UP — now using Vercel API
   // =====================================================
   const handleGoogleRegister = () => {
     if (invite) {
-      window.location.href = `http://localhost:5000/api/auth/google?invite=${invite}`;
+      window.location.href = `${API_URL}/auth/google?invite=${invite}`;
     } else {
-      window.location.href = `http://localhost:5000/api/auth/google`;
+      window.location.href = `${API_URL}/auth/google`;
     }
   };
 
@@ -273,7 +247,6 @@ export const RegisterPage = () => {
                 name="password"
                 placeholder="Enter Password"
                 value={form.password}
-                autoComplete="new-password"
                 onChange={handleChange}
                 required
               />
@@ -288,7 +261,6 @@ export const RegisterPage = () => {
                 name="confirmPassword"
                 placeholder="Confirm Password"
                 value={form.confirmPassword}
-                autoComplete="new-password"
                 onChange={handleChange}
                 required
               />
@@ -305,7 +277,7 @@ export const RegisterPage = () => {
               <span>I agree to all terms</span>
             </label>
 
-            {/* SUBMIT */}
+            {/* Submit */}
             <button type="submit" className="register__btn" disabled={loading}>
               {loading ? "Loading..." : "Register"}
             </button>
