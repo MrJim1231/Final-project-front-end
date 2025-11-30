@@ -1,33 +1,32 @@
-import Status from "../models/Status.js";
-import Priority from "../models/Priority.js";
+import Status from "./models/Status.js";
+import Priority from "./models/Priority.js";
 
-async function initDefaults() {
-  const defaultStatuses = ["Not Started", "In Progress", "Completed"];
-  const defaultPriorities = ["Low", "Medium", "High"];
-
-  // === СТАТУСЫ ===
-  for (const title of defaultStatuses) {
-    const exists = await Status.findOne({ title });
+async function ensureDefaults(Model, defaultValues) {
+  for (const title of defaultValues) {
+    const exists = await Model.findOne({ title });
 
     if (!exists) {
-      await Status.create({ title, isDefault: true });
-    } else if (!exists.isDefault) {
-      exists.isDefault = true;
-      await exists.save();
+      await Model.create({ title, isDefault: true });
+      continue;
     }
-  }
 
-  // === ПРИОРИТЕТЫ ===
-  for (const title of defaultPriorities) {
-    const exists = await Priority.findOne({ title });
-
-    if (!exists) {
-      await Priority.create({ title, isDefault: true });
-    } else if (!exists.isDefault) {
+    if (!exists.isDefault) {
       exists.isDefault = true;
       await exists.save();
     }
   }
 }
 
-export default initDefaults;
+export default async function initDefaults() {
+  const defaultStatuses = ["Not Started", "In Progress", "Completed"];
+  const defaultPriorities = ["Low", "Medium", "High"];
+
+  try {
+    await ensureDefaults(Status, defaultStatuses);
+    await ensureDefaults(Priority, defaultPriorities);
+
+    console.log("Default Statuses & Priorities ensured ✔️");
+  } catch (err) {
+    console.error("Error initializing defaults:", err);
+  }
+}
