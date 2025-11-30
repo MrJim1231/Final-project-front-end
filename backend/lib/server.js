@@ -14,40 +14,49 @@ app.use(cors());
 app.use(express.json());
 
 // ==========================
-// MongoDB connection with connection pooling for serverless
+// MongoDB connection (Singleton for Vercel)
 // ==========================
-let isConnected = false;
+let cached = global.mongoose;
 
-const connectDB = async () => {
-  if (isConnected) {
-    console.log("Using existing MongoDB connection");
-    return;
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
+
+async function connectDB() {
+  if (cached.conn) {
+    return cached.conn;
   }
 
-  try {
-    const db = await mongoose.connect(process.env.MONGO_URI, {
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
-    });
+  if (!cached.promise) {
+    cached.promise = mongoose
+      .connect(process.env.MONGO_URI, {
+        bufferCommands: false,
+        serverSelectionTimeoutMS: 5000,
+      })
+      .then(async (mongoose) => {
+        console.log("MongoDB connected successfully ✅");
 
-    isConnected = db.connections[0].readyState === 1;
-    console.log("MongoDB connected successfully ✅");
-    console.log("DB Name:", mongoose.connection.name);
+        // Init defaults (only once per cold start)
+        const { default: initDefaults } = await import("../initDefaults.js");
+        await initDefaults();
 
-    // Initialize default statuses and priorities
-    const { default: initDefaults } = await import("../initDefaults.js");
-    await initDefaults();
-  } catch (err) {
-    console.log("MongoDB connection error ❌:", err);
-    throw err;
+        return mongoose;
+      })
+      .catch((err) => {
+        console.error("MongoDB connection error ❌:", err);
+        throw err;
+      });
   }
-};
 
-// Connect to DB on app initialization
-connectDB();
+  cached.conn = await cached.promise;
+  return cached.conn;
+}
+
+// Connect DB now
+await connectDB();
 
 // ==========================
-// Routes
+// Routes (dynamic imports for Vercel)
 // ==========================
 const { default: authRoutes } = await import("../routes/authRoutes.js");
 const { default: profileRoutes } = await import("../routes/profileRoutes.js");
