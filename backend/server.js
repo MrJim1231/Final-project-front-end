@@ -55,7 +55,9 @@ app.use("/api/invite", inviteRoutes);
 // ==========================
 // Wildcard route (for SPA)
 // ==========================
-app.get("/:path*", (req, res) => {
+// В Express 5.0 путь "*" или "/*" вызывает ошибки. 
+// Самый надежный способ для SPA — использовать app.use без пути в самом конце.
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/dist", "index.html"));
 });
 
