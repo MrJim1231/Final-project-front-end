@@ -25,6 +25,18 @@ mongoose
     // ==========================
     const initDefaults = require("./initDefaults");
     await initDefaults();
+
+    // ==========================
+    // Удаление старого индекса уникальности username
+    // ==========================
+    try {
+      const User = require("./models/User");
+      await User.collection.dropIndex("username_1");
+      console.log("Old unique username index dropped successfully 🗑️");
+    } catch (err) {
+      // Если индекса нет, просто игнорируем
+      console.log("Unique username index already clean or not found.");
+    }
   })
   .catch((err) => console.log("MongoDB connection error ❌:", err));
 
