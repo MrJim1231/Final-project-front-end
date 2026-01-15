@@ -134,7 +134,7 @@ export const RegisterPage = () => {
 
       // 🟦 2) LOGIN пользователем сразу после регистрации
       const loginRes = await UserAPI.login({
-        username: form.username,
+        email: form.email,
         password: form.password,
       });
 
