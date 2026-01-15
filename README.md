@@ -106,14 +106,18 @@ npm run build
 ```
 
 ### 3️⃣ Настройка .env (в папке /backend)
+Создайте файл `.env` в папке `/backend` и добавьте следующие переменные (используйте свои значения):
+
 ```env
 PORT=5000
 MONGO_URI=your_mongodb_uri
-JWT_SECRET=your_secret_key
-FRONTEND_URL=http://localhost:5173
-GOOGLE_CLIENT_ID=...
-GOOGLE_CLIENT_SECRET=...
-GOOGLE_REDIRECT_URI=http://localhost:5000/api/auth/google/callback
+JWT_SECRET=your_jwt_secret
+FRONTEND_URL=https://your-frontend-url.com
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GOOGLE_REDIRECT_URI=https://your-app-url.com/api/auth/google/callback
+MAIL_USER=your_email@gmail.com
+MAIL_PASS=your_app_password
 ```
 
 ### 4️⃣ Запуск
