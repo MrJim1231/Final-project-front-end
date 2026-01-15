@@ -183,9 +183,9 @@ export const RegisterPage = () => {
   // =====================================================
   const handleGoogleRegister = () => {
     if (invite) {
-      window.location.href = `http://localhost:5000/api/auth/google?invite=${invite}`;
+      window.location.href = `/api/auth/google?invite=${invite}`;
     } else {
-      window.location.href = `http://localhost:5000/api/auth/google`;
+      window.location.href = `/api/auth/google`;
     }
   };
 

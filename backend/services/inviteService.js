@@ -22,7 +22,8 @@ class InviteService {
       role,
     });
 
-    const link = `http://localhost:5173/register?invite=${token}`;
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+    const link = `${frontendUrl}/register?invite=${token}`;
 
     await sendEmail(
       email,

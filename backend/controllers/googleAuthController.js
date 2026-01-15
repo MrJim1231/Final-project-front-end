@@ -52,8 +52,9 @@ exports.googleAuth = async (req, res) => {
     // =====================================================
     // 🔄 3. Редирект на фронтенд + передаём роль
     // =====================================================
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
     res.redirect(
-      `http://localhost:5173/register?googleToken=${result.token}` +
+      `${frontendUrl}/register?googleToken=${result.token}` +
         `&user=${encodeURIComponent(JSON.stringify(user))}` +
         `&role=${finalRole}`
     );
