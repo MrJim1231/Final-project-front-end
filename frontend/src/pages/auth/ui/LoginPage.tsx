@@ -23,7 +23,7 @@ import { setAuthToken } from "@/shared/api/api";
 
 export const LoginPage = () => {
   const [form, setForm] = useState({
-    username: "",
+    email: "",
     password: "",
     remember: false,
   });
@@ -108,7 +108,7 @@ export const LoginPage = () => {
       setLoading(true);
 
       const res = await UserAPI.login({
-        username: form.username,
+        email: form.email,
         password: form.password,
       });
 
@@ -143,7 +143,7 @@ export const LoginPage = () => {
         })
       );
 
-      setForm({ username: "", password: "", remember: false });
+      setForm({ email: "", password: "", remember: false });
       navigate("/");
     } catch (err: any) {
       alert(err.response?.data?.message || "Login failed");
@@ -169,17 +169,17 @@ export const LoginPage = () => {
           <h2 className="login__title">Sign In</h2>
 
           <form onSubmit={handleSubmit} className="login__form">
-            {/* Username */}
+            {/* Email */}
             <div className="login__input-group">
               <BsPersonFill className="login__input-icon" />
               <input
-                type="text"
-                name="username"
-                placeholder="Enter Username"
-                value={form.username}
+                type="email"
+                name="email"
+                placeholder="Enter Email"
+                value={form.email}
                 onChange={handleChange}
                 required
-                autoComplete="username"
+                autoComplete="email"
                 className="login__input"
               />
             </div>

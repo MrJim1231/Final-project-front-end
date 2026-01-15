@@ -9,12 +9,9 @@ exports.register = async ({
   email,
   password,
 }) => {
-  // Проверяем существование email/username
+  // Проверяем существование только email
   if (await User.findOne({ email })) {
     throw { status: 400, message: "Email already exists" };
-  }
-  if (await User.findOne({ username })) {
-    throw { status: 400, message: "Username already exists" };
   }
 
   // Хешируем пароль
@@ -40,9 +37,9 @@ exports.register = async ({
   };
 };
 
-exports.login = async ({ username, password }) => {
-  const user = await User.findOne({ username });
-  if (!user) throw { status: 400, message: "Invalid username or password" };
+exports.login = async ({ email, password }) => {
+  const user = await User.findOne({ email });
+  if (!user) throw { status: 400, message: "Invalid email or password" };
 
   const isMatch = await bcrypt.compare(password, user.passwordHash);
   if (!isMatch) throw { status: 400, message: "Invalid username or password" };
